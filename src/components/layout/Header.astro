@@ -1,0 +1,480 @@
+---
+import Logo from './Logo.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { mainNav } from '../../data/navigation';
+import { getServices } from '../../lib/content';
+import { routePath } from '../../lib/links';
+
+const services = getServices();
+const path = routePath(Astro.url.pathname);
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+const servicesActive = isActive('/servicios');
+---
+
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a href="/" class="brand" aria-label="ClickSolutions, ir al inicio">
+      <Logo variant="mark" />
+    </a>
+
+    <nav class="nav-desktop" aria-label="Principal">
+      <ul class="nav-list">
+        <li class="has-menu" data-dropdown>
+          <button
+            type="button"
+            class:list={['nav-link', { active: servicesActive }]}
+            aria-expanded="false"
+            aria-controls="menu-servicios"
+            data-dropdown-toggle
+          >
+            Servicios <Icon name="chevron-down" size={16} class="chevron" />
+          </button>
+          <div id="menu-servicios" class="dropdown" hidden data-dropdown-panel>
+            <ul class="dropdown-grid">
+              {
+                services.map((service) => (
+                  <li>
+                    <a
+                      href={`/servicios/${service.slug}`}
+                      class="dropdown-item"
+                      aria-current={isActive(`/servicios/${service.slug}`) ? 'page' : undefined}
+                    >
+                      <span class="dropdown-icon">
+                        <Icon name={service.icon} size={20} />
+                      </span>
+                      <span>
+                        <span class="dropdown-title">{service.name}</span>
+                        <span class="dropdown-desc">{service.tagline}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <a href="/servicios" class="dropdown-footer">
+              Ver todos los servicios <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
+        </li>
+        {
+          mainNav.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class:list={['nav-link', { active: isActive(link.href) }]}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <Button href="/contacto" size="sm" class="header-cta" track="quote_cta" data-track-label="header">
+        Solicitar cotización
+      </Button>
+      <button
+        type="button"
+        class="menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menú"
+        data-menu-toggle
+      >
+        <Icon name="menu" size={24} class="icon-open" />
+        <Icon name="x" size={24} class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" hidden data-mobile-menu>
+    <nav class="container" aria-label="Menú móvil">
+      <p class="mobile-label">Servicios</p>
+      <ul class="mobile-list">
+        {
+          services.map((service) => (
+            <li>
+              <a href={`/servicios/${service.slug}`} class="mobile-link">
+                <Icon name={service.icon} size={20} />
+                {service.name}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href="/servicios" class="mobile-link mobile-link--muted">Ver todos los servicios</a>
+        </li>
+      </ul>
+      <p class="mobile-label">Empresa</p>
+      <ul class="mobile-list">
+        {
+          mainNav.map((link) => (
+            <li>
+              <a href={link.href} class="mobile-link" aria-current={isActive(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <Button href="/contacto" size="lg" class="mobile-cta" track="quote_cta" data-track-label="mobile-menu">
+        Solicitar cotización
+      </Button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.96);
+    border-bottom: 1px solid var(--border);
+  }
+
+  @supports (backdrop-filter: blur(8px)) {
+    .site-header {
+      background: rgb(255 255 255 / 0.88);
+      backdrop-filter: saturate(160%) blur(8px);
+    }
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    height: var(--header-h);
+  }
+
+  .brand {
+    display: inline-flex;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-desktop {
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 40px;
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--dur-fast), color var(--dur-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-expanded='true'] {
+    background: var(--surface);
+    color: var(--brand-navy);
+  }
+
+  .nav-link.active {
+    color: var(--brand-navy);
+    font-weight: 600;
+  }
+
+  .nav-link :global(.chevron) {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .nav-link[aria-expanded='true'] :global(.chevron) {
+    transform: rotate(180deg);
+  }
+
+  .has-menu {
+    position: relative;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    width: min(560px, 90vw);
+    padding: var(--space-3);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-50%);
+    animation: dropdown-in var(--dur-base) var(--ease-out);
+  }
+
+  /* Puente invisible para que el menú no se cierre al mover el mouse hacia él. */
+  .dropdown::before {
+    content: '';
+    position: absolute;
+    inset: -12px 0 auto;
+    height: 12px;
+  }
+
+  @keyframes dropdown-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -4px);
+    }
+  }
+
+  .dropdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dropdown-item {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+    transition: background-color var(--dur-fast);
+  }
+
+  .dropdown-item:hover,
+  .dropdown-item[aria-current='page'] {
+    background: var(--surface);
+  }
+
+  .dropdown-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--info-bg);
+    color: var(--brand-navy);
+  }
+
+  .dropdown-title {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--brand-ink);
+  }
+
+  .dropdown-desc {
+    display: block;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .dropdown-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: var(--space-3);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .menu-toggle {
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+
+  .menu-toggle :global(.icon-close),
+  .menu-toggle[aria-expanded='true'] :global(.icon-open) {
+    display: none;
+  }
+
+  .menu-toggle[aria-expanded='true'] :global(.icon-close) {
+    display: block;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    overflow-y: auto;
+    padding-block: var(--space-4) var(--space-12);
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    overscroll-behavior: contain;
+  }
+
+  .mobile-label {
+    margin: var(--space-6) 0 var(--space-2);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .mobile-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 48px;
+    padding: 0 var(--space-2);
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-md);
+    font-weight: 500;
+    color: var(--brand-ink);
+    text-decoration: none;
+  }
+
+  .mobile-link :global(svg) {
+    color: var(--brand-navy);
+  }
+
+  .mobile-link--muted {
+    font-size: var(--fs-base);
+    color: var(--link);
+  }
+
+  :global(.mobile-cta) {
+    width: 100%;
+    margin-top: var(--space-8);
+  }
+
+  @media (max-width: 959px) {
+    .nav-desktop {
+      display: none;
+    }
+
+    .header-actions {
+      margin-left: auto;
+    }
+
+    .menu-toggle {
+      display: inline-grid;
+    }
+  }
+
+  @media (max-width: 479px) {
+    :global(.header-cta) {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+
+  :global(body.menu-open) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  // Menú desplegable de servicios: clic, teclado (Escape) y hover en dispositivos con mouse.
+  document.querySelectorAll<HTMLElement>('[data-dropdown]').forEach((root) => {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-dropdown-toggle]')!;
+    const panel = root.querySelector<HTMLElement>('[data-dropdown-panel]')!;
+    let closeTimer: number | undefined;
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+
+    toggle.addEventListener('click', () => setOpen(panel.hasAttribute('hidden')));
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      root.addEventListener('mouseenter', () => {
+        window.clearTimeout(closeTimer);
+        setOpen(true);
+      });
+      root.addEventListener('mouseleave', () => {
+        closeTimer = window.setTimeout(() => setOpen(false), 150);
+      });
+    }
+
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node | null)) setOpen(false);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) setOpen(false);
+    });
+  });
+
+  // Menú móvil.
+  const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const mobileMenu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+
+  if (menuToggle && mobileMenu) {
+    const setMenu = (open: boolean) => {
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      mobileMenu.hidden = !open;
+      document.body.classList.toggle('menu-open', open);
+    };
+
+    menuToggle.addEventListener('click', () => setMenu(mobileMenu.hasAttribute('hidden')));
+    mobileMenu.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('a')) setMenu(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenu.hidden) {
+        setMenu(false);
+        menuToggle.focus();
+      }
+    });
+    window.matchMedia('(min-width: 960px)').addEventListener('change', (e) => {
+      if (e.matches) setMenu(false);
+    });
+  }
+</script>

@@ -1,0 +1,447 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import ImagePlaceholder from '../../components/ui/ImagePlaceholder.astro';
+import Gallery from '../../components/sections/Gallery.astro';
+import ProjectCard from '../../components/sections/ProjectCard.astro';
+import ProcessSteps from '../../components/sections/ProcessSteps.astro';
+import FAQList from '../../components/sections/FAQList.astro';
+import ContactForm from '../../components/forms/ContactForm.astro';
+import LicenseCatalog from '../../components/licenses/LicenseCatalog.astro';
+import { site } from '../../config/site';
+import { getServices, getProjects, getLicenses } from '../../lib/content';
+import { whatsappUrl } from '../../lib/links';
+import { serviceSchema, faqSchema, breadcrumbSchema } from '../../lib/seo';
+import type { Service } from '../../data/services';
+
+export const getStaticPaths = (() =>
+  getServices().map((service) => ({ params: { slug: service.slug }, props: { service } }))) satisfies GetStaticPaths;
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+const path = `/servicios/${service.slug}`;
+const siteUrl = new URL(Astro.site ?? Astro.url.origin);
+const breadcrumbs = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Servicios', href: '/servicios' },
+  { label: service.name, href: path },
+];
+
+const isDrones = service.slug === 'drones';
+const isWeb = service.slug === 'desarrollo-web';
+const isSupport = service.slug === 'soporte-tecnico';
+const isLicenses = service.slug === 'licencias-software';
+
+const whatsapp = whatsappUrl(`Hola ${site.name}, quisiera información sobre: ${service.name}.`);
+const projects = isWeb || isDrones ? getProjects(service.slug) : [];
+const products = isLicenses ? getLicenses() : [];
+
+const supportModes = [
+  site.support.onsite && { title: 'Presencial', text: 'Atención en tu domicilio u oficina, según tu ubicación.', icon: 'building' as const },
+  site.support.remote && { title: 'Remota', text: 'Asistencia a distancia, solo con tu autorización y durante la sesión que tú inicias.', icon: 'monitor' as const },
+].filter((mode): mode is Exclude<typeof mode, false> => Boolean(mode));
+---
+
+<BaseLayout
+  title={service.seo.title}
+  description={service.seo.description}
+  schema={[
+    serviceSchema(siteUrl, { name: service.name, description: service.seo.description, path }),
+    faqSchema(service.faqs),
+    breadcrumbSchema(siteUrl, breadcrumbs),
+  ]}
+>
+  <PageHero eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
+    <Fragment slot="actions">
+      <Button href="#cotizar" variant="on-dark" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label={service.slug}>
+        {service.cta.label}
+      </Button>
+      {
+        whatsapp && (
+          <Button href={whatsapp} variant="outline-dark" size="lg" icon="message" external track="whatsapp_click" data-track-label={service.slug}>
+            WhatsApp
+          </Button>
+        )
+      }
+    </Fragment>
+    <div slot="aside" class="hero-visual">
+      <ImagePlaceholder
+        dark
+        icon={isDrones ? 'camera' : service.icon}
+        label={isDrones ? 'Fotografía aérea propia pendiente' : 'Imagen del servicio pendiente'}
+      />
+    </div>
+  </PageHero>
+
+  <!-- Descripción y aplicaciones -->
+  <section class="section">
+    <div class="container intro">
+      <div class="intro__text">
+        <span class="eyebrow">El servicio</span>
+        <h2>{isLicenses ? 'Software original para cada necesidad' : 'Qué resolvemos'}</h2>
+        {service.description.map((p) => <p class="lead">{p}</p>)}
+      </div>
+      <ul class="audiences">
+        {
+          service.audiences.map((a) => (
+            <li class="audience">
+              <span class="icon-tile"><Icon name={a.icon} size={22} /></span>
+              <div>
+                <h3>{a.title}</h3>
+                <p>{a.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    service.offerings.length > 0 && (
+      <section class="section section--muted">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">{service.hero.eyebrow}</span>
+            <h2>{service.offeringsTitle}</h2>
+          </div>
+          <div class={`grid ${isWeb ? 'grid--2' : 'grid--3'}`}>
+            {service.offerings.map((o) => (
+              <article class="card offering">
+                <span class="icon-tile"><Icon name={o.icon} size={22} /></span>
+                <h3>{o.title}</h3>
+                <p class="offering__summary">{o.summary}</p>
+                {(o.problem || o.audience) && (
+                  <dl class="offering__details">
+                    {o.problem && (<div><dt>Qué resuelve</dt><dd>{o.problem}</dd></div>)}
+                    {o.audience && (<div><dt>Para quién</dt><dd>{o.audience}</dd></div>)}
+                  </dl>
+                )}
+                {o.includes && (
+                  <>
+                    <p class="offering__label">Qué incluye</p>
+                    <ul class="check-list">
+                      {o.includes.map((item) => (
+                        <li><Icon name="check" size={16} />{item}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </article>
+            ))}
+          </div>
+          {isWeb && (
+            <p class="offering-note">El alcance exacto de cada proyecto se define en la propuesta según tus necesidades.</p>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    isSupport && supportModes.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Modalidad</span>
+            <h2>Cómo te atendemos</h2>
+          </div>
+          <div class="grid grid--2">
+            {supportModes.map((mode) => (
+              <div class="card mode">
+                <span class="icon-tile"><Icon name={mode.icon} size={22} /></span>
+                <h3>{mode.title}</h3>
+                <p>{mode.text}</p>
+              </div>
+            ))}
+          </div>
+          <div class="notice notice--info support-note">
+            <Icon name="info" size={20} />
+            <p>
+              Nunca accedemos a tus equipos sin tu autorización. Los tiempos de atención dependen de cada caso y se coordinan
+              al revisar tu solicitud.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    isLicenses && (
+      <section class="section" id="catalogo">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Catálogo</span>
+            <h2>Licencias disponibles</h2>
+            <p>Busca por nombre, fabricante o tipo de software. Por ahora, los pedidos se coordinan por consulta.</p>
+          </div>
+          <LicenseCatalog products={products} />
+          <div class="notice notice--info licenses-note">
+            <Icon name="shield" size={20} />
+            <p>
+              Comercializamos únicamente licencias legítimas. Las claves de activación se entregan de forma privada tras confirmar
+              el pedido y nunca se publican en este sitio.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    (isDrones || isWeb) && (
+      <section class:list={['section', { 'section--muted': isSupport }]}>
+        <div class="container">
+          <div class="section-header section-header--row">
+            <div>
+              <span class="eyebrow">{isDrones ? 'Galería' : 'Portafolio'}</span>
+              <h2>{isDrones ? 'Trabajos realizados' : 'Proyectos web'}</h2>
+            </div>
+            {isWeb && projects.length > 0 && <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver todo el portafolio</Button>}
+          </div>
+          {projects.length > 0 ? (
+            <div class="grid grid--3">
+              {projects.map((project) => <ProjectCard project={project} />)}
+            </div>
+          ) : (
+            <Gallery
+              items={service.gallery}
+              placeholderIcon={isDrones ? 'camera' : 'layout'}
+              emptyText={isDrones ? 'Pronto publicaremos aquí fotografías y videos de trabajos reales.' : 'Pronto publicaremos aquí proyectos reales.'}
+            />
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    service.notes && (
+      <div class="container notes">
+        {service.notes.map((note) => (
+          <div class="notice notice--info">
+            <Icon name="info" size={20} />
+            <p>{note}</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  <!-- Proceso -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Proceso</span>
+        <h2>{isLicenses ? 'Cómo adquirir una licencia' : 'Cómo trabajamos'}</h2>
+      </div>
+      <ProcessSteps steps={service.process} />
+    </div>
+  </section>
+
+  <!-- Requisitos + FAQ -->
+  <section class="section section--muted">
+    <div class="container two-col">
+      <div>
+        <span class="eyebrow">Antes de empezar</span>
+        <h2>Qué información necesitamos</h2>
+        <ul class="check-list requirements">
+          {service.requirements.map((r) => <li><Icon name="check" size={16} />{r}</li>)}
+        </ul>
+      </div>
+      <div>
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Dudas comunes</h2>
+        <FAQList faqs={service.faqs} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Formulario -->
+  <section class="section" id="cotizar">
+    <div class="container form-layout">
+      <div class="form-intro">
+        <span class="eyebrow">{service.cta.label}</span>
+        <h2>{service.cta.formHeading}</h2>
+        <p class="lead">Completa el formulario y te responderemos con los siguientes pasos. Solicitar información no tiene costo ni compromiso.</p>
+        {
+          whatsapp && (
+            <p>
+              ¿Prefieres conversar?{' '}
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track="whatsapp_click" data-track-label={`${service.slug}-form`}>
+                Escríbenos por WhatsApp
+              </a>.
+            </p>
+          )
+        }
+      </div>
+      <div class="card form-card">
+        <ContactForm
+          service={service.slug}
+          variant={isSupport ? 'soporte' : 'general'}
+          categories={service.offerings.map((o) => o.title)}
+          submitLabel={service.cta.label}
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-visual {
+    max-width: 520px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .audiences {
+    display: grid;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .audience {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .audience .icon-tile {
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .audience h3 {
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-1);
+  }
+
+  .audience p {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .offering {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .offering__summary {
+    color: var(--text-muted);
+  }
+
+  .offering__details {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    font-size: var(--fs-sm);
+  }
+
+  dt,
+  .offering__label {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  dd {
+    margin: 2px 0 0;
+  }
+
+  .offering__label {
+    margin-bottom: var(--space-2);
+  }
+
+  .offering .check-list {
+    font-size: var(--fs-sm);
+    margin: 0;
+  }
+
+  .offering-note {
+    margin: var(--space-6) 0 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .support-note,
+  .licenses-note {
+    margin-top: var(--space-8);
+  }
+
+  .section-header--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: none;
+  }
+
+  .notes {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--space-12);
+  }
+
+  .requirements {
+    margin-top: var(--space-6);
+  }
+
+  .form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .form-intro {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-8));
+  }
+
+  .form-card {
+    padding: clamp(1.25rem, 0.5rem + 3vw, 2.5rem);
+  }
+
+  @media (max-width: 899px) {
+    .intro,
+    .two-col,
+    .form-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+
+    .form-intro {
+      position: static;
+    }
+  }
+</style>

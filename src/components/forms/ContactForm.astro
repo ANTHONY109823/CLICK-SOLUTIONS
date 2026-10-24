@@ -1,0 +1,484 @@
+---
+/**
+ * Formulario de contacto/cotización. Envía a /api/contacto (validación real en el servidor).
+ * Si el envío no está configurado (PUBLIC_CONTACT_FORM_ENABLED=false) el formulario se muestra
+ * deshabilitado con un aviso: nunca se simula un envío.
+ */
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { site } from '../../config/site';
+import { serviceOptions, budgetOptions, priorityOptions } from '../../lib/contact';
+import { mailtoUrl, whatsappUrl } from '../../lib/links';
+
+interface Props {
+  /** Servicio preseleccionado. */
+  service?: string;
+  /** "soporte" agrega categoría y prioridad. */
+  variant?: 'general' | 'soporte';
+  /** Categorías para el formulario de soporte. */
+  categories?: string[];
+  submitLabel?: string;
+}
+
+const { service = '', variant = 'general', categories = [], submitLabel = 'Enviar solicitud' } = Astro.props;
+const enabled = site.contactFormEnabled;
+const whatsapp = whatsappUrl();
+const email = mailtoUrl('Solicitud desde la web');
+const messageLabel = variant === 'soporte' ? 'Describe el problema' : 'Cuéntanos qué necesitas';
+---
+
+<div class="contact-form">
+  {
+    !enabled && (
+      <div class="notice notice--warning form-disabled-notice">
+        <Icon name="info" size={20} />
+        <div>
+          <p>
+            <strong>El envío en línea aún no está habilitado.</strong>
+            {whatsapp || email ? ' Mientras tanto, puedes escribirnos directamente:' : ' Pronto podrás enviarnos tu solicitud desde aquí.'}
+          </p>
+          {(whatsapp || email) && (
+            <p class="form-disabled-links">
+              {whatsapp && <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track="whatsapp_click" data-track-label="form-disabled">WhatsApp</a>}
+              {email && <a href={email} data-track="email_click" data-track-label="form-disabled">{site.contact.email}</a>}
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  <form action="/api/contacto" method="post" novalidate data-contact-form>
+    <fieldset disabled={!enabled}>
+      <legend class="visually-hidden">Datos de tu solicitud</legend>
+
+      <div class="form-grid">
+        <div class="field" data-field="name">
+          <label for="cf-name">Nombre <span aria-hidden="true">*</span></label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" aria-describedby="cf-name-error" />
+          <p class="field-error" id="cf-name-error" data-error="name"></p>
+        </div>
+
+        <div class="field" data-field="company">
+          <label for="cf-company">Empresa <span class="optional">(opcional)</span></label>
+          <input id="cf-company" name="company" type="text" autocomplete="organization" maxlength="120" />
+        </div>
+
+        <div class="field" data-field="email">
+          <label for="cf-email">Correo electrónico <span aria-hidden="true">*</span></label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="254" aria-describedby="cf-email-error" />
+          <p class="field-error" id="cf-email-error" data-error="email"></p>
+        </div>
+
+        <div class="field" data-field="phone">
+          <label for="cf-phone">Teléfono <span class="optional">(opcional)</span></label>
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="20" inputmode="tel" aria-describedby="cf-phone-error" />
+          <p class="field-error" id="cf-phone-error" data-error="phone"></p>
+        </div>
+
+        <div class="field" data-field="service">
+          <label for="cf-service">Servicio de interés <span aria-hidden="true">*</span></label>
+          <select id="cf-service" name="service" required aria-describedby="cf-service-error">
+            <option value="" selected={!service}>Elige una opción</option>
+            {serviceOptions.map((o) => <option value={o.value} selected={o.value === service}>{o.label}</option>)}
+          </select>
+          <p class="field-error" id="cf-service-error" data-error="service"></p>
+        </div>
+
+        {
+          variant === 'soporte' ? (
+            <>
+              <div class="field" data-field="category">
+                <label for="cf-category">Categoría <span class="optional">(opcional)</span></label>
+                <select id="cf-category" name="category">
+                  <option value="">Elige una categoría</option>
+                  {categories.map((c) => <option value={c}>{c}</option>)}
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div class="field" data-field="priority">
+                <label for="cf-priority">Prioridad <span class="optional">(opcional)</span></label>
+                <select id="cf-priority" name="priority" aria-describedby="cf-priority-error">
+                  <option value="">Elige una prioridad</option>
+                  {priorityOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+                </select>
+                <p class="field-error" id="cf-priority-error" data-error="priority"></p>
+              </div>
+            </>
+          ) : (
+            <div class="field" data-field="budget">
+              <label for="cf-budget">Presupuesto estimado <span class="optional">(opcional)</span></label>
+              <select id="cf-budget" name="budget" aria-describedby="cf-budget-error">
+                <option value="">Prefiero no indicarlo</option>
+                {budgetOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+              <p class="field-error" id="cf-budget-error" data-error="budget"></p>
+            </div>
+          )
+        }
+
+        <div class="field field--full" data-field="message">
+          <label for="cf-message">{messageLabel} <span aria-hidden="true">*</span></label>
+          <textarea id="cf-message" name="message" rows="5" required maxlength="3000" aria-describedby="cf-message-hint cf-message-error"></textarea>
+          <p class="field-hint" id="cf-message-hint">No incluyas contraseñas ni datos bancarios.</p>
+          <p class="field-error" id="cf-message-error" data-error="message"></p>
+        </div>
+
+        <!-- Campo trampa para bots: las personas no lo ven ni lo completan. -->
+        <div class="hp" aria-hidden="true">
+          <label for="cf-website">Sitio web</label>
+          <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="ts" value="" />
+
+        <div class="field field--full field--check" data-field="consent">
+          <div class="check">
+            <input id="cf-consent" name="consent" type="checkbox" required aria-describedby="cf-consent-error" />
+            <label for="cf-consent">
+              Autorizo el uso de mis datos para responder esta solicitud, según la
+              <a href="/politica-de-privacidad" target="_blank">política de privacidad</a>.
+              <span aria-hidden="true">*</span>
+            </label>
+          </div>
+          <p class="field-error" id="cf-consent-error" data-error="consent"></p>
+        </div>
+      </div>
+
+      <div class="form-error" role="alert" hidden data-form-error></div>
+
+      <div class="form-actions">
+        <Button type="submit" size="lg" data-submit>
+          <span data-submit-label>{submitLabel}</span>
+        </Button>
+        <p class="form-required"><span aria-hidden="true">*</span> Campos obligatorios</p>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="form-success" role="status" tabindex="-1" hidden data-form-success>
+    <span class="form-success__icon"><Icon name="check" size={28} /></span>
+    <h3>¡Solicitud enviada!</h3>
+    <p>Gracias por escribirnos. Revisaremos tu mensaje y te responderemos por correo electrónico.</p>
+  </div>
+</div>
+
+<style>
+  .contact-form {
+    width: 100%;
+  }
+
+  .form-disabled-notice {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-disabled-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+    font-weight: 600;
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  fieldset:disabled {
+    opacity: 0.6;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-4);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--brand-ink);
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  input:not([type='checkbox']),
+  select,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    font: inherit;
+    font-size: 16px; /* evita el zoom automático en iOS */
+    color: var(--text);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--brand-cyan);
+    box-shadow: var(--focus-ring);
+  }
+
+  [aria-invalid='true'] {
+    border-color: var(--danger) !important;
+  }
+
+  .field-hint {
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+
+  .field-error {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--danger);
+  }
+
+  .field-error:empty {
+    display: none;
+  }
+
+  .check {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .check input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    accent-color: var(--brand-navy);
+  }
+
+  .check label {
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-error {
+    margin-top: var(--space-5);
+    padding: var(--space-4);
+    border: 1px solid #f5c2c2;
+    border-radius: var(--radius-md);
+    background: var(--danger-bg);
+    color: #991b1b;
+    font-size: var(--fs-sm);
+  }
+
+  .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .form-required {
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+
+  .form-actions :global([data-submit][aria-busy='true']) {
+    cursor: progress;
+  }
+
+  .form-actions :global([data-submit][aria-busy='true'])::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgb(255 255 255 / 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .form-success {
+    padding: var(--space-10) var(--space-6);
+    border: 1px solid #bbe5c8;
+    border-radius: var(--radius-lg);
+    background: var(--success-bg);
+    text-align: center;
+  }
+
+  .form-success:focus {
+    outline: none;
+  }
+
+  .form-success__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-4);
+    border-radius: 50%;
+    background: var(--success);
+    color: #fff;
+  }
+
+  .form-success p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 599px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { validateContact, type ContactErrors } from '../../lib/contact';
+  import { track } from '../../lib/analytics';
+
+  const GENERIC_ERROR = 'No pudimos enviar tu solicitud. Inténtalo nuevamente en unos minutos.';
+
+  document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+    const wrapper = form.closest('.contact-form')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+    const formError = form.querySelector<HTMLElement>('[data-form-error]')!;
+    const success = wrapper.querySelector<HTMLElement>('[data-form-success]')!;
+    const originalLabel = submitLabel.textContent;
+
+    form.querySelector<HTMLInputElement>('input[name="ts"]')!.value = String(Date.now());
+
+    // Prellenado desde enlaces como /contacto?servicio=licencias-software&producto=...
+    const params = new URLSearchParams(location.search);
+    const serviceSelect = form.querySelector<HTMLSelectElement>('select[name="service"]')!;
+    const requested = params.get('servicio');
+    if (requested && [...serviceSelect.options].some((o) => o.value === requested)) {
+      serviceSelect.value = requested;
+    }
+    const product = params.get('producto')?.slice(0, 120);
+    const message = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]')!;
+    if (product && !message.value) {
+      message.value = `Hola, quisiera información sobre la licencia: ${product}.`;
+    }
+
+    const showErrors = (errors: ContactErrors) => {
+      let first: HTMLElement | null = null;
+      for (const [field, text] of Object.entries(errors)) {
+        const control = form.querySelector<HTMLElement>(`[name="${field}"]`);
+        const slot = form.querySelector<HTMLElement>(`[data-error="${field}"]`);
+        if (slot) slot.textContent = text ?? '';
+        if (control) {
+          control.setAttribute('aria-invalid', 'true');
+          first ??= control;
+        }
+      }
+      first?.focus();
+    };
+
+    const clearErrors = () => {
+      form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+      form.querySelectorAll('[data-error]').forEach((el) => (el.textContent = ''));
+      formError.hidden = true;
+    };
+
+    const setLoading = (loading: boolean) => {
+      submit.disabled = loading;
+      submit.setAttribute('aria-busy', String(loading));
+      submitLabel.textContent = loading ? 'Enviando…' : originalLabel;
+    };
+
+    // Limpia el error de un campo cuando la persona lo corrige.
+    form.addEventListener('input', (e) => {
+      const target = e.target as HTMLElement;
+      const name = target.getAttribute('name');
+      if (name && target.getAttribute('aria-invalid')) {
+        target.removeAttribute('aria-invalid');
+        const slot = form.querySelector(`[data-error="${name}"]`);
+        if (slot) slot.textContent = '';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const fd = new FormData(form);
+      const payload: Record<string, unknown> = Object.fromEntries(fd);
+      payload.consent = fd.get('consent') === 'on';
+
+      const result = validateContact(payload);
+      if (!result.ok) {
+        showErrors(result.errors);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const body = await res.json().catch(() => ({}));
+
+        if (res.ok && body.ok) {
+          form.hidden = true;
+          success.hidden = false;
+          success.focus();
+          track('form_submit', { service: result.data.service });
+          return;
+        }
+        if (res.status === 422 && body.errors) {
+          showErrors(body.errors);
+          return;
+        }
+        formError.textContent = typeof body.message === 'string' ? body.message : GENERIC_ERROR;
+        formError.hidden = false;
+      } catch {
+        formError.textContent = 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.';
+        formError.hidden = false;
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+</script>

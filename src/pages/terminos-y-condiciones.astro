@@ -1,0 +1,73 @@
+---
+/* BORRADOR: revisar con un profesional antes de marcar site.legalReviewed = true. */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../config/site';
+
+const owner = site.legalName ?? site.name;
+---
+
+<LegalLayout
+  title="Términos y condiciones"
+  description="Condiciones de uso del sitio web de ClickSolutions y de las solicitudes de servicios realizadas a través de él."
+  path="/terminos-y-condiciones"
+  updated="24 de octubre de 2026"
+>
+  <p>
+    Estos términos regulan el uso del sitio web de {site.name}, administrado por {owner}{site.ruc && <> (RUC {site.ruc})</>}.
+    Al navegar por el sitio aceptas estas condiciones.
+  </p>
+
+  <h2>1. Uso del sitio</h2>
+  <p>
+    Este sitio tiene fines informativos y permite enviar solicitudes de información o cotización. Te comprometes a usarlo de
+    forma lícita y a no enviar información falsa, ofensiva o que vulnere derechos de terceros.
+  </p>
+
+  <h2>2. Información de los servicios</h2>
+  <p>
+    Las descripciones de servicios y productos son referenciales. El alcance, el precio, los plazos y las condiciones de cada
+    trabajo se definen en la propuesta o cotización que te enviamos, y solo son vinculantes cuando ambas partes los aceptan.
+  </p>
+
+  <h2>3. Solicitudes y cotizaciones</h2>
+  <p>
+    Enviar el formulario no constituye un contrato ni una compra. Es una solicitud de información que responderemos con los
+    siguientes pasos.
+  </p>
+
+  <h2>4. Licencias de software</h2>
+  <p>
+    Las licencias se rigen por los términos de uso del fabricante de cada producto. Las condiciones de entrega, activación y
+    devolución se informan antes de confirmar cada pedido. Por el momento no se realizan pagos en línea a través de este sitio.
+  </p>
+
+  <h2>5. Servicios con drones</h2>
+  <p>
+    Cada operación está sujeta a la normativa aeronáutica vigente, a las autorizaciones que correspondan, a las condiciones
+    climáticas y a la autorización del propietario del lugar. Podemos reprogramar o declinar un vuelo que no pueda realizarse
+    de forma segura o legal.
+  </p>
+
+  <h2>6. Propiedad intelectual</h2>
+  <p>
+    Los contenidos del sitio (textos, diseño, logotipo e imágenes propias) pertenecen a {owner} o se usan con autorización.
+    Las marcas de terceros mencionadas pertenecen a sus respectivos titulares y su mención no implica asociación ni respaldo.
+  </p>
+
+  <h2>7. Enlaces externos</h2>
+  <p>El sitio puede contener enlaces a sitios de terceros, sobre cuyo contenido no tenemos control ni responsabilidad.</p>
+
+  <h2>8. Responsabilidad</h2>
+  <p>
+    Procuramos que la información del sitio sea exacta y esté actualizada, pero puede contener errores u omisiones. No
+    garantizamos que el sitio esté disponible de forma ininterrumpida.
+  </p>
+
+  <h2>9. Ley aplicable</h2>
+  <p>Estos términos se rigen por las leyes de la República del Perú.</p>
+
+  <h2>10. Cambios</h2>
+  <p>Podemos modificar estos términos. La versión vigente es la publicada en esta página.</p>
+
+  <p>Para consultas sobre estos términos, visita nuestra <a href="/contacto">página de contacto</a>.</p>
+</LegalLayout>

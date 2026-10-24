@@ -1,0 +1,166 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'on-dark' | 'outline-dark';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: IconName;
+  iconRight?: IconName;
+  type?: 'button' | 'submit';
+  /** Nombre del evento de analítica (ver src/lib/analytics.ts). */
+  track?: string;
+  external?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  iconRight,
+  type = 'button',
+  track,
+  external = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, className];
+const iconSize = size === 'sm' ? 16 : 18;
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class:list={classes}
+      data-track={track}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      {...rest}
+    >
+      {icon && <Icon name={icon} size={iconSize} />}
+      <span><slot /></span>
+      {iconRight && <Icon name={iconRight} size={iconSize} class="btn__icon-right" />}
+    </a>
+  ) : (
+    <button type={type} class:list={classes} data-track={track} {...rest}>
+      {icon && <Icon name={icon} size={iconSize} />}
+      <span><slot /></span>
+      {iconRight && <Icon name={iconRight} size={iconSize} class="btn__icon-right" />}
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-weight: 600;
+    font-size: var(--fs-base);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn[disabled],
+  .btn[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn--sm {
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    font-size: var(--fs-sm);
+  }
+
+  .btn--lg {
+    min-height: 52px;
+    padding: 0 var(--space-6);
+    font-size: var(--fs-md);
+  }
+
+  .btn--primary {
+    background: var(--primary);
+    color: var(--primary-contrast);
+  }
+
+  .btn--primary:hover:not([disabled]) {
+    background: var(--primary-hover);
+    color: var(--primary-contrast);
+  }
+
+  .btn--secondary {
+    background: var(--bg);
+    color: var(--brand-ink);
+    border-color: var(--border-strong);
+  }
+
+  .btn--secondary:hover:not([disabled]) {
+    border-color: var(--brand-navy);
+    color: var(--brand-navy);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--link);
+    padding-inline: var(--space-2);
+  }
+
+  .btn--ghost:hover {
+    color: var(--primary-hover);
+  }
+
+  .btn--ghost:hover :global(.btn__icon-right) {
+    transform: translateX(3px);
+  }
+
+  .btn :global(.btn__icon-right) {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  /* Sobre fondos oscuros */
+  .btn--on-dark {
+    background: var(--brand-cyan);
+    color: #04121c;
+  }
+
+  .btn--on-dark:hover {
+    background: #3fc4f3;
+    color: #04121c;
+  }
+
+  .btn--outline-dark {
+    background: transparent;
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+  }
+
+  .btn--outline-dark:hover {
+    border-color: var(--dark-muted);
+    color: #fff;
+  }
+</style>

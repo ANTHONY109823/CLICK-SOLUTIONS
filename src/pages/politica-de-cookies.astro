@@ -1,0 +1,50 @@
+---
+/*
+ * Refleja el estado REAL del sitio: hoy no se usan cookies ni rastreadores.
+ * Si se activa analítica u otra herramienta de terceros, actualiza este texto y agrega el aviso de consentimiento.
+ */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../config/site';
+---
+
+<LegalLayout
+  title="Política de cookies"
+  description="Información sobre el uso de cookies y tecnologías similares en el sitio web de ClickSolutions."
+  path="/politica-de-cookies"
+  updated="24 de octubre de 2026"
+>
+  <h2>¿Qué son las cookies?</h2>
+  <p>
+    Las cookies son pequeños archivos que un sitio web guarda en tu navegador para recordar información sobre tu visita.
+  </p>
+
+  <h2>Cookies que usa este sitio</h2>
+  {
+    site.analyticsEnabled ? (
+      <p>
+        Este sitio utiliza herramientas de medición para conocer, de forma agregada, cómo se usan sus páginas. Puedes aceptar o
+        rechazar su uso desde el aviso de cookies.
+      </p>
+    ) : (
+      <p>
+        Actualmente <strong>este sitio no utiliza cookies</strong> propias ni de terceros, ni herramientas de seguimiento o
+        publicidad. Las fuentes tipográficas se sirven desde nuestro propio servidor, sin conectar con servicios externos.
+      </p>
+    )
+  }
+
+  <h2>Enlaces a terceros</h2>
+  <p>
+    Si haces clic en enlaces externos (por ejemplo, WhatsApp o redes sociales), esos servicios pueden usar sus propias cookies
+    según sus políticas.
+  </p>
+
+  <h2>Cómo gestionar las cookies</h2>
+  <p>Puedes ver y eliminar las cookies desde la configuración de privacidad de tu navegador.</p>
+
+  <h2>Cambios</h2>
+  <p>
+    Si en el futuro incorporamos cookies o herramientas de medición, actualizaremos esta política y te pediremos tu
+    consentimiento cuando corresponda.
+  </p>
+</LegalLayout>

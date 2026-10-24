@@ -1,0 +1,98 @@
+/*
+ * Sistema de diseño de ClickSolutions.
+ * Los colores de marca se tomaron del logo oficial (sin modificarlo).
+ * Cambia aquí un valor y se actualiza en todo el sitio.
+ */
+:root {
+  /* Marca (del logo) */
+  --brand-cyan: #00aae7;
+  --brand-navy: #033f5c;
+  --brand-ink: #1b2b42;
+
+  /* Superficies claras (donde aparece el logo) */
+  --bg: #ffffff;
+  --surface: #f5f8fb;
+  --surface-2: #eaf1f7;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f1c2e;
+  --text-muted: #4b5b70;
+
+  /* Superficies oscuras (hero, bandas de llamada a la acción) */
+  --dark-bg: #0b1220;
+  --dark-surface: #111827;
+  --dark-card: #172338;
+  --dark-border: #29384d;
+  --dark-text: #f8fafc;
+  --dark-muted: #a3b1c4;
+  --dark-accent: #38c3f2;
+
+  /* Acciones */
+  --primary: var(--brand-navy);
+  --primary-hover: #022d42;
+  --primary-contrast: #ffffff;
+  --accent: var(--brand-cyan);
+  --link: #035f8a;
+
+  /* Estados (versiones con contraste suficiente sobre blanco) */
+  --success: #15803d;
+  --success-bg: #ecfdf3;
+  --warning: #b45309;
+  --warning-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --info-bg: #ecf8fe;
+
+  /* Tipografía */
+  --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --fs-2xl: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --fs-3xl: clamp(2.25rem, 1.5rem + 3.2vw, 3.75rem);
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-base: 1.65;
+
+  /* Espaciado */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --section-y: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+
+  /* Radios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Sombras (discretas) */
+  --shadow-sm: 0 1px 2px rgb(15 28 46 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(15 28 46 / 0.08), 0 2px 4px -2px rgb(15 28 46 / 0.05);
+  --shadow-lg: 0 16px 40px -12px rgb(15 28 46 / 0.18);
+
+  /* Layout */
+  --container: 1200px;
+  --container-narrow: 760px;
+  --gutter: clamp(1rem, 0.6rem + 2vw, 2rem);
+  --header-h: 72px;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+
+  --focus-ring: 0 0 0 3px rgb(0 170 231 / 0.45);
+}

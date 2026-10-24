@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import ContactForm from '../components/forms/ContactForm.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../config/site';
+import { mailtoUrl, telUrl, whatsappUrl, socialLinks } from '../lib/links';
+import type { IconName } from '../components/ui/icons';
+
+const channels = [
+  { label: 'WhatsApp', value: 'Escríbenos', href: whatsappUrl(), icon: 'message', track: 'whatsapp_click', external: true },
+  { label: 'Correo', value: site.contact.email, href: mailtoUrl('Solicitud desde la web'), icon: 'mail', track: 'email_click' },
+  { label: 'Teléfono', value: site.contact.phone, href: telUrl(), icon: 'phone', track: 'phone_click' },
+].filter((c) => c.href) as { label: string; value: string; href: string; icon: IconName; track: string; external?: boolean }[];
+
+const details = [
+  { label: 'Zona de atención', value: site.contact.area, icon: 'map-pin' },
+  { label: 'Dirección', value: site.contact.address, icon: 'building' },
+  { label: 'Horario', value: site.contact.hours, icon: 'clock' },
+].filter((d) => d.value) as { label: string; value: string; icon: IconName }[];
+
+const socials = socialLinks();
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Contacta a ClickSolutions para solicitar una cotización de drones, desarrollo web, soporte técnico o licencias de software."
+>
+  <PageHero
+    compact
+    eyebrow="Contacto"
+    title="Hablemos de lo que necesitas"
+    lead="Completa el formulario y te responderemos con los siguientes pasos. Solicitar información no tiene costo."
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Contacto', href: '/contacto' },
+    ]}
+  />
+
+  <section class="section">
+    <div class="container contact">
+      <div class="card contact__form">
+        <h2>Envíanos tu solicitud</h2>
+        <ContactForm />
+      </div>
+
+      <aside class="contact__aside">
+        {
+          channels.length > 0 && (
+            <div>
+              <h2 class="aside-title">Canales directos</h2>
+              <ul class="channels">
+                {channels.map((c) => (
+                  <li>
+                    <a
+                      href={c.href}
+                      class="channel"
+                      data-track={c.track}
+                      data-track-label="contacto"
+                      target={c.external ? '_blank' : undefined}
+                      rel={c.external ? 'noopener noreferrer' : undefined}
+                    >
+                      <span class="icon-tile"><Icon name={c.icon} size={20} /></span>
+                      <span>
+                        <span class="channel__label">{c.label}</span>
+                        <span class="channel__value">{c.value}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          details.length > 0 && (
+            <ul class="details">
+              {details.map((d) => (
+                <li>
+                  <Icon name={d.icon} size={18} />
+                  <span><strong>{d.label}:</strong> {d.value}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        {
+          socials.length > 0 && (
+            <div>
+              <h2 class="aside-title">Redes sociales</h2>
+              <ul class="socials">
+                {socials.map((s) => (
+                  <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <div class="notice notice--info">
+          <Icon name="lock" size={20} />
+          <p>
+            Usamos tus datos solo para responder tu solicitud. Más información en nuestra
+            <a href="/politica-de-privacidad">política de privacidad</a>.
+          </p>
+        </div>
+
+        <div class="notice">
+          <Icon name="help" size={20} />
+          <p>¿Tienes una duda rápida? Revisa las <a href="/preguntas-frecuentes">preguntas frecuentes</a> o el <a href="/ayuda">centro de ayuda</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .contact__form {
+    padding: clamp(1.25rem, 0.5rem + 3vw, 2.5rem);
+  }
+
+  .contact__form h2 {
+    font-size: var(--fs-xl);
+    margin-bottom: var(--space-6);
+  }
+
+  .contact__aside {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .aside-title {
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-3);
+  }
+
+  .channels,
+  .details,
+  .socials {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color var(--dur-fast);
+  }
+
+  .channel:hover {
+    border-color: var(--brand-cyan);
+  }
+
+  .channel .icon-tile {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .channel__label {
+    display: block;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+
+  .channel__value {
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  .details li {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--fs-sm);
+  }
+
+  .details :global(svg) {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--brand-navy);
+  }
+
+  @media (max-width: 899px) {
+    .contact {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

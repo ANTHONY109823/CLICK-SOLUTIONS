@@ -1,0 +1,118 @@
+---
+import Breadcrumbs from '../ui/Breadcrumbs.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  breadcrumbs?: { label: string; href: string }[];
+  /** Hero compacto para páginas secundarias. */
+  compact?: boolean;
+}
+
+const { eyebrow, title, lead, breadcrumbs, compact = false } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+
+<section class:list={['page-hero', { 'page-hero--compact': compact }]}>
+  <div class:list={['container', 'page-hero__inner', { 'page-hero__inner--split': hasAside }]}>
+    <div class="page-hero__content">
+      {breadcrumbs && <Breadcrumbs items={breadcrumbs} dark />}
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      <h1>{title}</h1>
+      {lead && <p class="page-hero__lead">{lead}</p>}
+      {
+        Astro.slots.has('actions') && (
+          <div class="page-hero__actions">
+            <slot name="actions" />
+          </div>
+        )
+      }
+    </div>
+    {
+      hasAside && (
+        <div class="page-hero__aside">
+          <slot name="aside" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    background: var(--dark-bg);
+    color: var(--dark-text);
+    isolation: isolate;
+  }
+
+  /* Retícula sutil + un único resplandor de marca. */
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(to bottom, black, transparent 90%);
+  }
+
+  .page-hero::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    z-index: -1;
+    width: 60%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgb(0 170 231 / 0.18), transparent 65%);
+  }
+
+  .page-hero--compact {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  }
+
+  .page-hero__inner--split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .page-hero__content {
+    max-width: 760px;
+  }
+
+  h1 {
+    color: var(--dark-text);
+  }
+
+  .page-hero--compact h1 {
+    font-size: var(--fs-2xl);
+  }
+
+  .page-hero__lead {
+    max-width: 62ch;
+    font-size: var(--fs-md);
+    color: var(--dark-muted);
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+
+  @media (max-width: 899px) {
+    .page-hero__inner--split {
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+  }
+</style>

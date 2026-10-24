@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Logo from '../components/layout/Logo.astro';
+import Icon from '../components/ui/Icon.astro';
+import CTABand from '../components/sections/CTABand.astro';
+import { getServices } from '../lib/content';
+import type { IconName } from '../components/ui/icons';
+
+const services = getServices();
+
+// Principios de trabajo. Reemplaza o amplía con la historia real de la marca cuando esté disponible.
+const values: { title: string; text: string; icon: IconName }[] = [
+  { title: 'Claridad', text: 'Explicamos lo que hacemos en lenguaje sencillo y sin letra pequeña.', icon: 'message' },
+  { title: 'Honestidad', text: 'Solo ofrecemos lo que podemos cumplir y te decimos cuándo algo no es viable.', icon: 'shield' },
+  { title: 'Legalidad', text: 'Software original, vuelos dentro de la normativa y respeto por tus datos.', icon: 'lock' },
+  { title: 'Mejora continua', text: 'Nos mantenemos al día para ofrecerte soluciones actuales y seguras.', icon: 'refresh' },
+];
+---
+
+<BaseLayout
+  title="Nosotros"
+  description="Conoce ClickSolutions: una marca de servicios tecnológicos en Perú especializada en drones, desarrollo web, soporte técnico y licencias de software."
+>
+  <PageHero
+    compact
+    eyebrow="Nosotros"
+    title="Tecnología útil, explicada con claridad"
+    lead="ClickSolutions es una marca de servicios tecnológicos que acompaña a personas, emprendedores y empresas en Perú."
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Nosotros', href: '/nosotros' },
+    ]}
+  />
+
+  <section class="section">
+    <div class="container about">
+      <div class="about__logo">
+        <Logo variant="full" width={180} loading="eager" />
+      </div>
+      <div class="about__text">
+        <h2>Qué hacemos</h2>
+        <p class="lead">
+          Reunimos cuatro líneas de servicio que suelen necesitarse juntas: presencia digital, equipos que funcionen bien,
+          software original y contenido visual de calidad.
+        </p>
+        <ul class="about__services">
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/servicios/${s.slug}`}>
+                  <span class="icon-tile"><Icon name={s.icon} size={20} /></span>
+                  <span>
+                    <strong>{s.name}</strong>
+                    <span class="about__tagline">{s.tagline}</span>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--muted">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Nuestros principios</span>
+        <h2>Cómo queremos trabajar contigo</h2>
+      </div>
+      <div class="grid grid--4">
+        {
+          values.map((v) => (
+            <div class="card">
+              <span class="icon-tile"><Icon name={v.icon} size={22} /></span>
+              <h3>{v.title}</h3>
+              <p class="muted">{v.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTABand title="Conversemos sobre lo que necesitas" />
+</BaseLayout>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .about__logo {
+    display: grid;
+    place-items: center;
+    padding: var(--space-12);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--bg);
+  }
+
+  .about__services {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+  }
+
+  .about__services a {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    height: 100%;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color var(--dur-fast);
+  }
+
+  .about__services a:hover {
+    border-color: var(--brand-cyan);
+  }
+
+  .about__services .icon-tile {
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .about__tagline {
+    display: block;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 899px) {
+    .about {
+      grid-template-columns: 1fr;
+    }
+
+    .about__logo {
+      padding: var(--space-8);
+    }
+  }
+
+  @media (max-width: 559px) {
+    .about__services {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

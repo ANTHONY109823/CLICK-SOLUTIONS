@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { getServices } from '../lib/content';
+
+const services = getServices();
+---
+
+<BaseLayout title="Página no encontrada" description="La página que buscas no existe o fue movida." noindex>
+  <section class="section">
+    <div class="container container--narrow not-found">
+      <p class="code" aria-hidden="true">404</p>
+      <h1>No encontramos esta página</h1>
+      <p class="lead">Es posible que el enlace esté incompleto o que la página haya cambiado de dirección.</p>
+      <div class="actions">
+        <Button href="/" iconRight="arrow-right">Ir al inicio</Button>
+        <Button href="/contacto" variant="secondary">Contactar</Button>
+      </div>
+      <nav aria-label="Servicios" class="suggestions">
+        <p>O visita uno de nuestros servicios:</p>
+        <ul>
+          {services.map((s) => <li><a href={`/servicios/${s.slug}`}>{s.name}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+  }
+
+  .code {
+    margin: 0;
+    font-size: clamp(4rem, 3rem + 6vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--brand-cyan);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .suggestions {
+    margin-top: var(--space-12);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .suggestions ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
+    list-style: none;
+    padding: 0;
+  }
+</style>

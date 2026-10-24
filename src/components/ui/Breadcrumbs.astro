@@ -1,0 +1,76 @@
+---
+interface Props {
+  items: { label: string; href: string }[];
+  dark?: boolean;
+}
+
+const { items, dark = false } = Astro.props;
+---
+
+<nav aria-label="Ruta de navegación" class:list={['breadcrumbs', { 'breadcrumbs--dark': dark }]}>
+  <ol>
+    {
+      items.map((item, index) => (
+        <li>
+          {index === items.length - 1 ? (
+            <span aria-current="page">{item.label}</span>
+          ) : (
+            <a href={item.href}>{item.label}</a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: var(--space-6);
+    font-size: var(--fs-sm);
+  }
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+    color: var(--border-strong);
+  }
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  [aria-current] {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .breadcrumbs--dark a {
+    color: var(--dark-muted);
+  }
+
+  .breadcrumbs--dark a:hover {
+    color: var(--dark-text);
+  }
+
+  .breadcrumbs--dark [aria-current] {
+    color: var(--dark-text);
+  }
+
+  .breadcrumbs--dark li + li::before {
+    color: var(--dark-border);
+  }
+</style>

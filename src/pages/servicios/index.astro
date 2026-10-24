@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import CTABand from '../../components/sections/CTABand.astro';
+import { getServices } from '../../lib/content';
+
+const services = getServices();
+---
+
+<BaseLayout
+  title="Servicios"
+  description="Conoce los servicios de ClickSolutions: drones, desarrollo web, soporte técnico y licencias de software para personas y empresas en Perú."
+>
+  <PageHero
+    eyebrow="Servicios"
+    title="Todo lo que necesitas en tecnología, en un solo lugar"
+    lead="Cuatro líneas de servicio pensadas para personas, emprendedores y empresas. Elige la que necesitas para conocer el detalle."
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Servicios', href: '/servicios' },
+    ]}
+  />
+
+  <section class="section">
+    <div class="container services-list">
+      {
+        services.map((service, index) => (
+          <article class="service-row">
+            <div class="service-row__head">
+              <span class="service-row__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <span class="icon-tile"><Icon name={service.icon} size={24} /></span>
+              <h2>{service.name}</h2>
+              <p class="lead">{service.hero.lead}</p>
+              <div class="service-row__actions">
+                <Button href={`/servicios/${service.slug}`} iconRight="arrow-right">Ver detalle</Button>
+                <Button href={`/servicios/${service.slug}#cotizar`} variant="secondary" track="quote_cta" data-track-label={`servicios-${service.slug}`}>
+                  {service.cta.label}
+                </Button>
+              </div>
+            </div>
+            <ul class="service-row__offerings">
+              {(service.offerings.length ? service.offerings.map((o) => o.title) : service.highlights).map((title) => (
+                <li>
+                  <Icon name="check" size={16} />
+                  {title}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <CTABand title="¿No sabes qué servicio necesitas?" text="Cuéntanos tu situación y te orientamos sobre la mejor opción, sin compromiso." />
+</BaseLayout>
+
+<style>
+  .services-list {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .service-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: var(--space-10);
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+  }
+
+  .service-row__index {
+    float: right;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--border-strong);
+  }
+
+  .service-row h2 {
+    font-size: var(--fs-xl);
+  }
+
+  .service-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .service-row__offerings {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    font-size: var(--fs-sm);
+  }
+
+  .service-row__offerings li {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .service-row__offerings :global(svg) {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--brand-cyan);
+  }
+
+  @media (max-width: 899px) {
+    .service-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+</style>

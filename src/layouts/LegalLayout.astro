@@ -1,0 +1,54 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  /** Fecha de última actualización, p. ej. "24 de octubre de 2026". */
+  updated: string;
+}
+
+const { title, description, path, updated } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHero
+    compact
+    eyebrow="Legal"
+    title={title}
+    lead={`Última actualización: ${updated}`}
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: title, href: path },
+    ]}
+  />
+  <section class="section">
+    <div class="container">
+      {
+        !site.legalReviewed && (
+          <div class="notice notice--warning legal-draft">
+            <Icon name="alert" size={20} />
+            <p>
+              <strong>Documento en revisión.</strong> Este texto es una versión preliminar y puede actualizarse. Si tienes
+              dudas sobre su contenido, contáctanos.
+            </p>
+          </div>
+        )
+      }
+      <article class="prose">
+        <slot />
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-draft {
+    max-width: 72ch;
+    margin-bottom: var(--space-8);
+  }
+</style>

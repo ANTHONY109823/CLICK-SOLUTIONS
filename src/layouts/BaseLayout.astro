@@ -1,0 +1,111 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import WhatsAppFloat from '../components/layout/WhatsAppFloat.astro';
+import { site, getMissingData } from '../config/site';
+import { organizationSchema } from '../lib/seo';
+import { absoluteUrl } from '../lib/links';
+
+interface Props {
+  /** Título de la página (sin el nombre de la marca). */
+  title: string;
+  description: string;
+  /** Evita la indexación (páginas reservadas o de error). */
+  noindex?: boolean;
+  /** Datos estructurados adicionales (JSON-LD). */
+  schema?: object[];
+  /** Usa el título tal cual, sin “| ClickSolutions”. */
+  rawTitle?: boolean;
+}
+
+const { title, description, noindex = false, schema = [], rawTitle = false } = Astro.props;
+
+const siteUrl = new URL(Astro.site ?? Astro.url.origin);
+const fullTitle = rawTitle ? title : `${title} | ${site.name}`;
+// En el build, la ruta incluye el archivo (".../contacto.html", ".../index.html"): se limpia.
+const cleanPath = Astro.url.pathname.replace(/(\/index)?\.html$/, '').replace(/\/$/, '') || '/';
+const canonical = new URL(cleanPath, siteUrl).href;
+const ogImage = absoluteUrl('/brand/clicksolutions-logo.png', siteUrl);
+const jsonLd = [organizationSchema(siteUrl), ...schema];
+// Evita que un "</script>" dentro de los datos cierre la etiqueta.
+const serialize = (data: object) => JSON.stringify(data).replace(/</g, '\\u003c');
+
+const missing = import.meta.env.DEV ? getMissingData() : [];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#033f5c" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Logo de ClickSolutions" />
+    <meta name="twitter:card" content="summary" />
+
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={serialize(data)} />)}
+  </head>
+  <body>
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+    {
+      missing.length > 0 && (
+        <div class="dev-banner" role="note">
+          <strong>Solo en desarrollo:</strong> datos pendientes en <code>src/config/site.ts</code>: {missing.join(', ')}.
+        </div>
+      )
+    }
+
+    <Header />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFloat />
+
+    <script>
+      import { initTracking } from '../lib/analytics';
+      initTracking();
+    </script>
+  </body>
+</html>
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  .dev-banner {
+    padding: var(--space-2) var(--gutter);
+    background: var(--warning-bg);
+    border-bottom: 1px solid #fcd9a4;
+    color: #7c3a06;
+    font-size: var(--fs-xs);
+  }
+</style>

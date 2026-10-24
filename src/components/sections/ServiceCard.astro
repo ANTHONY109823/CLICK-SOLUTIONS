@@ -1,0 +1,103 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { Service } from '../../data/services';
+
+interface Props {
+  service: Service;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { service, headingLevel: Heading = 'h3' } = Astro.props;
+const href = `/servicios/${service.slug}`;
+---
+
+<article class="card service-card">
+  <span class="icon-tile"><Icon name={service.icon} size={22} /></span>
+  <Heading class="service-card__title">
+    <a href={href} class="service-card__link">{service.name}</a>
+  </Heading>
+  <p class="service-card__tagline">{service.tagline}</p>
+  <ul class="check-list">
+    {
+      service.highlights.map((item) => (
+        <li>
+          <Icon name="check" size={16} />
+          {item}
+        </li>
+      ))
+    }
+  </ul>
+  <span class="service-card__more" aria-hidden="true">
+    Ver servicio <Icon name="arrow-right" size={16} />
+  </span>
+</article>
+
+<style>
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition:
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .service-card:hover {
+    border-color: #a9dcf2;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .service-card:focus-within {
+    border-color: var(--brand-cyan);
+  }
+
+  .service-card__title {
+    font-size: var(--fs-lg);
+  }
+
+  /* Toda la tarjeta es clicable, con un solo enlace accesible. */
+  .service-card__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .service-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .service-card__link:focus-visible {
+    outline: none;
+  }
+
+  .service-card__tagline {
+    color: var(--text-muted);
+  }
+
+  .check-list {
+    font-size: var(--fs-sm);
+  }
+
+  .service-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .service-card__more :global(svg) {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .service-card:hover .service-card__more :global(svg) {
+    transform: translateX(3px);
+  }
+</style>

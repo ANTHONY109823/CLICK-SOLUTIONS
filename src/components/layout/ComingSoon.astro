@@ -1,0 +1,47 @@
+---
+/** Página reservada para una función futura. No simula ninguna funcionalidad. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import type { IconName } from '../ui/icons';
+
+interface Props {
+  title: string;
+  description: string;
+  icon: IconName;
+  text: string;
+}
+
+const { title, description, icon, text } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} noindex>
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="empty-state">
+        <span class="icon-tile"><Icon name={icon} size={24} /></span>
+        <span class="badge">Próximamente</span>
+        <h1 class="title">{title}</h1>
+        <p>{text}</p>
+        <div class="actions">
+          <Button href="/servicios" variant="secondary">Ver servicios</Button>
+          <Button href="/contacto">Contactar</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .title {
+    margin-top: var(--space-4);
+    font-size: var(--fs-2xl);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+</style>

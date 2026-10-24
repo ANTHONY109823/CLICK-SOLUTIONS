@@ -1,0 +1,415 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import ServiceCard from '../components/sections/ServiceCard.astro';
+import ProjectCard from '../components/sections/ProjectCard.astro';
+import ProcessSteps from '../components/sections/ProcessSteps.astro';
+import FAQList from '../components/sections/FAQList.astro';
+import CTABand from '../components/sections/CTABand.astro';
+import { getServices, getProjects, getGeneralFaqs } from '../lib/content';
+import { faqSchema } from '../lib/seo';
+import type { IconName } from '../components/ui/icons';
+
+const services = getServices();
+const projects = getProjects().slice(0, 3);
+const faqs = getGeneralFaqs().slice(0, 4);
+
+const audiences: { title: string; text: string; icon: IconName; links: { label: string; href: string }[] }[] = [
+  {
+    title: 'Para personas',
+    text: 'Soporte para tus equipos, licencias originales y registros aéreos de tus momentos importantes.',
+    icon: 'users',
+    links: [
+      { label: 'Soporte técnico', href: '/servicios/soporte-tecnico' },
+      { label: 'Licencias', href: '/servicios/licencias-software' },
+    ],
+  },
+  {
+    title: 'Para emprendedores',
+    text: 'Una presencia digital profesional para empezar a vender y contenido visual que destaque tu marca.',
+    icon: 'sparkles',
+    links: [
+      { label: 'Desarrollo web', href: '/servicios/desarrollo-web' },
+      { label: 'Drones', href: '/servicios/drones' },
+    ],
+  },
+  {
+    title: 'Para empresas',
+    text: 'Sistemas a medida, automatización, mantenimiento de equipos y software legítimo para tu equipo.',
+    icon: 'building',
+    links: [
+      { label: 'Sistemas web', href: '/servicios/desarrollo-web' },
+      { label: 'Soporte técnico', href: '/servicios/soporte-tecnico' },
+    ],
+  },
+];
+
+// Compromisos de trabajo (verificables por el cliente), no afirmaciones de marketing.
+const commitments: { title: string; text: string; icon: IconName }[] = [
+  { title: 'Propuesta clara antes de empezar', text: 'Conoces el alcance y el costo antes de aprobar cualquier trabajo.', icon: 'clipboard' },
+  { title: 'Cuatro servicios, un solo contacto', text: 'Drones, web, soporte y licencias con el mismo equipo y la misma forma de trabajar.', icon: 'layout' },
+  { title: 'Solo software legítimo', text: 'Licencias originales y claves entregadas de forma privada, nunca publicadas.', icon: 'shield' },
+  { title: 'Tus datos, protegidos', text: 'Solo pedimos la información necesaria y la usamos para atender tu solicitud.', icon: 'lock' },
+];
+
+const process = [
+  { title: 'Cuéntanos tu necesidad', text: 'Por el formulario o los canales de contacto.' },
+  { title: 'Evaluamos y cotizamos', text: 'Te enviamos una propuesta con alcance y costo.' },
+  { title: 'Ejecutamos', text: 'Realizamos el trabajo y te mantenemos informado.' },
+  { title: 'Entrega y seguimiento', text: 'Revisamos contigo el resultado y los siguientes pasos.' },
+];
+---
+
+<BaseLayout
+  title="ClickSolutions | Drones, desarrollo web, soporte técnico y licencias de software"
+  rawTitle
+  description="Soluciones tecnológicas en Perú: servicios con drones, desarrollo web, soporte técnico y licencias de software originales para personas y empresas."
+  schema={[faqSchema(faqs)]}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <span class="eyebrow">Drones · Desarrollo web · Soporte técnico · Licencias</span>
+        <h1>Tecnología inteligente para llevar tus ideas más lejos</h1>
+        <p class="hero__lead">
+          Soluciones en drones, desarrollo web, soporte técnico y licencias de software para personas y empresas.
+        </p>
+        <div class="hero__actions">
+          <Button href="/servicios" variant="on-dark" size="lg" iconRight="arrow-right" track="explore_services">
+            Explorar servicios
+          </Button>
+          <Button href="/contacto" variant="outline-dark" size="lg" track="quote_cta" data-track-label="hero">
+            Solicitar cotización
+          </Button>
+        </div>
+      </div>
+
+      <ul class="hero__services" aria-label="Nuestras líneas de servicio">
+        {
+          services.map((service) => (
+            <li>
+              <a href={`/servicios/${service.slug}`} class="hero-tile">
+                <span class="hero-tile__icon">
+                  <Icon name={service.icon} size={22} />
+                </span>
+                <span class="hero-tile__name">{service.name}</span>
+                <span class="hero-tile__text">{service.tagline}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Cuatro líneas de negocio -->
+  <section class="section" id="servicios">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Servicios</span>
+        <h2>Cuatro líneas de servicio, un mismo compromiso</h2>
+        <p>Elige el área que necesitas y conoce en detalle qué incluye, cómo trabajamos y cómo solicitarlo.</p>
+      </div>
+      <div class="grid grid--4">
+        {services.map((service) => <ServiceCard service={service} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Soluciones por tipo de cliente -->
+  <section class="section section--muted">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Para quién</span>
+        <h2>Soluciones según lo que necesitas</h2>
+      </div>
+      <div class="grid grid--3">
+        {
+          audiences.map((a) => (
+            <article class="card">
+              <span class="icon-tile"><Icon name={a.icon} size={22} /></span>
+              <h3>{a.title}</h3>
+              <p class="muted">{a.text}</p>
+              <ul class="inline-links">
+                {a.links.map((l) => (
+                  <li>
+                    <a href={l.href}>{l.label} <Icon name="arrow-right" size={14} /></a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Proyectos -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header section-header--row">
+        <div>
+          <span class="eyebrow">Proyectos</span>
+          <h2>Trabajos realizados</h2>
+        </div>
+        {projects.length > 0 && <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver portafolio</Button>}
+      </div>
+      {
+        projects.length > 0 ? (
+          <div class="grid grid--3">
+            {projects.map((project) => <ProjectCard project={project} />)}
+          </div>
+        ) : (
+          <div class="empty-state">
+            <span class="icon-tile"><Icon name="image" size={22} /></span>
+            <h3>Portafolio en preparación</h3>
+            <p>Pronto publicaremos aquí trabajos reales. Si quieres conocer ejemplos de lo que podemos hacer, escríbenos.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Compromisos -->
+  <section class="section section--muted">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Por qué ClickSolutions</span>
+        <h2>Cómo trabajamos contigo</h2>
+        <p>Compromisos concretos que puedes comprobar desde la primera conversación.</p>
+      </div>
+      <div class="grid grid--4">
+        {
+          commitments.map((c) => (
+            <div class="commitment">
+              <span class="icon-tile"><Icon name={c.icon} size={22} /></span>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Proceso -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Proceso</span>
+        <h2>Así de simple es empezar</h2>
+      </div>
+      <ProcessSteps steps={process} />
+    </div>
+  </section>
+
+  <!-- Preguntas frecuentes -->
+  <section class="section section--muted">
+    <div class="container faq-layout">
+      <div class="section-header">
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Resolvemos tus dudas</h2>
+        <p>¿No encuentras lo que buscas? Revisa todas las <a href="/preguntas-frecuentes">preguntas frecuentes</a> o escríbenos.</p>
+      </div>
+      <FAQList faqs={faqs} />
+    </div>
+  </section>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(4rem, 2rem + 7vw, 8rem);
+    background: var(--dark-bg);
+    color: var(--dark-text);
+    isolation: isolate;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 70% 40%, black 20%, transparent 75%);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -15%;
+    z-index: -1;
+    width: 70%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgb(0 170 231 / 0.2), transparent 62%);
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .hero h1 {
+    color: var(--dark-text);
+    max-width: 16ch;
+  }
+
+  .hero__lead {
+    max-width: 52ch;
+    font-size: var(--fs-md);
+    color: var(--dark-muted);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+
+  .hero__services {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-5);
+    border: 1px solid var(--dark-border);
+    border-radius: var(--radius-lg);
+    background: rgb(23 35 56 / 0.7);
+    color: var(--dark-text);
+    text-decoration: none;
+    transition:
+      border-color var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out),
+      background-color var(--dur-base);
+  }
+
+  .hero-tile:hover {
+    border-color: rgb(0 170 231 / 0.6);
+    background: var(--dark-card);
+    color: var(--dark-text);
+    transform: translateY(-2px);
+  }
+
+  .hero__services li:nth-child(even) {
+    transform: translateY(var(--space-6));
+  }
+
+  .hero-tile__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-md);
+    background: rgb(0 170 231 / 0.12);
+    color: var(--dark-accent);
+  }
+
+  .hero-tile__name {
+    font-weight: 600;
+  }
+
+  .hero-tile__text {
+    font-size: var(--fs-sm);
+    color: var(--dark-muted);
+  }
+
+  .section-header--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: none;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .inline-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+  }
+
+  .inline-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+  }
+
+  .inline-links a:hover {
+    text-decoration: underline;
+  }
+
+  .commitment h3 {
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .commitment p {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .faq-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  @media (max-width: 899px) {
+    .hero__inner,
+    .faq-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .faq-layout {
+      gap: 0;
+    }
+
+    .hero__services li:nth-child(even) {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .hero__services {
+      grid-template-columns: 1fr;
+    }
+
+    .hero__actions :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

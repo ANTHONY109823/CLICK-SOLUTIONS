@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import ProjectCard from '../../components/sections/ProjectCard.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import CTABand from '../../components/sections/CTABand.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = getProjects();
+---
+
+<BaseLayout
+  title="Proyectos"
+  description="Portafolio de ClickSolutions: proyectos de desarrollo web, trabajos con drones y soluciones tecnológicas realizadas para nuestros clientes."
+>
+  <PageHero
+    compact
+    eyebrow="Portafolio"
+    title="Proyectos"
+    lead="Trabajos realizados en desarrollo web, drones y soluciones tecnológicas."
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Proyectos', href: '/proyectos' },
+    ]}
+  />
+
+  <section class="section">
+    <div class="container">
+      {
+        projects.length > 0 ? (
+          <div class="grid grid--3">
+            {projects.map((project) => <ProjectCard project={project} />)}
+          </div>
+        ) : (
+          <div class="empty-state">
+            <span class="icon-tile"><Icon name="image" size={22} /></span>
+            <h2>Portafolio en preparación</h2>
+            <p>Estamos reuniendo los proyectos que podemos mostrar con autorización de nuestros clientes. Muy pronto los verás aquí.</p>
+            <Button href="/contacto" track="quote_cta" data-track-label="proyectos-empty">Cuéntanos tu proyecto</Button>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CTABand title="¿Quieres que tu proyecto sea el próximo?" ctaLabel="Solicitar propuesta" />
+</BaseLayout>

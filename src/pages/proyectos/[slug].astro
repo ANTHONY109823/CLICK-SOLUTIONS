@@ -1,0 +1,138 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import Gallery from '../../components/sections/Gallery.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import CTABand from '../../components/sections/CTABand.astro';
+import { getProjects, getService } from '../../lib/content';
+import { breadcrumbSchema } from '../../lib/seo';
+import type { Project } from '../../data/projects';
+
+export const getStaticPaths = (() =>
+  getProjects().map((project) => ({ params: { slug: project.slug }, props: { project } }))) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const service = getService(project.service);
+const siteUrl = new URL(Astro.site ?? Astro.url.origin);
+const breadcrumbs = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Proyectos', href: '/proyectos' },
+  { label: project.title, href: `/proyectos/${project.slug}` },
+];
+---
+
+<BaseLayout
+  title={project.title}
+  description={project.summary}
+  noindex={project.demo}
+  schema={[breadcrumbSchema(siteUrl, breadcrumbs)]}
+>
+  <PageHero compact eyebrow={service?.name} title={project.title} lead={project.summary} breadcrumbs={breadcrumbs} />
+
+  <section class="section">
+    <div class="container project">
+      <div class="project__body">
+        {
+          project.demo && (
+            <div class="notice notice--warning">
+              <Icon name="alert" size={20} />
+              <p><strong>Contenido de demostración.</strong> Esta página solo se ve en desarrollo y no representa un proyecto real.</p>
+            </div>
+          )
+        }
+        {project.description.map((p) => <p class="lead">{p}</p>)}
+
+        <h2>Galería</h2>
+        <Gallery items={project.images} placeholderIcon={service?.icon ?? 'image'} emptyText="Capturas del proyecto pendientes." />
+      </div>
+
+      <aside class="card project__meta">
+        <dl>
+          {service && (<div><dt>Servicio</dt><dd><a href={`/servicios/${service.slug}`}>{service.name}</a></dd></div>)}
+          {project.client && (<div><dt>Cliente</dt><dd>{project.client}</dd></div>)}
+          {project.year && (<div><dt>Año</dt><dd>{project.year}</dd></div>)}
+          {
+            project.technologies.length > 0 && (
+              <div>
+                <dt>Tecnologías</dt>
+                <dd class="tags">{project.technologies.map((t) => <span class="badge">{t}</span>)}</dd>
+              </div>
+            )
+          }
+        </dl>
+        {
+          project.url && (
+            <Button href={project.url} variant="secondary" iconRight="external" external>
+              Visitar sitio
+            </Button>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  <CTABand ctaLabel="Solicitar propuesta" />
+</BaseLayout>
+
+<style>
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .project__body .notice {
+    margin-bottom: var(--space-6);
+  }
+
+  .project__body h2 {
+    margin-top: var(--space-10);
+    font-size: var(--fs-xl);
+  }
+
+  .project__meta {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-6));
+  }
+
+  dl {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-6);
+  }
+
+  dt {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  dd {
+    margin: var(--space-1) 0 0;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 899px) {
+    .project {
+      grid-template-columns: 1fr;
+    }
+
+    .project__meta {
+      position: static;
+    }
+  }
+</style>

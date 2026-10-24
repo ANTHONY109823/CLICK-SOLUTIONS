@@ -1,0 +1,83 @@
+---
+import type { Step } from '../../data/services';
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<ol class="steps" style={`--steps: ${steps.length}`}>
+  {
+    steps.map((step, index) => (
+      <li class="step">
+        <span class="step__number" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <h3 class="step__title">{step.title}</h3>
+        <p class="step__text">{step.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+  }
+
+  .step {
+    position: relative;
+    padding-top: var(--space-6);
+    border-top: 2px solid var(--border);
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: var(--brand-cyan);
+  }
+
+  .step__number {
+    display: block;
+    margin-bottom: var(--space-3);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--link);
+  }
+
+  .step__title {
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .step__text {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  :global(.section--dark) .step {
+    border-color: var(--dark-border);
+  }
+
+  :global(.section--dark) .step__number {
+    color: var(--dark-accent);
+  }
+
+  :global(.section--dark) .step__text {
+    color: var(--dark-muted);
+  }
+</style>

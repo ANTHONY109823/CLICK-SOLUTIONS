@@ -1,0 +1,202 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Icon from '../components/ui/Icon.astro';
+import Button from '../components/ui/Button.astro';
+import type { IconName } from '../components/ui/icons';
+
+const guides: { id: string; title: string; intro: string; icon: IconName; steps: string[] }[] = [
+  {
+    id: 'cotizacion',
+    title: 'Cómo solicitar una cotización',
+    intro: 'Mientras más detalles nos des, más precisa será la propuesta.',
+    icon: 'clipboard',
+    steps: [
+      'Elige el servicio que necesitas o selecciona “Otro” si no estás seguro.',
+      'Describe tu necesidad: qué quieres lograr, para cuándo y cualquier referencia útil.',
+      'Envía el formulario. Revisaremos tu solicitud y te contactaremos con los siguientes pasos.',
+      'Recibirás una propuesta con alcance y costo. El trabajo empieza solo cuando la apruebas.',
+    ],
+  },
+  {
+    id: 'proyecto-web',
+    title: 'Qué preparar para tu proyecto web',
+    intro: 'Tener esto a mano acelera el diseño y el desarrollo.',
+    icon: 'code',
+    steps: [
+      'Logo y colores de tu marca, si ya los tienes.',
+      'Lista de secciones o páginas que imaginas para tu sitio.',
+      'Textos sobre tu negocio, productos o servicios.',
+      'Fotos propias de buena calidad (productos, local, equipo).',
+      'Ejemplos de sitios web que te gusten.',
+    ],
+  },
+  {
+    id: 'soporte',
+    title: 'Antes de pedir soporte técnico',
+    intro: 'Algunas acciones simples que ayudan a diagnosticar más rápido.',
+    icon: 'headset',
+    steps: [
+      'Anota el mensaje de error exacto o toma una foto de la pantalla.',
+      'Indica la marca y el modelo del equipo, si los conoces.',
+      'Respalda tus archivos importantes en un disco externo o en la nube.',
+      'Nunca compartas tus contraseñas por formularios o chats: si se necesita un acceso, se coordina contigo de forma segura.',
+    ],
+  },
+  {
+    id: 'licencias',
+    title: 'Cómo funcionan las licencias',
+    intro: 'Lo que debes saber antes de adquirir software.',
+    icon: 'key',
+    steps: [
+      'Revisa el tipo de licencia (suscripción o perpetua) y su duración.',
+      'Verifica la compatibilidad con tu sistema operativo y el número de dispositivos permitidos.',
+      'Las claves se entregan de forma privada tras confirmar el pedido; nunca se publican en la web.',
+      'Las condiciones de uso son las del fabricante. Consulta la política de devoluciones de cada producto.',
+    ],
+  },
+  {
+    id: 'drones',
+    title: 'Planificar un servicio con drones',
+    intro: 'Cada vuelo depende del lugar, el clima y la normativa.',
+    icon: 'drone',
+    steps: [
+      'Ten clara la ubicación exacta y una fecha tentativa (con una alternativa).',
+      'Si es un lugar privado o un evento, consigue la autorización del propietario u organizador.',
+      'Define el uso del material (redes, web, presentación) para elegir el formato adecuado.',
+      'Evaluaremos si el vuelo es viable según la normativa de la DGAC y las restricciones de la zona.',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Centro de ayuda"
+  description="Guías de ClickSolutions para solicitar cotizaciones, preparar tu proyecto web, pedir soporte técnico, adquirir licencias y planificar servicios con drones."
+>
+  <PageHero
+    compact
+    eyebrow="Ayuda"
+    title="Centro de ayuda"
+    lead="Guías breves para que aproveches al máximo nuestros servicios."
+    breadcrumbs={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Ayuda', href: '/ayuda' },
+    ]}
+  />
+
+  <section class="section">
+    <div class="container">
+      <ul class="guide-index grid grid--3">
+        {
+          guides.map((g) => (
+            <li>
+              <a href={`#${g.id}`} class="card guide-link">
+                <span class="icon-tile"><Icon name={g.icon} size={22} /></span>
+                <span class="guide-link__title">{g.title}</span>
+                <span class="guide-link__intro">{g.intro}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="guides">
+        {
+          guides.map((g) => (
+            <section id={g.id} class="guide" aria-labelledby={`${g.id}-title`}>
+              <h2 id={`${g.id}-title`}>{g.title}</h2>
+              <p class="lead">{g.intro}</p>
+              <ol class="guide__steps">
+                {g.steps.map((step) => <li>{step}</li>)}
+              </ol>
+            </section>
+          ))
+        }
+      </div>
+
+      <div class="help-cta">
+        <h2>¿Necesitas más ayuda?</h2>
+        <p>Revisa las preguntas frecuentes o escríbenos directamente.</p>
+        <div class="help-cta__actions">
+          <Button href="/preguntas-frecuentes" variant="secondary">Preguntas frecuentes</Button>
+          <Button href="/contacto" track="quote_cta" data-track-label="ayuda">Contactar</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-index {
+    list-style: none;
+    margin: 0 0 var(--space-16);
+    padding: 0;
+  }
+
+  .guide-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    height: 100%;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+
+  .guide-link:hover {
+    border-color: var(--brand-cyan);
+    box-shadow: var(--shadow-md);
+    color: var(--text);
+  }
+
+  .guide-link__title {
+    font-weight: 600;
+    color: var(--brand-ink);
+  }
+
+  .guide-link__intro {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .guides {
+    display: grid;
+    gap: var(--space-12);
+    max-width: 760px;
+  }
+
+  .guide h2 {
+    font-size: var(--fs-xl);
+  }
+
+  .guide__steps {
+    display: grid;
+    gap: var(--space-3);
+    padding-left: 1.5rem;
+  }
+
+  .guide__steps li::marker {
+    font-weight: 700;
+    color: var(--link);
+  }
+
+  .help-cta {
+    margin-top: var(--space-16);
+    padding: var(--space-10);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .help-cta p {
+    color: var(--text-muted);
+  }
+
+  .help-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+</style>

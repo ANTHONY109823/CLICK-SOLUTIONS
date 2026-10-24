@@ -1,0 +1,63 @@
+---
+/**
+ * Logo oficial de ClickSolutions. Se usan los archivos originales, sin modificaciones:
+ * - "full": logo vertical completo (src/assets/brand/clicksolutions-logo.png).
+ * - "mark": isotipo + nombre de la marca en texto (hasta contar con una versión horizontal oficial).
+ * Astro solo genera copias redimensionadas para la web; el diseño y los colores no cambian.
+ * Siempre sobre fondo claro: el texto del logo es azul marino.
+ */
+import { Image } from 'astro:assets';
+import logoFull from '../../assets/brand/clicksolutions-logo.png';
+import isotipo from '../../assets/brand/clicksolutions-isotipo.png';
+
+interface Props {
+  variant?: 'mark' | 'full';
+  /** Ancho del logo completo en px. */
+  width?: number;
+  loading?: 'eager' | 'lazy';
+}
+
+const { variant = 'mark', width = 120, loading = 'lazy' } = Astro.props;
+---
+
+{
+  variant === 'full' ? (
+    <Image
+      src={logoFull}
+      alt="ClickSolutions"
+      width={width}
+      densities={[1, 2]}
+      loading={loading}
+      class="logo-full"
+    />
+  ) : (
+    <span class="logo-mark">
+      <Image src={isotipo} alt="" width={36} densities={[1, 2]} loading="eager" class="logo-mark__icon" />
+      <span class="logo-mark__text">ClickSolutions</span>
+    </span>
+  )
+}
+
+<style>
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark :global(.logo-mark__icon) {
+    width: 36px;
+    height: auto;
+  }
+
+  .logo-mark__text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--brand-navy);
+  }
+
+  :global(.logo-full) {
+    height: auto;
+  }
+</style>

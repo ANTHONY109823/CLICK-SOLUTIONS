@@ -1,0 +1,90 @@
+---
+/*
+ * BORRADOR basado en la Ley N.° 29733 (Protección de Datos Personales, Perú) y su reglamento.
+ * Debe ser revisado por un profesional antes de marcar site.legalReviewed = true.
+ * Completa razón social, RUC y correo en src/config/site.ts.
+ */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../config/site';
+
+const owner = site.legalName ?? site.name;
+const contactEmail = site.contact.email;
+---
+
+<LegalLayout
+  title="Política de privacidad"
+  description="Cómo ClickSolutions recopila, usa y protege los datos personales que nos envías a través de este sitio web."
+  path="/politica-de-privacidad"
+  updated="24 de octubre de 2026"
+>
+  <p>
+    En {site.name} respetamos tu privacidad. Esta política explica qué datos personales recopilamos a través de este sitio
+    web, para qué los usamos y cuáles son tus derechos, conforme a la Ley N.° 29733, Ley de Protección de Datos Personales,
+    y su reglamento.
+  </p>
+
+  <h2>1. Responsable del tratamiento</h2>
+  <p>
+    El responsable del tratamiento de tus datos es <strong>{owner}</strong>{site.ruc && <>, con RUC {site.ruc}</>}.
+    {contactEmail && <> Puedes escribirnos a <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>}
+  </p>
+
+  <h2>2. Datos que recopilamos</h2>
+  <p>Solo recopilamos los datos que nos proporcionas voluntariamente en el formulario de contacto:</p>
+  <ul>
+    <li>Nombre y, opcionalmente, empresa.</li>
+    <li>Correo electrónico y, opcionalmente, teléfono.</li>
+    <li>Servicio de interés, descripción de tu necesidad y, opcionalmente, presupuesto estimado.</li>
+  </ul>
+  <p>
+    No solicitamos datos sensibles ni datos bancarios a través del formulario. Te pedimos no incluir contraseñas ni información
+    financiera en tus mensajes.
+  </p>
+
+  <h2>3. Finalidad</h2>
+  <p>Usamos tus datos únicamente para:</p>
+  <ul>
+    <li>Responder tu consulta o solicitud de cotización.</li>
+    <li>Coordinar contigo la prestación del servicio solicitado.</li>
+  </ul>
+  <p>No usamos tus datos para enviarte publicidad sin tu consentimiento expreso ni los vendemos a terceros.</p>
+
+  <h2>4. Base legal</h2>
+  <p>
+    Tratamos tus datos con tu consentimiento, que otorgas al marcar la casilla de autorización del formulario. Puedes revocarlo
+    en cualquier momento.
+  </p>
+
+  <h2>5. Destinatarios y transferencias</h2>
+  <p>
+    Para enviar y recibir los mensajes del formulario utilizamos proveedores tecnológicos de alojamiento web y de envío de
+    correo electrónico, que pueden procesar los datos en servidores ubicados fuera del Perú. Estos proveedores actúan solo
+    para prestar dicho servicio técnico.
+  </p>
+
+  <h2>6. Conservación</h2>
+  <p>
+    El sitio web no almacena en una base de datos los mensajes del formulario: se reenvían por correo electrónico a
+    {site.name}. Conservamos la comunicación solo durante el tiempo necesario para atender tu solicitud y cumplir obligaciones
+    legales aplicables.
+  </p>
+
+  <h2>7. Tus derechos</h2>
+  <p>
+    Puedes ejercer tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO), así como revocar tu
+    consentimiento, escribiéndonos{contactEmail ? <> a <a href={`mailto:${contactEmail}`}>{contactEmail}</a></> : <> a través de la <a href="/contacto">página de contacto</a></>}.
+    Si consideras que no hemos atendido tu solicitud, puedes acudir a la Autoridad Nacional de Protección de Datos Personales.
+  </p>
+
+  <h2>8. Seguridad</h2>
+  <p>
+    Aplicamos medidas técnicas razonables para proteger tus datos, como conexión cifrada (HTTPS) y validación de la información
+    recibida. Ningún sistema es completamente infalible, pero trabajamos para reducir los riesgos.
+  </p>
+
+  <h2>9. Cookies</h2>
+  <p>Consulta nuestra <a href="/politica-de-cookies">política de cookies</a>.</p>
+
+  <h2>10. Cambios</h2>
+  <p>Podemos actualizar esta política. Publicaremos cualquier cambio en esta página con su fecha de actualización.</p>
+</LegalLayout>

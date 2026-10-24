@@ -1,0 +1,357 @@
+---
+/**
+ * Catálogo de licencias con búsqueda y filtros en el navegador.
+ * No hay compra en línea todavía: cada producto lleva a una consulta (site.features.onlinePayments).
+ */
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { availabilityLabels, type LicenseProduct } from '../../data/licenses';
+
+interface Props {
+  products: LicenseProduct[];
+}
+
+const { products } = Astro.props;
+
+const unique = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b, 'es'));
+const categories = unique(products.map((p) => p.category));
+const manufacturers = unique(products.map((p) => p.manufacturer));
+
+const formatPrice = (price: LicenseProduct['price']) =>
+  price
+    ? new Intl.NumberFormat('es-PE', { style: 'currency', currency: price.currency }).format(price.amount)
+    : 'Precio a consultar';
+
+const availabilityClass: Record<LicenseProduct['availability'], string> = {
+  disponible: 'badge--success',
+  'bajo-pedido': 'badge--warning',
+  agotado: 'badge--danger',
+};
+
+const consultHref = (p: LicenseProduct) =>
+  `/contacto?servicio=licencias-software&producto=${encodeURIComponent(`${p.name} (${p.edition})`)}`;
+---
+
+{
+  products.length === 0 ? (
+    <div class="empty-state">
+      <span class="icon-tile"><Icon name="key" size={22} /></span>
+      <h3>Catálogo en preparación</h3>
+      <p>Estamos preparando el catálogo de productos. Mientras tanto, cuéntanos qué software necesitas y te informamos sobre disponibilidad, condiciones y precio.</p>
+      <Button href="/contacto?servicio=licencias-software" track="quote_cta" data-track-label="licenses-empty">
+        Consultar licencia
+      </Button>
+    </div>
+  ) : (
+    <div class="catalog" data-catalog>
+      <div class="filters" role="search">
+        <div class="filter filter--search">
+          <label for="lc-search">Buscar</label>
+          <div class="search-input">
+            <Icon name="search" size={18} />
+            <input id="lc-search" type="search" placeholder="Nombre, fabricante o tipo" autocomplete="off" data-filter-search />
+          </div>
+        </div>
+        <div class="filter">
+          <label for="lc-category">Categoría</label>
+          <select id="lc-category" data-filter-category>
+            <option value="">Todas</option>
+            {categories.map((c) => <option value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div class="filter">
+          <label for="lc-manufacturer">Fabricante</label>
+          <select id="lc-manufacturer" data-filter-manufacturer>
+            <option value="">Todos</option>
+            {manufacturers.map((m) => <option value={m}>{m}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <p class="results-count" aria-live="polite" data-results-count>
+        {products.length} {products.length === 1 ? 'producto' : 'productos'}
+      </p>
+
+      <ul class="products">
+        {products.map((p) => (
+          <li
+            class="card product"
+            data-product
+            data-category={p.category}
+            data-manufacturer={p.manufacturer}
+            data-search={`${p.name} ${p.manufacturer} ${p.category} ${p.licenseType} ${p.edition}`.toLowerCase()}
+          >
+            <div class="product__head">
+              {p.image ? (
+                <img src={p.image.src} alt={p.image.alt} width="56" height="56" loading="lazy" class="product__img" />
+              ) : (
+                <span class="icon-tile product__icon"><Icon name="key" size={22} /></span>
+              )}
+              <div class="product__badges">
+                {p.demo && <span class="badge badge--demo">Demostración</span>}
+                <span class={`badge ${availabilityClass[p.availability]}`}>{availabilityLabels[p.availability]}</span>
+              </div>
+            </div>
+
+            <p class="product__maker">{p.manufacturer} · {p.category}</p>
+            <h3 class="product__name">{p.name}</h3>
+            <p class="product__desc">{p.description}</p>
+
+            <dl class="product__specs">
+              <div><dt>Edición</dt><dd>{p.edition}</dd></div>
+              <div><dt>Tipo de licencia</dt><dd>{p.licenseType}</dd></div>
+              <div><dt>Duración</dt><dd>{p.duration}</dd></div>
+              <div><dt>Dispositivos</dt><dd>{p.devices ?? 'No aplica'}</dd></div>
+              <div class="span-2"><dt>Compatible con</dt><dd>{p.platforms.join(', ')}</dd></div>
+            </dl>
+
+            <details class="product__terms">
+              <summary>Condiciones y devoluciones</summary>
+              <p><strong>Condiciones de uso:</strong> {p.terms}</p>
+              <p><strong>Devoluciones:</strong> {p.refundPolicy}</p>
+            </details>
+
+            <div class="product__footer">
+              <p class="product__price">{formatPrice(p.price)}</p>
+              <Button
+                href={consultHref(p)}
+                size="sm"
+                variant={p.availability === 'agotado' ? 'secondary' : 'primary'}
+                track="license_interest"
+                data-track-label={p.id}
+              >
+                Consultar licencia
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div class="empty-state no-results" hidden data-no-results>
+        <p>No encontramos productos con esos filtros. Prueba con otra búsqueda o <a href="/contacto?servicio=licencias-software">consúltanos directamente</a>.</p>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .filters {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .filter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  label {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--brand-ink);
+  }
+
+  .search-input {
+    position: relative;
+  }
+
+  .search-input :global(svg) {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    color: var(--text-muted);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  input,
+  select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    font: inherit;
+    font-size: 16px;
+    color: var(--text);
+  }
+
+  input {
+    padding-left: 42px;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--brand-cyan);
+    box-shadow: var(--focus-ring);
+  }
+
+  .results-count {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .product {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product[hidden] {
+    display: none;
+  }
+
+  .product__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .product__img {
+    border-radius: var(--radius-md);
+    object-fit: contain;
+  }
+
+  .product__badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+
+  .product__maker {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .product__name {
+    font-size: var(--fs-md);
+  }
+
+  .product__desc {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .product__specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    font-size: var(--fs-sm);
+  }
+
+  .product__specs .span-2 {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .product__terms {
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-sm);
+  }
+
+  .product__terms summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .product__terms p {
+    margin: var(--space-2) 0 0;
+    color: var(--text-muted);
+  }
+
+  .product__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+  }
+
+  .product__price {
+    margin: 0;
+    font-weight: 700;
+    color: var(--brand-ink);
+  }
+
+  .no-results {
+    margin-top: var(--space-4);
+    padding: var(--space-8);
+  }
+
+  @media (max-width: 719px) {
+    .filters {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .filter--search {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-catalog]').forEach((catalog) => {
+    const search = catalog.querySelector<HTMLInputElement>('[data-filter-search]')!;
+    const category = catalog.querySelector<HTMLSelectElement>('[data-filter-category]')!;
+    const manufacturer = catalog.querySelector<HTMLSelectElement>('[data-filter-manufacturer]')!;
+    const count = catalog.querySelector<HTMLElement>('[data-results-count]')!;
+    const empty = catalog.querySelector<HTMLElement>('[data-no-results]')!;
+    const items = [...catalog.querySelectorAll<HTMLElement>('[data-product]')];
+
+    const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
+    const apply = () => {
+      const q = normalize(search.value);
+      let visible = 0;
+      for (const item of items) {
+        const match =
+          (!q || normalize(item.dataset.search ?? '').includes(q)) &&
+          (!category.value || item.dataset.category === category.value) &&
+          (!manufacturer.value || item.dataset.manufacturer === manufacturer.value);
+        item.hidden = !match;
+        if (match) visible++;
+      }
+      count.textContent = `${visible} ${visible === 1 ? 'producto' : 'productos'}`;
+      empty.hidden = visible > 0;
+    };
+
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    manufacturer.addEventListener('change', apply);
+  });
+</script>
