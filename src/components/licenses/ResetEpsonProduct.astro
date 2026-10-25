@@ -56,6 +56,11 @@ import Icon from '../ui/Icon.astro';
     box-shadow: var(--shadow-md);
   }
 
+  .reset-product > *,
+  .reset-window__body > * {
+    min-width: 0;
+  }
+
   .reset-product__visual { display: grid; place-items: center; min-height: 300px; padding: var(--space-5); overflow: hidden; border-radius: 19px; background: radial-gradient(circle at 80% 15%, rgb(0 170 231 / 0.26), transparent 35%), linear-gradient(145deg, #03152d, #075083); }
   .reset-window { width: min(100%, 340px); border: 1px solid rgb(255 255 255 / 0.17); border-radius: 16px; background: rgb(2 15 32 / 0.77); box-shadow: 0 28px 50px rgb(0 0 0 / 0.3); transform: rotate(-1.5deg); }
   .reset-window__top { display: flex; align-items: center; gap: 5px; min-height: 38px; padding-inline: 12px; border-bottom: 1px solid rgb(255 255 255 / 0.1); }
@@ -87,7 +92,7 @@ import Icon from '../ui/Icon.astro';
   .reset-product__footer p { display: flex; gap: 7px; margin: 0; color: #7a4a08; font-size: 0.7rem; }
   .reset-product__footer p :global(svg) { flex: 0 0 auto; margin-top: 1px; }
 
-  @media (max-width: 840px) { .reset-product { grid-template-columns: 1fr; } }
+  @media (max-width: 840px) { .reset-product { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 520px) {
     .reset-product__visual { min-height: 240px; padding: var(--space-3); }
     .reset-window__body { padding: var(--space-4); }
