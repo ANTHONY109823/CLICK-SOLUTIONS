@@ -48,7 +48,7 @@ const products = isLicenses ? getLicenses() : [];
     breadcrumbSchema(siteUrl, breadcrumbs),
   ]}
 >
-  <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
+  <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead}>
     <Fragment slot="actions">
       <Button href={`#${contentAnchor}`} variant="on-dark" size="lg" iconRight="arrow-right">
         {contentLabel}
@@ -82,14 +82,15 @@ const products = isLicenses ? getLicenses() : [];
       ) : commercialPlanService ? (
         <CommercialPlans service={commercialPlanService} />
       ) : (
-        <div class="rail-shell" data-scroll-shell>
-          <div class="rail-controls" aria-label="Mover servicios">
-            <button type="button" aria-label="Ver servicios anteriores" data-scroll-prev><Icon name="arrow-right" size={17} /></button>
-            <button type="button" aria-label="Ver más servicios" data-scroll-next><Icon name="arrow-right" size={17} /></button>
+        <div class="rail-shell" data-carousel data-carousel-autoplay="5200">
+          <div class="rail-controls" aria-label="Cambiar solución destacada">
+            <span aria-live="polite" data-carousel-status>1 de {service.offerings.length}</span>
+            <button type="button" aria-label="Ver solución anterior" data-carousel-prev><Icon name="arrow-right" size={17} /></button>
+            <button type="button" aria-label="Ver solución siguiente" data-carousel-next><Icon name="arrow-right" size={17} /></button>
           </div>
-          <div class="work-rail" aria-label={service.offeringsTitle} data-scroll-rail tabindex="0">
+          <div class="work-rail" aria-label={service.offeringsTitle} data-carousel-track tabindex="0">
             {service.offerings.map((offering) => (
-              <article class="work-card">
+              <article class="work-card" data-carousel-item>
                 <span class="work-card__icon"><Icon name={offering.icon} size={21} /></span>
                 <h3>{offering.title}</h3>
                 <p>{offering.summary}</p>
@@ -118,27 +119,6 @@ const products = isLicenses ? getLicenses() : [];
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  document.querySelectorAll<HTMLElement>('[data-scroll-shell]').forEach((shell) => {
-    const rail = shell.querySelector<HTMLElement>('[data-scroll-rail]');
-    const previous = shell.querySelector<HTMLButtonElement>('[data-scroll-prev]');
-    const next = shell.querySelector<HTMLButtonElement>('[data-scroll-next]');
-    if (!rail || !previous || !next) return;
-
-    const move = (direction: number) => rail.scrollBy({ left: direction * Math.min(rail.clientWidth * 0.82, 720), behavior: 'smooth' });
-    previous.addEventListener('click', () => move(-1));
-    next.addEventListener('click', () => move(1));
-
-    const update = () => {
-      previous.disabled = rail.scrollLeft < 4;
-      next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
-    };
-    rail.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
-    update();
-  });
-</script>
 
 <style>
   .hero-visual {
@@ -376,14 +356,18 @@ const products = isLicenses ? getLicenses() : [];
     gap: var(--space-4);
     overflow-x: auto;
     padding: 4px 2px var(--space-4);
-    scroll-snap-type: x proximity;
-    scrollbar-width: thin;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
   }
+
+  .work-rail::-webkit-scrollbar { display: none; }
 
   .rail-shell { position: relative; }
   .rail-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: var(--space-2); }
+  .rail-controls > span { align-self: center; min-width: 54px; color: var(--text-muted); font-size: var(--fs-xs); font-weight: 750; text-align: right; }
   .rail-controls button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 12px; background: #fff; color: var(--brand-navy); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-fast); }
-  .rail-controls button:first-child { transform: rotate(180deg); }
+  .rail-controls button:first-of-type { transform: rotate(180deg); }
   .rail-controls button:hover:not(:disabled) { border-color: var(--brand-cyan); background: var(--info-bg); }
   .rail-controls button:disabled { opacity: 0.35; cursor: default; }
 

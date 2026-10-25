@@ -8,6 +8,7 @@ import { services, type Service, type ServiceSlug } from '../data/services';
 import { projects, type Project } from '../data/projects';
 import { licenses, type LicenseProduct } from '../data/licenses';
 import { generalFaqs } from '../data/faqs';
+import home from '../data/home.json';
 
 const isShown = (item: { demo?: boolean }) => !item.demo || site.showDemoContent;
 
@@ -36,4 +37,10 @@ export function getLicenses(): LicenseProduct[] {
 
 export function getGeneralFaqs() {
   return generalFaqs;
+}
+
+export type HomeContent = typeof home;
+
+export function getHomeContent(): HomeContent {
+  return home;
 }

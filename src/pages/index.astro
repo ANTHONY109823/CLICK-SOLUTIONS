@@ -4,11 +4,12 @@ import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
 import ProjectCard from '../components/sections/ProjectCard.astro';
 import HomeHero from '../components/sections/HomeHero.astro';
-import { getServices, getProjects } from '../lib/content';
+import { getServices, getProjects, getHomeContent } from '../lib/content';
 import type { IconName } from '../components/ui/icons';
 
 const services = getServices();
 const projects = getProjects().slice(0, 2);
+const home = getHomeContent();
 
 const projectFormats: { title: string; text: string; icon: IconName; href: string }[] = [
   { title: 'Experiencias web', text: 'Sitios, catálogos y sistemas enfocados en objetivos reales.', icon: 'code', href: '/servicios/desarrollo-web' },
@@ -28,13 +29,13 @@ const values: { title: string; text: string; icon: IconName }[] = [
   rawTitle
   description="Soluciones tecnológicas en Perú: drones, desarrollo web, soporte técnico, licencias y herramientas de software para personas y empresas."
 >
-  <HomeHero services={services} />
+  <HomeHero services={services} content={home} />
 
   <section class="home-panel projects-panel" id="proyectos">
     <div class="container panel-inner">
       <header class="panel-heading" data-reveal>
-        <div><span class="eyebrow">Proyectos</span><h2>Ideas convertidas en soluciones útiles</h2></div>
-        <p>Explora directamente cada especialidad.</p>
+        <div><span class="eyebrow">{home.projectsEyebrow}</span><h2>{home.projectsTitle}</h2></div>
+        <p>{home.projectsLead}</p>
       </header>
       <div class:list={['projects-layout', { 'projects-layout--empty': projects.length === 0 }]}>
         {projects.length > 0 && <div class="featured-project" data-reveal="left"><ProjectCard project={projects[0]} /></div>}
@@ -55,11 +56,11 @@ const values: { title: string; text: string; icon: IconName }[] = [
   <section class="home-panel about-panel" id="empresa">
     <div class="container about-grid">
       <div class="about-copy" data-reveal="left">
-        <span class="eyebrow">ClickSolutions</span>
-        <h2>Un socio tecnológico, sin complicaciones.</h2>
-        <p>Reunimos desarrollo web, drones, soporte y software para que personas y empresas resuelvan sus necesidades con un solo equipo.</p>
+        <span class="eyebrow">{home.aboutEyebrow}</span>
+        <h2>{home.aboutTitle}</h2>
+        <p>{home.aboutLead}</p>
         <div class="about-actions">
-          <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">Hablemos de tu proyecto</Button>
+          <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">{home.aboutCta}</Button>
         </div>
       </div>
       <div class="values" id="ayuda" data-reveal="right">

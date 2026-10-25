@@ -1,0 +1,121 @@
+media:
+  - name: images
+    label: Imágenes del sitio
+    input: public/images
+    output: /images
+    rename: safe
+    categories: [image]
+
+settings:
+  content:
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: "Contenido: crear {path}"
+      update: "Contenido: actualizar {path}"
+      delete: "Contenido: eliminar {path}"
+      rename: "Contenido: renombrar {oldPath} a {newPath}"
+
+content:
+  - name: business
+    label: Datos de la empresa
+    type: file
+    path: src/data/business.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - name: legalName
+        label: Razón social o titular
+        type: string
+      - name: ruc
+        label: RUC
+        type: string
+        pattern:
+          regex: "^$|^[0-9]{11}$"
+          message: Ingresa 11 dígitos o deja el campo vacío.
+      - name: contact
+        label: Contacto
+        type: object
+        fields:
+          - { name: email, label: Correo, type: string }
+          - { name: phone, label: Teléfono visible, type: string }
+          - name: whatsapp
+            label: WhatsApp
+            type: string
+            description: Solo números con código de país, por ejemplo 51987654321.
+            pattern:
+              regex: "^$|^[0-9]{9,15}$"
+              message: Usa solo números, entre 9 y 15 dígitos.
+          - { name: area, label: Ciudad o zona de atención, type: string }
+          - { name: address, label: Dirección pública, type: string }
+          - { name: hours, label: Horario, type: string }
+      - name: social
+        label: Redes sociales
+        type: object
+        fields:
+          - { name: facebook, label: Facebook, type: string }
+          - { name: instagram, label: Instagram, type: string }
+          - { name: tiktok, label: TikTok, type: string }
+          - { name: linkedin, label: LinkedIn, type: string }
+          - { name: youtube, label: YouTube, type: string }
+      - name: support
+        label: Modalidad de soporte
+        type: object
+        fields:
+          - { name: onsite, label: Atención presencial, type: boolean }
+          - { name: remote, label: Atención remota, type: boolean }
+
+  - name: home
+    label: Página de inicio
+    type: file
+    path: src/data/home.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - { name: badge, label: Etiqueta superior, type: string, required: true }
+      - { name: title, label: Título principal, type: string, required: true }
+      - { name: titleAccent, label: Parte destacada del título, type: string, required: true }
+      - { name: lead, label: Introducción, type: text, required: true }
+      - { name: projectsEyebrow, label: Etiqueta de proyectos, type: string, required: true }
+      - { name: projectsTitle, label: Título de proyectos, type: string, required: true }
+      - { name: projectsLead, label: Texto de proyectos, type: text, required: true }
+      - { name: aboutEyebrow, label: Etiqueta de empresa, type: string, required: true }
+      - { name: aboutTitle, label: Título de empresa, type: string, required: true }
+      - { name: aboutLead, label: Texto de empresa, type: text, required: true }
+      - { name: aboutCta, label: Texto del botón final, type: string, required: true }
+
+  - name: advanced
+    label: Contenido avanzado
+    type: group
+    items:
+      - name: services
+        label: Servicios y precios
+        type: file
+        path: src/data/services.ts
+        format: code
+        operations:
+          delete: false
+      - name: licenses
+        label: Catálogo de software
+        type: file
+        path: src/data/licenses.ts
+        format: code
+        operations:
+          delete: false
+      - name: projects
+        label: Proyectos
+        type: file
+        path: src/data/projects.ts
+        format: code
+        operations:
+          delete: false
+      - name: faqs
+        label: Preguntas frecuentes
+        type: file
+        path: src/data/faqs.ts
+        format: code
+        operations:
+          delete: false

@@ -34,6 +34,7 @@ const profile = profiles[service];
 
 <div class="service-visual" data-profile={service} aria-label={`Vista representativa de ${profile.title}`}>
   <div class="service-visual__grid" aria-hidden="true"></div>
+  <div class="service-visual__scene" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="service-visual__panel">
     <div class="service-visual__top"><span></span><span></span><span></span><small>clicksolutions / {service}</small></div>
     <div class="service-visual__body">
@@ -87,6 +88,30 @@ const profile = profiles[service];
     mask-image: linear-gradient(135deg, black, transparent 78%);
   }
 
+  .service-visual__scene { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .service-visual__scene i { position: absolute; display: block; }
+
+  /* Radar y horizonte: lectura visual propia de una operación aérea. */
+  .service-visual[data-profile='drones'] .service-visual__scene i:first-child {
+    right: -24px; bottom: -88px; width: 270px; aspect-ratio: 1; border: 1px solid rgb(101 230 255 / 0.28); border-radius: 50%; box-shadow: 0 0 0 42px rgb(101 230 255 / 0.055), 0 0 0 84px rgb(101 230 255 / 0.035);
+  }
+  .service-visual[data-profile='drones'] .service-visual__scene i:nth-child(2) { right: 104px; bottom: 28px; width: 118px; height: 1px; background: #65e6ff; transform-origin: right; animation: radar-sweep 5s linear infinite; }
+
+  /* Bloques de código y estado: un entorno de producto digital. */
+  .service-visual[data-profile='desarrollo-web'] .service-visual__scene i { left: 8%; height: 3px; border-radius: 8px; background: rgb(99 230 168 / 0.35); }
+  .service-visual[data-profile='desarrollo-web'] .service-visual__scene i:first-child { top: 22%; width: 92px; }
+  .service-visual[data-profile='desarrollo-web'] .service-visual__scene i:nth-child(2) { top: 27%; width: 146px; }
+  .service-visual[data-profile='desarrollo-web'] .service-visual__scene i:nth-child(3) { top: 32%; width: 64px; }
+  .service-visual[data-profile='desarrollo-web'] .service-visual__scene i:nth-child(4) { top: 37%; width: 118px; }
+
+  /* Escáner de diagnóstico: movimiento vertical controlado. */
+  .service-visual[data-profile='soporte-tecnico'] .service-visual__scene i:first-child { inset: 12% 6% auto; height: 1px; background: linear-gradient(90deg, transparent, #76b8ff, transparent); box-shadow: 0 0 16px #76b8ff; animation: diagnostic-scan 4.5s ease-in-out infinite; }
+  .service-visual[data-profile='soporte-tecnico'] .service-visual__scene i:nth-child(2) { right: 8%; bottom: 12%; width: 86px; aspect-ratio: 1; border: 1px dashed rgb(118 184 255 / 0.35); border-radius: 50%; }
+
+  /* Matriz y sello de activación: ambiente propio del catálogo de software. */
+  .service-visual[data-profile='licencias-software'] .service-visual__scene { opacity: 0.72; background-image: radial-gradient(circle, rgb(212 255 101 / 0.28) 1px, transparent 1.5px); background-position: 88% 72%; background-size: 18px 18px; mask-image: radial-gradient(circle at 86% 70%, black, transparent 34%); }
+  .service-visual[data-profile='licencias-software'] .service-visual__scene i:first-child { right: 54px; bottom: 36px; width: 90px; aspect-ratio: 1; border: 1px solid rgb(212 255 101 / 0.26); border-radius: 22px; transform: rotate(12deg); }
+
   .service-visual__panel {
     position: absolute;
     inset: 34px 42px;
@@ -132,6 +157,8 @@ const profile = profiles[service];
   .visual-chip--b { right: 18px; bottom: 18px; color: var(--visual-accent); }
 
   @keyframes signal-in { from { opacity: 0; transform: scaleY(0.1); } }
+  @keyframes radar-sweep { to { transform: rotate(360deg); } }
+  @keyframes diagnostic-scan { 0%, 100% { transform: translateY(0); opacity: 0.25; } 50% { transform: translateY(230px); opacity: 0.8; } }
 
   @media (max-width: 520px) {
     .service-visual { min-height: 280px; }
@@ -139,5 +166,5 @@ const profile = profiles[service];
     .visual-chip { display: none; }
   }
 
-  @media (prefers-reduced-motion: reduce) { .signal i { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .signal i, .service-visual__scene i { animation: none !important; } }
 </style>

@@ -49,7 +49,7 @@ const productHref = (p: LicenseProduct) =>
       </Button>
     </div>
   ) : (
-    <div class="catalog" data-catalog>
+    <div class="catalog" data-catalog data-carousel data-carousel-autoplay="6200">
       <div class="catalog-note">
         <Icon name="info" size={18} />
         <p>{hasOpenSourceProducts
@@ -88,15 +88,23 @@ const productHref = (p: LicenseProduct) =>
         </div>
       </div>
 
-      <p class="results-count" aria-live="polite" data-results-count>
-        {products.length} {products.length === 1 ? 'producto' : 'productos'}
-      </p>
+      <div class="results-bar">
+        <p class="results-count" aria-live="polite" data-results-count>
+          {products.length} {products.length === 1 ? 'producto' : 'productos'}
+        </p>
+        <div class="catalog-controls" aria-label="Cambiar producto destacado">
+          <span aria-live="polite" data-carousel-status>1 de {products.length}</span>
+          <button type="button" aria-label="Producto anterior" data-carousel-prev><Icon name="arrow-right" size={17} /></button>
+          <button type="button" aria-label="Producto siguiente" data-carousel-next><Icon name="arrow-right" size={17} /></button>
+        </div>
+      </div>
 
-      <ul class="products">
+      <ul class="products" data-carousel-track tabindex="0" aria-label="Catálogo de productos">
         {products.map((p) => (
           <li
             class="card product"
             data-product
+            data-carousel-item
             data-category={p.category}
             data-manufacturer={p.manufacturer}
             data-brand={p.manufacturer.toLowerCase().replace(/\s+/g, '-')}
@@ -187,11 +195,9 @@ const productHref = (p: LicenseProduct) =>
 
   .category-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-2);
     margin-bottom: var(--space-3);
-    padding-bottom: var(--space-2);
-    overflow-x: auto;
-    scrollbar-width: thin;
   }
 
   .category-chip {
@@ -287,12 +293,27 @@ const productHref = (p: LicenseProduct) =>
     box-shadow: var(--focus-ring);
   }
 
-  .results-count {
+  .results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
     margin-bottom: var(--space-3);
+  }
+
+  .results-count {
+    margin: 0;
     font-size: var(--fs-sm);
     font-weight: 650;
     color: var(--text-muted);
   }
+
+  .catalog-controls { display: flex; align-items: center; gap: 8px; }
+  .catalog-controls > span { min-width: 56px; color: var(--text-muted); font-size: var(--fs-xs); font-weight: 750; text-align: right; }
+  .catalog-controls button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 12px; background: #fff; color: var(--brand-navy); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-fast); }
+  .catalog-controls button:first-of-type { transform: rotate(180deg); }
+  .catalog-controls button:hover:not(:disabled) { border-color: var(--brand-cyan); background: var(--info-bg); }
+  .catalog-controls button:disabled { opacity: 0.35; cursor: default; }
 
   .products {
     display: grid;
@@ -303,9 +324,12 @@ const productHref = (p: LicenseProduct) =>
     margin: 0;
     padding: 3px 2px var(--space-4);
     overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: thin;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
   }
+
+  .products::-webkit-scrollbar { display: none; }
 
   .product {
     position: relative;
@@ -501,9 +525,13 @@ const productHref = (p: LicenseProduct) =>
   }
 
   @media (max-width: 719px) {
+    .category-bar { display: none; }
+
     .filters {
       grid-template-columns: 1fr 1fr;
     }
+
+    .filter:not(.filter--search) { display: flex; }
 
     .filter--search {
       grid-column: 1 / -1;
@@ -573,6 +601,7 @@ const productHref = (p: LicenseProduct) =>
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-pressed', String(active));
       });
+      catalog.dispatchEvent(new CustomEvent('carousel:refresh'));
     };
 
     search.addEventListener('input', apply);

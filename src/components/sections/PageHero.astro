@@ -1,5 +1,4 @@
 ---
-import Breadcrumbs from '../ui/Breadcrumbs.astro';
 import type { ServiceSlug } from '../../data/services';
 
 interface Props {
@@ -13,14 +12,13 @@ interface Props {
   theme?: ServiceSlug;
 }
 
-const { eyebrow, title, lead, breadcrumbs, compact = false, theme } = Astro.props;
+const { eyebrow, title, lead, compact = false, theme } = Astro.props;
 const hasAside = Astro.slots.has('aside');
 ---
 
 <section class:list={['page-hero', { 'page-hero--compact': compact }]} data-theme={theme}>
   <div class:list={['container', 'page-hero__inner', { 'page-hero__inner--split': hasAside }]}>
     <div class="page-hero__content">
-      {breadcrumbs && <Breadcrumbs items={breadcrumbs} dark />}
       {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h1>{title}</h1>
       {lead && <p class="page-hero__lead">{lead}</p>}

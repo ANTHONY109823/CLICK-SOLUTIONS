@@ -31,11 +31,11 @@ Fecha: 2026-10-24 · Estado: Fase 1–3 (primera versión) en curso.
   el servidor y envía el correo mediante la API de **Resend**. Sin claves configuradas, el
   formulario se muestra deshabilitado con un aviso honesto: **nunca se simula el envío**.
 - **Sin base de datos, sin login, sin pagos** en la v1: no son necesarios todavía.
-- **Contenido centralizado** en `src/data/*.ts` y leído a través de `src/lib/content.ts`.
-  Cuando exista el panel de administración, solo cambia esa capa (pasa a leer de la API /
-  PostgreSQL) y las páginas siguen igual.
-- **Fase futura**: API ASP.NET Core o funciones de servidor + PostgreSQL + panel `/admin`
-  como aplicación separada con autenticación en el servidor.
+- **Contenido centralizado** en `src/data/*` y leído a través de `src/lib/content.ts`.
+- **Panel editorial preparado con Pages CMS**: `.pages.yml` permite editar datos de la empresa,
+  textos de inicio e imágenes desde GitHub. Cada guardado dispara la publicación automática.
+- **Fase futura transaccional**: API ASP.NET Core o funciones de servidor + PostgreSQL para
+  pedidos, clientes, pagos y entrega autorizada de licencias.
 
 Nota: se descartó Vercel porque su plan gratuito “Hobby” es solo para uso no comercial
 (Pro ~20 USD/mes). Cloudflare Pages también sería válido: cambiar de plataforma solo
@@ -104,6 +104,7 @@ Tipografía: **Inter** (variable, alojada en el propio sitio, sin Google Fonts �
 ## 6. Primera versión (v1)
 
 - Todas las rutas del mapa, con diseño responsive y menú móvil.
+- Panel editorial basado en Git para datos comerciales, inicio e imágenes.
 - Inicio orientado a conversión; 4 páginas de servicio con oferta, proceso, FAQ y formulario.
 - Catálogo de licencias con búsqueda y filtros (vacío hasta cargar productos reales).
 - Portafolio y galerías con estado vacío honesto hasta tener trabajos reales.
@@ -117,7 +118,7 @@ Tipografía: **Inter** (variable, alojada en el propio sitio, sin Google Fonts �
 
 ## 7. Segunda fase (no se construye ahora)
 
-Panel administrativo · gestión de catálogo/precios/proyectos/FAQ · base de datos PostgreSQL ·
+Edición estructurada de catálogo/precios/proyectos/FAQ · base de datos PostgreSQL ·
 carrito y pagos (Culqi, Niubiz, Mercado Pago o Izipay) · pedidos · área de clientes ·
 entrega autorizada de licencias · historial de compras · automatización de solicitudes ·
 versión en inglés.

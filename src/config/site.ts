@@ -6,13 +6,14 @@
  * y el sitio los mostrará en header, footer, contacto, datos estructurados, etc.
  */
 import { PUBLIC_CONTACT_FORM_ENABLED, PUBLIC_ANALYTICS_ENABLED } from 'astro:env/client';
+import business from '../data/business.json';
 
 export const site = {
   name: 'ClickSolutions',
   /** Razón social o nombre del titular (políticas legales). PENDIENTE */
-  legalName: null as string | null,
+  legalName: business.legalName as string | null,
   /** RUC (11 dígitos). PENDIENTE */
-  ruc: null as string | null,
+  ruc: business.ruc as string | null,
   locale: 'es-PE',
   country: 'Perú',
   description:
@@ -20,32 +21,32 @@ export const site = {
 
   contact: {
     /** Correo público de contacto. PENDIENTE */
-    email: null as string | null,
+    email: business.contact.email as string | null,
     /** Teléfono en formato internacional, p. ej. "+51 987 654 321". PENDIENTE */
-    phone: null as string | null,
+    phone: business.contact.phone as string | null,
     /** WhatsApp: solo dígitos con código de país, p. ej. "51987654321". PENDIENTE */
-    whatsapp: null as string | null,
+    whatsapp: business.contact.whatsapp as string | null,
     /** Ciudad o zona de atención, p. ej. "Lima, Perú". PENDIENTE */
-    area: null as string | null,
+    area: business.contact.area as string | null,
     /** Dirección física (solo si deseas publicarla). PENDIENTE */
-    address: null as string | null,
+    address: business.contact.address as string | null,
     /** Horario de atención, p. ej. "Lunes a sábado, 9:00–18:00". PENDIENTE */
-    hours: null as string | null,
+    hours: business.contact.hours as string | null,
   },
 
   /** URLs completas de redes sociales. PENDIENTE */
   social: {
-    facebook: null as string | null,
-    instagram: null as string | null,
-    tiktok: null as string | null,
-    linkedin: null as string | null,
-    youtube: null as string | null,
+    facebook: business.social.facebook as string | null,
+    instagram: business.social.instagram as string | null,
+    tiktok: business.social.tiktok as string | null,
+    linkedin: business.social.linkedin as string | null,
+    youtube: business.social.youtube as string | null,
   },
 
   /** Soporte técnico: modalidades de atención. PENDIENTE DE CONFIRMAR */
   support: {
-    onsite: true,
-    remote: false,
+    onsite: business.support.onsite,
+    remote: business.support.remote,
   },
 
   /** Funciones que aún no existen: mientras estén en false no se muestran como operativas. */

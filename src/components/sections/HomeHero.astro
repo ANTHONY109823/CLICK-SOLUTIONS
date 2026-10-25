@@ -2,22 +2,24 @@
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import type { Service } from '../../data/services';
+import type { HomeContent } from '../../lib/content';
 
 interface Props {
   services: Service[];
+  content: HomeContent;
 }
 
-const { services } = Astro.props;
+const { services, content } = Astro.props;
 ---
 
 <section class="hero">
   <div class="hero__grid" aria-hidden="true"></div>
   <div class="container hero__inner">
     <div class="hero__content" data-reveal="left">
-      <span class="hero__badge"><span></span> Tecnología para personas y empresas</span>
-      <h1>Convertimos tus ideas en <strong>soluciones reales.</strong></h1>
+      <span class="hero__badge"><span></span> {content.badge}</span>
+      <h1>{content.title} <strong>{content.titleAccent}</strong></h1>
       <p class="hero__lead">
-        Desarrollo web, producción aérea, soporte técnico y software original desde un mismo equipo.
+        {content.lead}
       </p>
       <div class="hero__actions">
         <Button href="#servicios" variant="on-dark" size="lg" iconRight="arrow-right" track="explore_services">
@@ -63,19 +65,29 @@ const { services } = Astro.props;
     </div>
   </div>
 
-  <div class="container service-ribbon" id="servicios" data-reveal>
-    {
-      services.map((service) => (
-        <a href={`/servicios/${service.slug}`} class="service-ribbon__item" data-service={service.slug}>
-          <span class="service-ribbon__icon"><Icon name={service.icon} size={24} /></span>
-          <span>
-            <strong>{service.name}</strong>
-            <small>{service.tagline}</small>
-          </span>
-          <Icon name="arrow-right" size={18} class="service-ribbon__arrow" />
-        </a>
-      ))
-    }
+  <div class="service-showcase" id="servicios" data-carousel data-carousel-autoplay="4400" data-reveal>
+    <div class="container service-showcase__bar">
+      <span>Explora cada especialidad</span>
+      <div class="carousel-controls" aria-label="Cambiar servicio destacado">
+        <span class="carousel-status" aria-live="polite" data-carousel-status>1 de {services.length}</span>
+        <button type="button" aria-label="Servicio anterior" data-carousel-prev><Icon name="arrow-right" size={17} /></button>
+        <button type="button" aria-label="Servicio siguiente" data-carousel-next><Icon name="arrow-right" size={17} /></button>
+      </div>
+    </div>
+    <div class="container service-ribbon" data-carousel-track tabindex="0" aria-label="Servicios de ClickSolutions">
+      {
+        services.map((service) => (
+          <a href={`/servicios/${service.slug}`} class="service-ribbon__item" data-service={service.slug} data-carousel-item>
+            <span class="service-ribbon__icon"><Icon name={service.icon} size={24} /></span>
+            <span>
+              <strong>{service.name}</strong>
+              <small>{service.tagline}</small>
+            </span>
+            <Icon name="arrow-right" size={18} class="service-ribbon__arrow" />
+          </a>
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -213,7 +225,9 @@ const { services } = Astro.props;
   .floating-chip--top { top: -20px; right: 36px; }
   .floating-chip--bottom { bottom: -20px; left: 34px; animation-delay: -2s; }
 
-  .service-ribbon { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative; z-index: 3; }
+  .service-showcase { position: relative; z-index: 3; }
+  .service-showcase__bar { display: none; }
+  .service-ribbon { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .service-ribbon__item { --tile-accent: var(--brand-cyan); --tile-deep: #07315b; position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); min-height: 92px; padding: var(--space-4); overflow: hidden; border: 1px solid color-mix(in srgb, var(--tile-accent) 25%, transparent); border-bottom: 0; background: linear-gradient(145deg, var(--tile-deep), #051c37); color: #fff; text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base); }
   .service-ribbon__item[data-service='drones'] { --tile-accent: #63e5ff; --tile-deep: #07536b; }
   .service-ribbon__item[data-service='desarrollo-web'] { --tile-accent: #5ee1aa; --tile-deep: #075044; }
@@ -231,6 +245,12 @@ const { services } = Astro.props;
   .service-ribbon small { color: #92acc3; font-size: 0.68rem; line-height: 1.35; }
   .service-ribbon__item :global(.service-ribbon__arrow) { position: relative; z-index: 1; color: var(--tile-accent); transition: transform var(--dur-fast); }
   .service-ribbon__item:hover :global(.service-ribbon__arrow) { transform: translateX(4px); }
+
+  .carousel-controls { display: flex; align-items: center; gap: 8px; }
+  .carousel-status { min-width: 50px; color: #8faac1; font-size: 0.7rem; font-weight: 750; text-align: right; }
+  .carousel-controls button { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgb(99 208 249 / 0.24); border-radius: 11px; background: rgb(3 34 65 / 0.9); color: #dff6ff; cursor: pointer; }
+  .carousel-controls button:first-of-type { transform: rotate(180deg); }
+  .carousel-controls button:disabled { opacity: 0.35; cursor: default; }
 
   @keyframes pulse { 50% { opacity: 0.45; box-shadow: 0 0 4px var(--brand-cyan); } }
   @keyframes float { 50% { transform: translateY(-8px); } }
@@ -260,7 +280,9 @@ const { services } = Astro.props;
     .browser-window__body { grid-template-columns: 1fr; min-height: auto; }
     .visual-copy { padding: var(--space-6) 0 0; }
     .floating-chip { display: none; }
-    .service-ribbon { grid-auto-flow: column; grid-auto-columns: minmax(82vw, 1fr); grid-template-columns: none; overflow-x: auto; padding-inline: var(--gutter); scroll-snap-type: x proximity; scrollbar-width: none; }
+    .service-showcase { padding-top: var(--space-3); background: linear-gradient(180deg, transparent, rgb(0 8 22 / 0.3)); }
+    .service-showcase__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-bottom: var(--space-3); color: #a9bfd2; font-size: var(--fs-xs); font-weight: 750; }
+    .service-ribbon { grid-auto-flow: column; grid-auto-columns: minmax(82vw, 1fr); grid-template-columns: none; overflow-x: auto; padding-inline: var(--gutter); scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
     .service-ribbon::-webkit-scrollbar { display: none; }
     .service-ribbon__item, .service-ribbon__item:first-child, .service-ribbon__item:nth-child(2), .service-ribbon__item:last-child { min-height: 88px; border-radius: 16px 16px 0 0; scroll-snap-align: start; }
   }

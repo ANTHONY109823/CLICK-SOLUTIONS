@@ -1,0 +1,23 @@
+{
+  "legalName": null,
+  "ruc": null,
+  "contact": {
+    "email": null,
+    "phone": null,
+    "whatsapp": null,
+    "area": null,
+    "address": null,
+    "hours": null
+  },
+  "social": {
+    "facebook": null,
+    "instagram": null,
+    "tiktok": null,
+    "linkedin": null,
+    "youtube": null
+  },
+  "support": {
+    "onsite": true,
+    "remote": false
+  }
+}
