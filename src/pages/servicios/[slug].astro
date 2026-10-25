@@ -409,8 +409,8 @@ const products = isLicenses ? getLicenses() : [];
   .service-note { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; color: var(--text-muted); font-size: var(--fs-xs); }
   .service-note :global(svg) { flex: 0 0 auto; margin-top: 2px; color: var(--link); }
 
-  .license-stack { display: grid; min-width: 0; gap: clamp(2.25rem, 5vw, 4rem); }
-  .license-stack > * { min-width: 0; }
+  .license-stack { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; width: 100%; gap: clamp(2.25rem, 5vw, 4rem); }
+  .license-stack > * { min-width: 0; max-width: 100%; }
   .catalog-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-6); margin-bottom: calc(var(--space-4) * -1); }
   .catalog-heading span { color: var(--link); font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
   .catalog-heading h2 { margin: 3px 0 0; font-size: var(--fs-xl); }
