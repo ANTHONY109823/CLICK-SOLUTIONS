@@ -163,4 +163,15 @@ const iconSize = size === 'sm' ? 16 : 18;
     border-color: var(--dark-muted);
     color: #fff;
   }
+
+  @media (max-width: 480px) {
+    .btn {
+      white-space: normal;
+      text-align: center;
+    }
+
+    .btn > span {
+      min-width: 0;
+    }
+  }
 </style>
