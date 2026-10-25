@@ -260,7 +260,8 @@ const { services } = Astro.props;
     .browser-window__body { grid-template-columns: 1fr; min-height: auto; }
     .visual-copy { padding: var(--space-6) 0 0; }
     .floating-chip { display: none; }
-    .service-ribbon { grid-auto-flow: column; grid-auto-columns: minmax(82vw, 1fr); grid-template-columns: none; overflow-x: auto; padding-inline: var(--gutter); scroll-snap-type: x proximity; }
+    .service-ribbon { grid-auto-flow: column; grid-auto-columns: minmax(82vw, 1fr); grid-template-columns: none; overflow-x: auto; padding-inline: var(--gutter); scroll-snap-type: x proximity; scrollbar-width: none; }
+    .service-ribbon::-webkit-scrollbar { display: none; }
     .service-ribbon__item, .service-ribbon__item:first-child, .service-ribbon__item:nth-child(2), .service-ribbon__item:last-child { min-height: 88px; border-radius: 16px 16px 0 0; scroll-snap-align: start; }
   }
 
