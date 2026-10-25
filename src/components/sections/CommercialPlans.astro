@@ -1,0 +1,177 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { ServiceSlug } from '../../data/services';
+
+interface Plan {
+  name: string;
+  eyebrow: string;
+  price: string;
+  timing: string;
+  support: string;
+  description: string;
+  includes: string[];
+  featured?: boolean;
+}
+
+interface Props {
+  service: Extract<ServiceSlug, 'drones' | 'desarrollo-web'>;
+}
+
+const { service } = Astro.props;
+
+const plans: Record<Props['service'], Plan[]> = {
+  'desarrollo-web': [
+    {
+      eyebrow: 'Presencia profesional',
+      name: 'Web corporativa',
+      price: 'Desde USD 750',
+      timing: '2–3 semanas',
+      support: '30 días de soporte',
+      description: 'Para presentar la empresa, sus servicios y recibir consultas con una imagen sólida.',
+      includes: ['Diseño adaptable a celular', 'Contenido autoadministrable', 'Formulario y WhatsApp', 'SEO y publicación inicial'],
+    },
+    {
+      eyebrow: 'Operación organizada',
+      name: 'Web + gestión interna',
+      price: 'Desde USD 1,600',
+      timing: '5–6 semanas',
+      support: '60 días de soporte',
+      description: 'Suma un panel privado para centralizar clientes, solicitudes y seguimiento del equipo.',
+      includes: ['Todo el plan corporativo', 'Usuarios y permisos', 'Registros y estados', 'Panel e informes esenciales'],
+      featured: true,
+    },
+    {
+      eyebrow: 'Escala y automatización',
+      name: 'Plataforma premium',
+      price: 'Desde USD 2,600',
+      timing: '7–8 semanas',
+      support: '90 días de soporte',
+      description: 'Una solución a medida para procesos, automatizaciones, pagos o integraciones avanzadas.',
+      includes: ['Flujos personalizados', 'Automatizaciones', 'Pagos o integraciones', 'Paneles y capacitación'],
+    },
+  ],
+  drones: [
+    {
+      eyebrow: 'Contenido puntual',
+      name: 'Fotografía aérea',
+      price: 'Cotización por proyecto',
+      timing: 'Según ubicación',
+      support: 'Entrega digital',
+      description: 'Imágenes aéreas de inmuebles, terrenos, eventos o espacios comerciales.',
+      includes: ['Evaluación de la zona', 'Plan básico de vuelo', 'Selección de fotografías', 'Entrega en alta resolución'],
+    },
+    {
+      eyebrow: 'Contenido completo',
+      name: 'Foto + video',
+      price: 'Cotización por proyecto',
+      timing: 'Según producción',
+      support: 'Entrega lista para usar',
+      description: 'Cobertura visual para campañas, eventos, redes sociales y presentación de propiedades.',
+      includes: ['Fotografía y clips aéreos', 'Planificación de tomas', 'Edición del material acordado', 'Formatos para web o redes'],
+      featured: true,
+    },
+    {
+      eyebrow: 'Registro especializado',
+      name: 'Empresa e inspección visual',
+      price: 'Cotización por alcance',
+      timing: 'Previa evaluación',
+      support: 'Entrega documentada',
+      description: 'Registro de obras, instalaciones y zonas de difícil acceso como apoyo visual.',
+      includes: ['Revisión de viabilidad', 'Ruta de captura acordada', 'Material ordenado por zona', 'Entrega según requerimiento'],
+    },
+  ],
+};
+
+const items = plans[service];
+const note = service === 'desarrollo-web'
+  ? 'Precios referenciales basados en un alcance estándar. Dominio, hosting, servicios de terceros, impuestos y funciones fuera del alcance se cotizan por separado.'
+  : 'El precio se define con la ubicación, duración, permisos, complejidad de vuelo y tipo de entrega. La cotización confirma todo antes de reservar.';
+---
+
+<div class="plans-shell">
+  <div class="plans">
+    {items.map((plan) => (
+      <article class:list={['plan', { 'plan--featured': plan.featured }]}>
+        {plan.featured && <span class="plan__flag">Recomendado</span>}
+        <p class="plan__eyebrow">{plan.eyebrow}</p>
+        <h3>{plan.name}</h3>
+        <p class="plan__price">{plan.price}</p>
+        <p class="plan__description">{plan.description}</p>
+        <div class="plan__meta">
+          <span><Icon name="clock" size={16} />{plan.timing}</span>
+          <span><Icon name="shield" size={16} />{plan.support}</span>
+        </div>
+        <ul>
+          {plan.includes.map((item) => <li><Icon name="check" size={16} />{item}</li>)}
+        </ul>
+      </article>
+    ))}
+  </div>
+  <p class="plans-note"><Icon name="info" size={16} />{note}</p>
+</div>
+
+<style>
+  .plans-shell { display: grid; gap: var(--space-4); }
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 390px;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: linear-gradient(145deg, #fff, #f5faff);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base), box-shadow var(--dur-base);
+  }
+
+  .plan::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue));
+    opacity: 0.45;
+  }
+
+  .plan:hover { transform: translateY(-4px); border-color: #a8ddf3; box-shadow: var(--shadow-md); }
+  .plan--featured { border-color: #87d6f5; background: linear-gradient(155deg, #fff, #ecf9ff); }
+  .plan--featured::before { height: 5px; opacity: 1; }
+
+  .plan__flag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px 9px;
+    border-radius: var(--radius-full);
+    background: var(--brand-navy);
+    color: #fff;
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .plan__eyebrow { margin: 0 0 8px; color: var(--link); font-size: var(--fs-xs); font-weight: 750; text-transform: uppercase; letter-spacing: 0.06em; }
+  .plan h3 { max-width: 14ch; margin-bottom: var(--space-2); font-size: var(--fs-lg); }
+  .plan__price { margin: 0 0 var(--space-4); color: var(--brand-ink); font-size: clamp(1.15rem, 2vw, 1.45rem); font-weight: 820; }
+  .plan__description { color: var(--text-muted); font-size: var(--fs-sm); }
+  .plan__meta { display: grid; gap: 7px; margin-bottom: var(--space-4); padding-block: var(--space-3); border-block: 1px solid var(--border); }
+  .plan__meta span, .plan li { display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-xs); }
+  .plan__meta :global(svg), .plan li :global(svg) { flex: 0 0 auto; margin-top: 1px; color: var(--brand-blue); }
+  .plan ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .plans-note { display: flex; gap: 8px; margin: 0; color: var(--text-muted); font-size: var(--fs-xs); }
+  .plans-note :global(svg) { flex: 0 0 auto; margin-top: 2px; color: var(--link); }
+
+  @media (max-width: 860px) {
+    .plans { grid-template-columns: 1fr; }
+    .plan { min-height: 0; }
+  }
+</style>

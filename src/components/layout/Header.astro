@@ -53,9 +53,6 @@ const servicesActive = isActive('/servicios');
                 ))
               }
             </ul>
-            <a href="/servicios" class="dropdown-footer">
-              Ver todos los servicios <Icon name="arrow-right" size={16} />
-            </a>
           </div>
         </li>
         {
@@ -106,9 +103,6 @@ const servicesActive = isActive('/servicios');
             </li>
           ))
         }
-        <li>
-          <a href="/servicios" class="mobile-link mobile-link--muted">Ver todos los servicios</a>
-        </li>
       </ul>
       <p class="mobile-label">Empresa</p>
       <ul class="mobile-list">
@@ -320,18 +314,6 @@ const servicesActive = isActive('/servicios');
     line-height: 1.45;
   }
 
-  .dropdown-footer {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
-    padding: var(--space-3);
-    border-top: 1px solid var(--dark-border);
-    font-size: var(--fs-sm);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
   .header-actions {
     display: flex;
     align-items: center;
@@ -417,11 +399,6 @@ const servicesActive = isActive('/servicios');
 
   .mobile-link :global(svg) {
     color: var(--dark-accent);
-  }
-
-  .mobile-link--muted {
-    font-size: var(--fs-base);
-    color: var(--link);
   }
 
   :global(.mobile-cta) {

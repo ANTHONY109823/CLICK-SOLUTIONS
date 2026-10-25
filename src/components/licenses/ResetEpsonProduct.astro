@@ -1,0 +1,97 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<article class="reset-product" aria-labelledby="reset-epson-title">
+  <div class="reset-product__visual" aria-hidden="true">
+    <div class="reset-window">
+      <div class="reset-window__top"><i></i><i></i><i></i><span>ResetEpson · ClickSolutions</span></div>
+      <div class="reset-window__body">
+        <span class="reset-icon"><Icon name="printer" size={32} /></span>
+        <div><small>UTILIDAD PARA WINDOWS</small><strong>Contador de tinta residual</strong></div>
+        <div class="reset-status"><i></i><span>Modelo verificado antes de activar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reset-product__copy">
+    <div class="reset-product__heading">
+      <span class="badge badge--success">Software propio</span>
+      <span class="badge">v1.0</span>
+    </div>
+    <h2 id="reset-epson-title">ResetEpson ClickSolutions</h2>
+    <p class="reset-product__lead">Herramienta para restablecer el contador de tinta residual en impresoras Epson EcoTank compatibles cuando aparece el aviso de servicio requerido.</p>
+
+    <div class="reset-flow" aria-label="Cómo funciona">
+      <span><b>1</b> Verificamos tu modelo</span>
+      <span><b>2</b> Recibes el programa</span>
+      <span><b>3</b> Activamos tu PC</span>
+    </div>
+
+    <ul class="reset-facts">
+      <li><Icon name="monitor" size={17} /><span><strong>Requisitos</strong> Windows, conexión USB e impresora encendida.</span></li>
+      <li><Icon name="key" size={17} /><span><strong>Planes</strong> Desde 1 día hasta licencia permanente, según disponibilidad.</span></li>
+      <li><Icon name="lock" size={17} /><span><strong>Activación privada</strong> La licencia queda vinculada al equipo autorizado.</span></li>
+    </ul>
+
+    <div class="reset-product__footer">
+      <Button href="/contacto?servicio=licencias-software&producto=ResetEpson%20ClickSolutions" iconRight="arrow-right" track="license_interest" data-track-label="reset-epson">
+        Consultar compatibilidad y precio
+      </Button>
+      <p><Icon name="alert" size={16} />El reinicio del contador no reemplaza la revisión, limpieza o cambio físico de las almohadillas de tinta residual.</p>
+    </div>
+  </div>
+</article>
+
+<style>
+  .reset-product {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding: clamp(1.25rem, 3vw, 2.4rem);
+    border: 1px solid #b7e1f3;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #f7fcff, #fff);
+    box-shadow: var(--shadow-md);
+  }
+
+  .reset-product__visual { display: grid; place-items: center; min-height: 300px; padding: var(--space-5); overflow: hidden; border-radius: 19px; background: radial-gradient(circle at 80% 15%, rgb(0 170 231 / 0.26), transparent 35%), linear-gradient(145deg, #03152d, #075083); }
+  .reset-window { width: min(100%, 340px); border: 1px solid rgb(255 255 255 / 0.17); border-radius: 16px; background: rgb(2 15 32 / 0.77); box-shadow: 0 28px 50px rgb(0 0 0 / 0.3); transform: rotate(-1.5deg); }
+  .reset-window__top { display: flex; align-items: center; gap: 5px; min-height: 38px; padding-inline: 12px; border-bottom: 1px solid rgb(255 255 255 / 0.1); }
+  .reset-window__top i { width: 7px; height: 7px; border-radius: 50%; background: #3a6787; }
+  .reset-window__top i:first-child { background: #ff6b78; }
+  .reset-window__top i:nth-child(2) { background: #ffc45c; }
+  .reset-window__top i:nth-child(3) { background: #4bd59a; }
+  .reset-window__top span { margin-left: auto; color: #7898b3; font: 0.58rem ui-monospace, Consolas, monospace; }
+  .reset-window__body { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); padding: var(--space-6); }
+  .reset-icon { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 17px; background: rgb(0 197 244 / 0.13); color: #70e7ff; }
+  .reset-window__body small, .reset-window__body strong { display: block; }
+  .reset-window__body small { margin: 3px 0 5px; color: #6bdcff; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; }
+  .reset-window__body strong { color: #fff; font-size: var(--fs-sm); }
+  .reset-status { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: var(--space-4); padding: 10px 12px; border: 1px solid rgb(76 218 157 / 0.15); border-radius: 10px; background: rgb(76 218 157 / 0.07); color: #a8c6d9; font-size: var(--fs-xs); }
+  .reset-status i { width: 8px; height: 8px; border-radius: 50%; background: #4cda9d; box-shadow: 0 0 12px #4cda9d; }
+
+  .reset-product__heading { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+  .reset-product__copy h2 { margin-bottom: var(--space-2); }
+  .reset-product__lead { color: var(--text-muted); }
+  .reset-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-block: var(--space-5); }
+  .reset-flow span { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 11px; background: var(--surface); color: var(--brand-ink); font-size: var(--fs-xs); font-weight: 650; }
+  .reset-flow b { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 auto; border-radius: 8px; background: var(--brand-navy); color: #fff; font-size: 0.68rem; }
+  .reset-facts { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+  .reset-facts li { display: flex; gap: 9px; color: var(--text-muted); font-size: var(--fs-xs); }
+  .reset-facts :global(svg) { flex: 0 0 auto; margin-top: 1px; color: var(--brand-blue); }
+  .reset-facts strong { color: var(--brand-ink); }
+  .reset-product__footer { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+  .reset-product__footer :global(.btn) { justify-self: start; }
+  .reset-product__footer p { display: flex; gap: 7px; margin: 0; color: #7a4a08; font-size: 0.7rem; }
+  .reset-product__footer p :global(svg) { flex: 0 0 auto; margin-top: 1px; }
+
+  @media (max-width: 840px) { .reset-product { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) {
+    .reset-product__visual { min-height: 240px; padding: var(--space-3); }
+    .reset-window__body { padding: var(--space-4); }
+    .reset-flow { grid-template-columns: 1fr; }
+    .reset-product__footer :global(.btn) { width: 100%; }
+  }
+</style>

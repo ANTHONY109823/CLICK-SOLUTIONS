@@ -5,6 +5,8 @@ import PageHero from '../../components/sections/PageHero.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import LicenseCatalog from '../../components/licenses/LicenseCatalog.astro';
+import ResetEpsonProduct from '../../components/licenses/ResetEpsonProduct.astro';
+import CommercialPlans from '../../components/sections/CommercialPlans.astro';
 import ServiceHeroVisual from '../../components/sections/ServiceHeroVisual.astro';
 import { site } from '../../config/site';
 import { getServices, getLicenses } from '../../lib/content';
@@ -24,11 +26,15 @@ const path = `/servicios/${service.slug}`;
 const siteUrl = new URL(Astro.site ?? Astro.url.origin);
 const breadcrumbs = [
   { label: 'Inicio', href: '/' },
-  { label: 'Servicios', href: '/servicios' },
+  { label: 'Servicios', href: '/#servicios' },
   { label: service.name, href: path },
 ];
 
 const isLicenses = service.slug === 'licencias-software';
+const commercialPlanService = service.slug === 'drones' || service.slug === 'desarrollo-web' ? service.slug : null;
+const hasCommercialPlans = commercialPlanService !== null;
+const contentAnchor = isLicenses ? 'catalogo' : hasCommercialPlans ? 'planes' : 'trabajos';
+const contentLabel = isLicenses ? 'Ver productos' : hasCommercialPlans ? 'Ver planes' : 'Ver soluciones';
 
 const whatsapp = whatsappUrl(`Hola ${site.name}, quisiera información sobre: ${service.name}.`);
 const products = isLicenses ? getLicenses() : [];
@@ -44,26 +50,19 @@ const products = isLicenses ? getLicenses() : [];
 >
   <PageHero compact eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
     <Fragment slot="actions">
-      <Button href="#cotizar" variant="on-dark" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label={service.slug}>
-        {service.cta.label}
+      <Button href={`#${contentAnchor}`} variant="on-dark" size="lg" iconRight="arrow-right">
+        {contentLabel}
       </Button>
-      {
-        whatsapp && (
-          <Button href={whatsapp} variant="outline-dark" size="lg" icon="message" external track="whatsapp_click" data-track-label={service.slug}>
-            WhatsApp
-          </Button>
-        )
-      }
     </Fragment>
     <div slot="aside" class="hero-visual"><ServiceHeroVisual service={service.slug} /></div>
   </PageHero>
 
-  <section class="service-sheet" id={isLicenses ? 'catalogo' : 'trabajos'}>
+  <section class="service-sheet" id={contentAnchor}>
     <div class="container service-sheet__inner">
       <header class="work-heading">
         <div>
-          <span class="eyebrow">{isLicenses ? 'Catálogo' : 'Qué ofrecemos'}</span>
-          <h2>{isLicenses ? 'Licencias y descargas gratuitas' : service.offeringsTitle}</h2>
+          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
+          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Paquetes según tu objetivo' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
           <p>{service.description[0]}</p>
         </div>
         <div class="audience-pills" aria-label="A quién está dirigido">
@@ -72,17 +71,32 @@ const products = isLicenses ? getLicenses() : [];
       </header>
 
       {isLicenses ? (
-        <LicenseCatalog products={products} />
+        <div class="license-stack">
+          <ResetEpsonProduct />
+          <div class="catalog-heading">
+            <div><span>Más opciones</span><h2>Licencias y descargas gratuitas</h2></div>
+            <p>Busca por nombre o categoría y revisa la modalidad antes de continuar.</p>
+          </div>
+          <LicenseCatalog products={products} />
+        </div>
+      ) : commercialPlanService ? (
+        <CommercialPlans service={commercialPlanService} />
       ) : (
-        <div class="work-rail" aria-label={service.offeringsTitle}>
-          {service.offerings.map((offering) => (
-            <article class="work-card">
-              <span class="work-card__icon"><Icon name={offering.icon} size={21} /></span>
-              <h3>{offering.title}</h3>
-              <p>{offering.summary}</p>
-              <div class="work-card__bottom"><strong>Precio según alcance</strong><a href="#cotizar">Cotizar <Icon name="arrow-right" size={14} /></a></div>
-            </article>
-          ))}
+        <div class="rail-shell" data-scroll-shell>
+          <div class="rail-controls" aria-label="Mover servicios">
+            <button type="button" aria-label="Ver servicios anteriores" data-scroll-prev><Icon name="arrow-right" size={17} /></button>
+            <button type="button" aria-label="Ver más servicios" data-scroll-next><Icon name="arrow-right" size={17} /></button>
+          </div>
+          <div class="work-rail" aria-label={service.offeringsTitle} data-scroll-rail tabindex="0">
+            {service.offerings.map((offering) => (
+              <article class="work-card">
+                <span class="work-card__icon"><Icon name={offering.icon} size={21} /></span>
+                <h3>{offering.title}</h3>
+                <p>{offering.summary}</p>
+                <div class="work-card__bottom"><strong>Precio según alcance</strong></div>
+              </article>
+            ))}
+          </div>
         </div>
       )}
 
@@ -92,7 +106,7 @@ const products = isLicenses ? getLicenses() : [];
         <div>
           <span>Cotización clara</span>
           <h2>{service.cta.formHeading}</h2>
-          <p>Cuéntanos lo esencial. Revisamos el alcance y te indicamos precio y próximos pasos antes de empezar.</p>
+          <p>Elige la opción que más se acerca a lo que necesitas. Confirmamos alcance, precio y próximos pasos antes de empezar.</p>
         </div>
         <div class="quote-strip__actions">
           <Button href={`/contacto?servicio=${service.slug}`} size="lg" iconRight="arrow-right" track="quote_cta" data-track-label={`${service.slug}-compact`}>
@@ -104,6 +118,27 @@ const products = isLicenses ? getLicenses() : [];
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-scroll-shell]').forEach((shell) => {
+    const rail = shell.querySelector<HTMLElement>('[data-scroll-rail]');
+    const previous = shell.querySelector<HTMLButtonElement>('[data-scroll-prev]');
+    const next = shell.querySelector<HTMLButtonElement>('[data-scroll-next]');
+    if (!rail || !previous || !next) return;
+
+    const move = (direction: number) => rail.scrollBy({ left: direction * Math.min(rail.clientWidth * 0.82, 720), behavior: 'smooth' });
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+
+    const update = () => {
+      previous.disabled = rail.scrollLeft < 4;
+      next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+    };
+    rail.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  });
+</script>
 
 <style>
   .hero-visual {
@@ -338,6 +373,13 @@ const products = isLicenses ? getLicenses() : [];
     scrollbar-width: thin;
   }
 
+  .rail-shell { position: relative; }
+  .rail-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: var(--space-2); }
+  .rail-controls button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 12px; background: #fff; color: var(--brand-navy); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-fast); }
+  .rail-controls button:first-child { transform: rotate(180deg); }
+  .rail-controls button:hover:not(:disabled) { border-color: var(--brand-cyan); background: var(--info-bg); }
+  .rail-controls button:disabled { opacity: 0.35; cursor: default; }
+
   .work-card {
     display: flex;
     flex-direction: column;
@@ -353,12 +395,18 @@ const products = isLicenses ? getLicenses() : [];
   .work-card__icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: var(--space-5); border-radius: 14px; background: linear-gradient(145deg, #daf5ff, #cee9ff); color: var(--brand-blue); }
   .work-card h3 { font-size: var(--fs-md); }
   .work-card > p { display: -webkit-box; margin-bottom: var(--space-5); overflow: hidden; color: var(--text-muted); font-size: var(--fs-sm); -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
-  .work-card__bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--border); }
+  .work-card__bottom { display: flex; align-items: center; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--border); }
   .work-card__bottom strong { font-size: var(--fs-xs); color: var(--brand-ink); }
   .work-card__bottom a { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); font-weight: 700; text-decoration: none; }
 
   .service-note { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; color: var(--text-muted); font-size: var(--fs-xs); }
   .service-note :global(svg) { flex: 0 0 auto; margin-top: 2px; color: var(--link); }
+
+  .license-stack { display: grid; gap: clamp(2.25rem, 5vw, 4rem); }
+  .catalog-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-6); margin-bottom: calc(var(--space-4) * -1); }
+  .catalog-heading span { color: var(--link); font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .catalog-heading h2 { margin: 3px 0 0; font-size: var(--fs-xl); }
+  .catalog-heading p { max-width: 46ch; margin: 0; color: var(--text-muted); font-size: var(--fs-sm); text-align: right; }
 
   .quote-strip {
     display: grid;
@@ -385,6 +433,8 @@ const products = isLicenses ? getLicenses() : [];
     .service-sheet { min-height: auto; }
     .work-heading, .quote-strip { grid-template-columns: 1fr; }
     .audience-pills, .quote-strip__actions { justify-content: flex-start; }
+    .catalog-heading { align-items: flex-start; flex-direction: column; gap: var(--space-2); }
+    .catalog-heading p { text-align: left; }
   }
 
   @media (max-width: 520px) {

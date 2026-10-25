@@ -9,7 +9,6 @@ export const mainNav: NavLink[] = [
   { label: 'Proyectos', href: '/proyectos' },
   { label: 'Nosotros', href: '/nosotros' },
   { label: 'Ayuda', href: '/ayuda' },
-  { label: 'Contacto', href: '/contacto' },
 ];
 
 export const companyNav: NavLink[] = [
