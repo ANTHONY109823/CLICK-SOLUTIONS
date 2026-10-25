@@ -48,7 +48,7 @@ const products = isLicenses ? getLicenses() : [];
     breadcrumbSchema(siteUrl, breadcrumbs),
   ]}
 >
-  <PageHero compact eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
+  <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
     <Fragment slot="actions">
       <Button href={`#${contentAnchor}`} variant="on-dark" size="lg" iconRight="arrow-right">
         {contentLabel}
@@ -57,7 +57,7 @@ const products = isLicenses ? getLicenses() : [];
     <div slot="aside" class="hero-visual"><ServiceHeroVisual service={service.slug} /></div>
   </PageHero>
 
-  <section class="service-sheet" id={contentAnchor}>
+  <section class="service-sheet" data-service={service.slug} id={contentAnchor}>
     <div class="container service-sheet__inner">
       <header class="work-heading">
         <div>
@@ -341,10 +341,17 @@ const products = isLicenses ? getLicenses() : [];
   }
 
   .service-sheet {
+    --sheet-accent: var(--brand-cyan);
+    --sheet-tint: rgb(0 170 231 / 0.07);
     min-height: calc(100svh - var(--header-h));
     padding-block: clamp(2.5rem, 5vh, 4.5rem);
-    background: radial-gradient(circle at 88% 8%, rgb(0 170 231 / 0.07), transparent 25%), var(--bg);
+    background: radial-gradient(circle at 88% 8%, var(--sheet-tint), transparent 25%), var(--bg);
   }
+
+  .service-sheet[data-service='drones'] { --sheet-accent: #16b7d8; --sheet-tint: rgb(22 183 216 / 0.11); background-color: #f7fcfd; }
+  .service-sheet[data-service='desarrollo-web'] { --sheet-accent: #20aa79; --sheet-tint: rgb(32 170 121 / 0.09); background-color: #f9fdfb; }
+  .service-sheet[data-service='soporte-tecnico'] { --sheet-accent: #596ee8; --sheet-tint: rgb(89 110 232 / 0.09); background-color: #fafbff; }
+  .service-sheet[data-service='licencias-software'] { --sheet-accent: #83a91d; --sheet-tint: rgb(151 196 34 / 0.09); background-color: #fcfdf8; }
 
   .service-sheet__inner { display: grid; gap: clamp(1.4rem, 3vh, 2.2rem); }
 
@@ -360,7 +367,7 @@ const products = isLicenses ? getLicenses() : [];
 
   .audience-pills { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
   .audience-pills span { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border: 1px solid var(--border); border-radius: var(--radius-full); background: #fff; color: var(--text-muted); font-size: var(--fs-xs); font-weight: 650; white-space: nowrap; }
-  .audience-pills :global(svg) { color: var(--link); }
+  .audience-pills :global(svg) { color: var(--sheet-accent); }
 
   .work-rail {
     display: grid;
@@ -392,7 +399,7 @@ const products = isLicenses ? getLicenses() : [];
     scroll-snap-align: start;
   }
 
-  .work-card__icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: var(--space-5); border-radius: 14px; background: linear-gradient(145deg, #daf5ff, #cee9ff); color: var(--brand-blue); }
+  .work-card__icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: var(--space-5); border-radius: 14px; background: color-mix(in srgb, var(--sheet-accent) 13%, #fff); color: var(--sheet-accent); }
   .work-card h3 { font-size: var(--fs-md); }
   .work-card > p { display: -webkit-box; margin-bottom: var(--space-5); overflow: hidden; color: var(--text-muted); font-size: var(--fs-sm); -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
   .work-card__bottom { display: flex; align-items: center; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--border); }
@@ -420,6 +427,11 @@ const products = isLicenses ? getLicenses() : [];
     color: var(--dark-text);
     box-shadow: 0 28px 55px -38px #001020;
   }
+
+  .service-sheet[data-service='drones'] .quote-strip { background: linear-gradient(125deg, #042637, #087089); }
+  .service-sheet[data-service='desarrollo-web'] .quote-strip { background: linear-gradient(125deg, #03283a, #075a48); }
+  .service-sheet[data-service='soporte-tecnico'] .quote-strip { background: linear-gradient(125deg, #0c1b3d, #304988); }
+  .service-sheet[data-service='licencias-software'] .quote-strip { background: linear-gradient(125deg, #10152c, #294d4c); }
 
   .quote-strip > div > span { color: var(--dark-accent); font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
   .quote-strip h2 { margin: 3px 0 5px; color: #fff; font-size: var(--fs-xl); }

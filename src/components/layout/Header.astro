@@ -2,14 +2,18 @@
 import Logo from './Logo.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
-import { mainNav } from '../../data/navigation';
 import { getServices } from '../../lib/content';
 import { routePath } from '../../lib/links';
 
 const services = getServices();
 const path = routePath(Astro.url.pathname);
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
-const servicesActive = isActive('/servicios');
+const shortLabels: Record<string, string> = {
+  drones: 'Drones',
+  'desarrollo-web': 'Desarrollo web',
+  'soporte-tecnico': 'Soporte',
+  'licencias-software': 'Software',
+};
 ---
 
 <header class="site-header" data-header>
@@ -18,62 +22,29 @@ const servicesActive = isActive('/servicios');
       <Logo variant="mark" />
     </a>
 
-    <nav class="nav-desktop" aria-label="Principal">
+    <nav class="nav-desktop" aria-label="Servicios principales">
       <ul class="nav-list">
-        <li class="has-menu" data-dropdown>
-          <button
-            type="button"
-            class:list={['nav-link', { active: servicesActive }]}
-            aria-expanded="false"
-            aria-controls="menu-servicios"
-            data-dropdown-toggle
-          >
-            <span class="nav-signal" aria-hidden="true"></span>
-            Servicios <Icon name="chevron-down" size={16} class="chevron" />
-          </button>
-          <div id="menu-servicios" class="dropdown" hidden data-dropdown-panel>
-            <ul class="dropdown-grid">
-              {
-                services.map((service) => (
-                  <li>
-                    <a
-                      href={`/servicios/${service.slug}`}
-                      class="dropdown-item"
-                      aria-current={isActive(`/servicios/${service.slug}`) ? 'page' : undefined}
-                    >
-                      <span class="dropdown-icon">
-                        <Icon name={service.icon} size={20} />
-                      </span>
-                      <span>
-                        <span class="dropdown-title">{service.name}</span>
-                        <span class="dropdown-desc">{service.tagline}</span>
-                      </span>
-                    </a>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </li>
-        {
-          mainNav.map((link) => (
+        {services.map((service) => {
+          const href = `/servicios/${service.slug}`;
+          return (
             <li>
               <a
-                href={link.href}
-                class:list={['nav-link', { active: isActive(link.href) }]}
-                aria-current={isActive(link.href) ? 'page' : undefined}
+                href={href}
+                class:list={['nav-link', { active: isActive(href) }]}
+                aria-current={isActive(href) ? 'page' : undefined}
               >
-                {link.label}
+                <Icon name={service.icon} size={16} />
+                {shortLabels[service.slug]}
               </a>
             </li>
-          ))
-        }
+          );
+        })}
       </ul>
     </nav>
 
     <div class="header-actions">
       <Button href="/contacto" size="sm" class="header-cta" track="quote_cta" data-track-label="header">
-        Solicitar cotización
+        Cotizar
       </Button>
       <button
         type="button"
@@ -90,27 +61,16 @@ const servicesActive = isActive('/servicios');
   </div>
 
   <div id="mobile-menu" class="mobile-menu" hidden data-mobile-menu>
-    <nav class="container" aria-label="Menú móvil">
-      <p class="mobile-label">Servicios</p>
+    <nav class="container" aria-label="Servicios principales">
+      <p class="mobile-label">Elige un servicio</p>
       <ul class="mobile-list">
         {
           services.map((service) => (
             <li>
-              <a href={`/servicios/${service.slug}`} class="mobile-link">
-                <Icon name={service.icon} size={20} />
-                {service.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="mobile-label">Empresa</p>
-      <ul class="mobile-list">
-        {
-          mainNav.map((link) => (
-            <li>
-              <a href={link.href} class="mobile-link" aria-current={isActive(link.href) ? 'page' : undefined}>
-                {link.label}
+              <a href={`/servicios/${service.slug}`} class="mobile-link" aria-current={isActive(`/servicios/${service.slug}`) ? 'page' : undefined}>
+                <span class="mobile-link__icon"><Icon name={service.icon} size={20} /></span>
+                <span><strong>{service.name}</strong><small>{service.tagline}</small></span>
+                <Icon name="arrow-right" size={17} />
               </a>
             </li>
           ))
@@ -159,7 +119,7 @@ const servicesActive = isActive('/servicios');
   .header-inner {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: clamp(1rem, 2.5vw, 2.5rem);
     height: var(--header-h);
     transition: height var(--dur-base) var(--ease-out);
   }
@@ -175,13 +135,14 @@ const servicesActive = isActive('/servicios');
   }
 
   .nav-desktop {
+    min-width: 0;
     margin-left: auto;
   }
 
   .nav-list {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -190,18 +151,19 @@ const servicesActive = isActive('/servicios');
   .nav-link {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 7px;
     min-height: 40px;
-    padding: 0 var(--space-3);
+    padding: 0 clamp(0.55rem, 1vw, 0.9rem);
     border: 0;
     border-radius: var(--radius-sm);
     background: none;
     font: inherit;
-    font-size: var(--fs-sm);
-    font-weight: 500;
+    font-size: clamp(0.75rem, 1vw, 0.875rem);
+    font-weight: 600;
     color: #d8e7f4;
     text-decoration: none;
     cursor: pointer;
+    white-space: nowrap;
     transition: background-color var(--dur-fast), color var(--dur-fast);
   }
 
@@ -212,8 +174,13 @@ const servicesActive = isActive('/servicios');
   }
 
   .nav-link.active {
+    background: rgb(0 170 231 / 0.12);
     color: var(--dark-accent);
     font-weight: 600;
+  }
+
+  .nav-link :global(svg) {
+    color: #6fcff5;
   }
 
   .nav-link :global(.chevron) {
@@ -379,22 +346,50 @@ const servicesActive = isActive('/servicios');
   }
 
   .mobile-list {
+    display: grid;
+    gap: var(--space-2);
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
   .mobile-link {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-3);
-    min-height: 48px;
-    padding: 0 var(--space-2);
-    border-bottom: 1px solid var(--dark-border);
-    font-size: var(--fs-md);
-    font-weight: 500;
+    min-height: 68px;
+    padding: var(--space-3);
+    border: 1px solid var(--dark-border);
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.035);
     color: var(--dark-text);
     text-decoration: none;
+  }
+
+  .mobile-link__icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgb(0 170 231 / 0.12);
+  }
+
+  .mobile-link strong,
+  .mobile-link small {
+    display: block;
+  }
+
+  .mobile-link strong {
+    font-size: var(--fs-sm);
+  }
+
+  .mobile-link small {
+    margin-top: 2px;
+    color: var(--dark-muted);
+    font-size: 0.68rem;
+    line-height: 1.35;
   }
 
   .mobile-link :global(svg) {
@@ -406,7 +401,13 @@ const servicesActive = isActive('/servicios');
     margin-top: var(--space-8);
   }
 
-  @media (max-width: 959px) {
+  @media (max-width: 1040px) {
+    .nav-link :global(svg) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 880px) {
     .nav-desktop {
       display: none;
     }
@@ -424,13 +425,13 @@ const servicesActive = isActive('/servicios');
     }
   }
 
-  @media (max-width: 479px) {
+  @media (max-width: 420px) {
     :global(.header-cta) {
       display: none !important;
     }
   }
 
-  @media (min-width: 960px) {
+  @media (min-width: 881px) {
     .mobile-menu {
       display: none !important;
     }
@@ -446,45 +447,6 @@ const servicesActive = isActive('/servicios');
   const syncHeader = () => siteHeader?.classList.toggle('is-scrolled', window.scrollY > 18);
   syncHeader();
   window.addEventListener('scroll', syncHeader, { passive: true });
-
-  // Menú desplegable de servicios: clic, teclado (Escape) y hover en dispositivos con mouse.
-  document.querySelectorAll<HTMLElement>('[data-dropdown]').forEach((root) => {
-    const toggle = root.querySelector<HTMLButtonElement>('[data-dropdown-toggle]')!;
-    const panel = root.querySelector<HTMLElement>('[data-dropdown-panel]')!;
-    let closeTimer: number | undefined;
-
-    const setOpen = (open: boolean) => {
-      toggle.setAttribute('aria-expanded', String(open));
-      panel.hidden = !open;
-    };
-
-    toggle.addEventListener('click', () => setOpen(panel.hasAttribute('hidden')));
-
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      root.addEventListener('mouseenter', () => {
-        window.clearTimeout(closeTimer);
-        setOpen(true);
-      });
-      root.addEventListener('mouseleave', () => {
-        closeTimer = window.setTimeout(() => setOpen(false), 150);
-      });
-    }
-
-    root.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !panel.hidden) {
-        setOpen(false);
-        toggle.focus();
-      }
-    });
-
-    root.addEventListener('focusout', (e) => {
-      if (!root.contains(e.relatedTarget as Node | null)) setOpen(false);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!root.contains(e.target as Node)) setOpen(false);
-    });
-  });
 
   // Menú móvil.
   const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
@@ -508,7 +470,7 @@ const servicesActive = isActive('/servicios');
         menuToggle.focus();
       }
     });
-    window.matchMedia('(min-width: 960px)').addEventListener('change', (e) => {
+    window.matchMedia('(min-width: 881px)').addEventListener('change', (e) => {
       if (e.matches) setMenu(false);
     });
   }

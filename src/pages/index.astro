@@ -34,7 +34,7 @@ const values: { title: string; text: string; icon: IconName }[] = [
     <div class="container panel-inner">
       <header class="panel-heading" data-reveal>
         <div><span class="eyebrow">Proyectos</span><h2>Ideas convertidas en soluciones útiles</h2></div>
-        <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver portafolio</Button>
+        <p>Explora directamente cada especialidad.</p>
       </header>
       <div class:list={['projects-layout', { 'projects-layout--empty': projects.length === 0 }]}>
         {projects.length > 0 && <div class="featured-project" data-reveal="left"><ProjectCard project={projects[0]} /></div>}
@@ -60,14 +60,13 @@ const values: { title: string; text: string; icon: IconName }[] = [
         <p>Reunimos desarrollo web, drones, soporte y software para que personas y empresas resuelvan sus necesidades con un solo equipo.</p>
         <div class="about-actions">
           <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">Hablemos de tu proyecto</Button>
-          <Button href="/nosotros" variant="secondary" size="lg">Conocer la empresa</Button>
         </div>
       </div>
-      <div class="values" data-reveal="right">
+      <div class="values" id="ayuda" data-reveal="right">
         {values.map((value) => (
           <article><span><Icon name={value.icon} size={21} /></span><div><h3>{value.title}</h3><p>{value.text}</p></div></article>
         ))}
-        <div class="availability"><span class="availability__dot"></span><div><strong>¿Tienes una idea?</strong><small>Cuéntanos qué necesitas y te orientamos.</small></div></div>
+        <div class="availability"><span class="availability__help"><Icon name="help" size={19} /></span><div><strong>Ayuda rápida</strong><small>Elige el servicio adecuado y cuéntanos tu objetivo; te orientamos antes de cotizar.</small></div></div>
       </div>
     </div>
   </section>
@@ -287,6 +286,7 @@ const values: { title: string; text: string; icon: IconName }[] = [
   }
 
   .panel-heading h2 { max-width: 15ch; margin: 0; }
+  .panel-heading > p { max-width: 28ch; margin: 0; color: var(--text-muted); font-size: var(--fs-sm); text-align: right; }
 
   .projects-layout {
     display: grid;
@@ -395,7 +395,7 @@ const values: { title: string; text: string; icon: IconName }[] = [
     background: rgb(29 168 105 / 0.08);
   }
 
-  .availability__dot { width: 10px; height: 10px; border-radius: 50%; background: #45df9a; box-shadow: 0 0 16px #45df9a; }
+  .availability__help { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 auto; border-radius: 12px; background: rgb(69 223 154 / 0.12); color: #63e8a9; }
   .availability strong, .availability small { display: block; }
   .availability strong { color: #fff; font-size: var(--fs-sm); }
   .availability small { color: #8fa9c0; font-size: var(--fs-xs); }
@@ -409,6 +409,7 @@ const values: { title: string; text: string; icon: IconName }[] = [
 
   @media (max-width: 560px) {
     .panel-heading { align-items: flex-start; flex-direction: column; }
+    .panel-heading > p { text-align: left; }
     .format-card { min-height: 92px; padding: var(--space-4); }
     .about-actions { display: grid; }
     .about-actions :global(.btn) { width: 100%; }
