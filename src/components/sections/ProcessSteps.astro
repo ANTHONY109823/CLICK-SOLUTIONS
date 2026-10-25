@@ -26,7 +26,7 @@ const { steps } = Astro.props;
   .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-    gap: var(--space-6);
+    gap: 0;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -35,8 +35,9 @@ const { steps } = Astro.props;
 
   .step {
     position: relative;
-    padding-top: var(--space-6);
-    border-top: 2px solid var(--border);
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, #fff, #fbfdff);
   }
 
   .step::before {
@@ -44,18 +45,30 @@ const { steps } = Astro.props;
     position: absolute;
     top: -2px;
     left: 0;
-    width: 40px;
-    height: 2px;
-    background: var(--brand-cyan);
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue));
+    transform: scaleX(0.22);
+    transform-origin: left;
+  }
+
+  .step + .step {
+    border-left: 1px solid var(--border);
   }
 
   .step__number {
-    display: block;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
     margin-bottom: var(--space-3);
     font-size: var(--fs-sm);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--link);
+    border: 1px solid #bde7f7;
+    border-radius: 13px;
+    background: var(--info-bg);
   }
 
   .step__title {
@@ -71,6 +84,7 @@ const { steps } = Astro.props;
 
   :global(.section--dark) .step {
     border-color: var(--dark-border);
+    background: var(--dark-surface);
   }
 
   :global(.section--dark) .step__number {
@@ -79,5 +93,14 @@ const { steps } = Astro.props;
 
   :global(.section--dark) .step__text {
     color: var(--dark-muted);
+  }
+
+  @media (max-width: 780px) {
+    .steps { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    .step { border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  }
+
+  @media (max-width: 520px) {
+    .steps { grid-template-columns: 1fr; }
   }
 </style>

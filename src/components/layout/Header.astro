@@ -28,6 +28,7 @@ const servicesActive = isActive('/servicios');
             aria-controls="menu-servicios"
             data-dropdown-toggle
           >
+            <span class="nav-signal" aria-hidden="true"></span>
             Servicios <Icon name="chevron-down" size={16} class="chevron" />
           </button>
           <div id="menu-servicios" class="dropdown" hidden data-dropdown-panel>
@@ -133,14 +134,31 @@ const servicesActive = isActive('/servicios');
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgb(255 255 255 / 0.96);
-    border-bottom: 1px solid var(--border);
+    --logo-color: #fff;
+    background: rgb(3 19 41 / 0.94);
+    border-bottom: 1px solid rgb(83 174 229 / 0.16);
+    box-shadow: 0 0 0 rgb(1 15 32 / 0);
+    transition: box-shadow var(--dur-base), background-color var(--dur-base);
+  }
+
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--brand-cyan), var(--brand-blue), transparent);
+    opacity: 0.8;
+  }
+
+  .site-header.is-scrolled {
+    background: rgb(3 19 41 / 0.98);
+    box-shadow: 0 16px 42px -30px rgb(0 0 0 / 0.9);
   }
 
   @supports (backdrop-filter: blur(8px)) {
     .site-header {
-      background: rgb(255 255 255 / 0.88);
-      backdrop-filter: saturate(160%) blur(8px);
+      background: rgb(3 19 41 / 0.82);
+      backdrop-filter: saturate(150%) blur(16px);
     }
   }
 
@@ -149,6 +167,11 @@ const servicesActive = isActive('/servicios');
     align-items: center;
     gap: var(--space-6);
     height: var(--header-h);
+    transition: height var(--dur-base) var(--ease-out);
+  }
+
+  .is-scrolled .header-inner {
+    height: 64px;
   }
 
   .brand {
@@ -182,7 +205,7 @@ const servicesActive = isActive('/servicios');
     font: inherit;
     font-size: var(--fs-sm);
     font-weight: 500;
-    color: var(--text);
+    color: #d8e7f4;
     text-decoration: none;
     cursor: pointer;
     transition: background-color var(--dur-fast), color var(--dur-fast);
@@ -190,12 +213,12 @@ const servicesActive = isActive('/servicios');
 
   .nav-link:hover,
   .nav-link[aria-expanded='true'] {
-    background: var(--surface);
-    color: var(--brand-navy);
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
   }
 
   .nav-link.active {
-    color: var(--brand-navy);
+    color: var(--dark-accent);
     font-weight: 600;
   }
 
@@ -211,14 +234,22 @@ const servicesActive = isActive('/servicios');
     position: relative;
   }
 
+  .nav-signal {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-cyan);
+    box-shadow: 0 0 12px var(--brand-cyan);
+  }
+
   .dropdown {
     position: absolute;
     top: calc(100% + 10px);
     left: 50%;
     width: min(560px, 90vw);
     padding: var(--space-3);
-    background: var(--bg);
-    border: 1px solid var(--border);
+    background: rgb(6 25 49 / 0.98);
+    border: 1px solid var(--dark-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     transform: translateX(-50%);
@@ -255,13 +286,13 @@ const servicesActive = isActive('/servicios');
     padding: var(--space-3);
     border-radius: var(--radius-md);
     text-decoration: none;
-    color: var(--text);
+    color: var(--dark-text);
     transition: background-color var(--dur-fast);
   }
 
   .dropdown-item:hover,
   .dropdown-item[aria-current='page'] {
-    background: var(--surface);
+    background: rgb(255 255 255 / 0.07);
   }
 
   .dropdown-icon {
@@ -271,21 +302,21 @@ const servicesActive = isActive('/servicios');
     width: 36px;
     height: 36px;
     border-radius: var(--radius-sm);
-    background: var(--info-bg);
-    color: var(--brand-navy);
+    background: rgb(0 170 231 / 0.14);
+    color: var(--dark-accent);
   }
 
   .dropdown-title {
     display: block;
     font-size: var(--fs-sm);
     font-weight: 600;
-    color: var(--brand-ink);
+    color: #fff;
   }
 
   .dropdown-desc {
     display: block;
     font-size: var(--fs-xs);
-    color: var(--text-muted);
+    color: var(--dark-muted);
     line-height: 1.45;
   }
 
@@ -295,7 +326,7 @@ const servicesActive = isActive('/servicios');
     gap: var(--space-2);
     margin-top: var(--space-2);
     padding: var(--space-3);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--dark-border);
     font-size: var(--fs-sm);
     font-weight: 600;
     text-decoration: none;
@@ -307,15 +338,27 @@ const servicesActive = isActive('/servicios');
     gap: var(--space-2);
   }
 
+  :global(.header-cta) {
+    background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue));
+    color: #031426;
+    box-shadow: 0 10px 26px -14px rgb(0 170 231 / 0.9);
+  }
+
+  :global(.header-cta:hover) {
+    background: linear-gradient(135deg, #38c8fa, #3198ff);
+    color: #031426;
+    transform: translateY(-1px);
+  }
+
   .menu-toggle {
     display: none;
     place-items: center;
     width: 44px;
     height: 44px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--dark-border);
     border-radius: var(--radius-md);
-    background: var(--bg);
-    color: var(--brand-ink);
+    background: rgb(255 255 255 / 0.06);
+    color: #fff;
     cursor: pointer;
   }
 
@@ -329,12 +372,18 @@ const servicesActive = isActive('/servicios');
   }
 
   .mobile-menu {
-    position: fixed;
-    inset: var(--header-h) 0 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: calc(100dvh - var(--header-h));
     overflow-y: auto;
     padding-block: var(--space-4) var(--space-12);
-    background: var(--bg);
-    border-top: 1px solid var(--border);
+    background:
+      radial-gradient(circle at 80% 5%, rgb(0 170 231 / 0.14), transparent 34%),
+      var(--dark-bg);
+    border-top: 1px solid var(--dark-border);
     overscroll-behavior: contain;
   }
 
@@ -344,7 +393,7 @@ const servicesActive = isActive('/servicios');
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--dark-muted);
   }
 
   .mobile-list {
@@ -359,15 +408,15 @@ const servicesActive = isActive('/servicios');
     gap: var(--space-3);
     min-height: 48px;
     padding: 0 var(--space-2);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--dark-border);
     font-size: var(--fs-md);
     font-weight: 500;
-    color: var(--brand-ink);
+    color: var(--dark-text);
     text-decoration: none;
   }
 
   .mobile-link :global(svg) {
-    color: var(--brand-navy);
+    color: var(--dark-accent);
   }
 
   .mobile-link--muted {
@@ -392,6 +441,10 @@ const servicesActive = isActive('/servicios');
     .menu-toggle {
       display: inline-grid;
     }
+
+    .is-scrolled .mobile-menu {
+      height: calc(100dvh - 64px);
+    }
   }
 
   @media (max-width: 479px) {
@@ -412,6 +465,11 @@ const servicesActive = isActive('/servicios');
 </style>
 
 <script>
+  const siteHeader = document.querySelector<HTMLElement>('[data-header]');
+  const syncHeader = () => siteHeader?.classList.toggle('is-scrolled', window.scrollY > 18);
+  syncHeader();
+  window.addEventListener('scroll', syncHeader, { passive: true });
+
   // Menú desplegable de servicios: clic, teclado (Escape) y hover en dispositivos con mouse.
   document.querySelectorAll<HTMLElement>('[data-dropdown]').forEach((root) => {
     const toggle = root.querySelector<HTMLButtonElement>('[data-dropdown-toggle]')!;

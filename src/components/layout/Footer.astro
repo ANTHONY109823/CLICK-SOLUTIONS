@@ -25,7 +25,7 @@ const columns = [
   <div class="container footer-grid">
     <div class="footer-brand">
       <a href="/" aria-label="ClickSolutions, ir al inicio" class="footer-logo">
-        <Logo variant="full" width={96} />
+        <Logo variant="mark" />
       </a>
       <p>{site.description}</p>
 
@@ -104,9 +104,13 @@ const columns = [
 
 <style>
   .site-footer {
+    --logo-color: #fff;
     margin-top: auto;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
+    background:
+      radial-gradient(circle at 12% 0%, rgb(0 170 231 / 0.12), transparent 30%),
+      var(--dark-bg);
+    border-top: 1px solid var(--dark-border);
+    color: var(--dark-muted);
     font-size: var(--fs-sm);
   }
 
@@ -124,7 +128,7 @@ const columns = [
 
   .footer-brand p {
     max-width: 34ch;
-    color: var(--text-muted);
+    color: var(--dark-muted);
   }
 
   .footer-contact,
@@ -146,12 +150,12 @@ const columns = [
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--text);
+    color: var(--dark-text);
     text-decoration: none;
   }
 
   .footer-contact :global(svg) {
-    color: var(--brand-navy);
+    color: var(--dark-accent);
   }
 
   .footer-social {
@@ -166,7 +170,7 @@ const columns = [
     font-size: var(--fs-sm);
     font-weight: 600;
     letter-spacing: 0;
-    color: var(--brand-ink);
+    color: #fff;
   }
 
   .footer-col li + li {
@@ -175,21 +179,21 @@ const columns = [
 
   .footer-col a,
   .footer-social a {
-    color: var(--text-muted);
+    color: var(--dark-muted);
     text-decoration: none;
   }
 
   .footer-col a:hover,
   .footer-social a:hover,
   .footer-contact a:hover {
-    color: var(--brand-navy);
+    color: var(--dark-accent);
     text-decoration: underline;
   }
 
   .footer-bottom {
     padding-block: var(--space-6);
-    border-top: 1px solid var(--border);
-    color: var(--text-muted);
+    border-top: 1px solid var(--dark-border);
+    color: var(--dark-muted);
     font-size: var(--fs-xs);
   }
 

@@ -37,16 +37,34 @@ const href = `/servicios/${service.slug}`;
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 390px;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
     transition:
       border-color var(--dur-base) var(--ease-out),
       box-shadow var(--dur-base) var(--ease-out),
       transform var(--dur-base) var(--ease-out);
   }
 
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
   .service-card:hover {
     border-color: #a9dcf2;
     box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(-7px);
+  }
+
+  .service-card:hover::before {
+    transform: scaleX(1);
   }
 
   .service-card:focus-within {
@@ -55,6 +73,7 @@ const href = `/servicios/${service.slug}`;
 
   .service-card__title {
     font-size: var(--fs-lg);
+    margin-top: var(--space-2);
   }
 
   /* Toda la tarjeta es clicable, con un solo enlace accesible. */
@@ -91,6 +110,15 @@ const href = `/servicios/${service.slug}`;
     font-size: var(--fs-sm);
     font-weight: 600;
     color: var(--link);
+  }
+
+  .service-card :global(.icon-tile) {
+    width: 56px;
+    height: 56px;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #e5f8ff, #d9efff);
+    color: var(--brand-blue);
+    box-shadow: 0 14px 30px -20px rgb(0 126 255 / 0.9);
   }
 
   .service-card__more :global(svg) {

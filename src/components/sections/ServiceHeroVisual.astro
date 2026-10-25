@@ -1,0 +1,143 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { ServiceSlug } from '../../data/services';
+import type { IconName } from '../ui/icons';
+
+interface Props { service: ServiceSlug }
+
+const { service } = Astro.props;
+
+const profiles: Record<ServiceSlug, {
+  icon: IconName;
+  kicker: string;
+  title: string;
+  metric: string;
+  chipA: string;
+  chipB: string;
+}> = {
+  drones: {
+    icon: 'drone', kicker: 'VISTA AÉREA', title: 'Captura otra perspectiva', metric: 'Planificación · Vuelo · Entrega', chipA: 'Foto + video', chipB: 'Vuelo evaluado',
+  },
+  'desarrollo-web': {
+    icon: 'code', kicker: 'PRODUCTO DIGITAL', title: 'Diseñado para convertir', metric: 'Diseño · Código · Publicación', chipA: 'Responsive', chipB: 'Rápido',
+  },
+  'soporte-tecnico': {
+    icon: 'headset', kicker: 'DIAGNÓSTICO', title: 'Equipos listos para trabajar', metric: 'Revisión · Solución · Prevención', chipA: 'Claro', chipB: 'Seguro',
+  },
+  'licencias-software': {
+    icon: 'key', kicker: 'SOFTWARE', title: 'La opción correcta para ti', metric: 'Licencias · Gratis · Soporte', chipA: 'Legítimo', chipB: 'Compatible',
+  },
+};
+
+const profile = profiles[service];
+---
+
+<div class="service-visual" data-profile={service} aria-label={`Vista representativa de ${profile.title}`}>
+  <div class="service-visual__grid" aria-hidden="true"></div>
+  <div class="service-visual__panel">
+    <div class="service-visual__top"><span></span><span></span><span></span><small>clicksolutions / {service}</small></div>
+    <div class="service-visual__body">
+      <span class="service-visual__icon"><Icon name={profile.icon} size={34} /></span>
+      <p>{profile.kicker}</p>
+      <h2>{profile.title}</h2>
+      <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <small>{profile.metric}</small>
+    </div>
+  </div>
+  <span class="visual-chip visual-chip--a">{profile.chipA}</span>
+  <span class="visual-chip visual-chip--b">{profile.chipB}</span>
+</div>
+
+<style>
+  .service-visual {
+    --visual-accent: #28c4f4;
+    position: relative;
+    min-height: 330px;
+    overflow: hidden;
+    border: 1px solid rgb(91 196 241 / 0.25);
+    border-radius: 24px;
+    background: linear-gradient(145deg, #061b36, #092e53);
+    box-shadow: 0 38px 75px -38px #000;
+    isolation: isolate;
+  }
+
+  .service-visual[data-profile='drones'] { --visual-accent: #65e6ff; background: linear-gradient(145deg, #06253a, #0b4c67); }
+  .service-visual[data-profile='desarrollo-web'] { --visual-accent: #63e6a8; background: linear-gradient(145deg, #071d38, #0a3c61); }
+  .service-visual[data-profile='soporte-tecnico'] { --visual-accent: #76b8ff; background: linear-gradient(145deg, #101b38, #173b68); }
+  .service-visual[data-profile='licencias-software'] { --visual-accent: #d4ff65; background: linear-gradient(145deg, #14162f, #193e62); }
+
+  .service-visual::after {
+    content: '';
+    position: absolute;
+    width: 270px;
+    aspect-ratio: 1;
+    right: -70px;
+    top: -80px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--visual-accent) 28%, transparent), transparent 68%);
+  }
+
+  .service-visual__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(135deg, black, transparent 78%);
+  }
+
+  .service-visual__panel {
+    position: absolute;
+    inset: 34px 42px;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.13);
+    border-radius: 18px;
+    background: rgb(2 14 30 / 0.64);
+    box-shadow: 0 25px 50px rgb(0 0 0 / 0.24);
+    backdrop-filter: blur(12px);
+    transform: rotate(-1deg);
+  }
+
+  .service-visual__top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding-inline: 13px;
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  .service-visual__top > span { width: 7px; height: 7px; border-radius: 50%; background: #31587a; }
+  .service-visual__top > span:first-child { background: #ff6a75; }
+  .service-visual__top > span:nth-child(2) { background: #ffc05b; }
+  .service-visual__top > span:nth-child(3) { background: #47dc98; }
+  .service-visual__top small { margin-left: auto; color: #7594ae; font: 0.6rem ui-monospace, Consolas, monospace; }
+
+  .service-visual__body { padding: clamp(1.4rem, 4vw, 2.4rem); }
+  .service-visual__icon { display: grid; place-items: center; width: 58px; height: 58px; margin-bottom: var(--space-4); border-radius: 17px; background: color-mix(in srgb, var(--visual-accent) 18%, transparent); color: var(--visual-accent); }
+  .service-visual__body p { margin: 0 0 6px; color: var(--visual-accent); font-size: 0.67rem; font-weight: 800; letter-spacing: 0.12em; }
+  .service-visual__body h2 { max-width: 11ch; margin: 0; color: #fff; font-size: clamp(1.65rem, 3.3vw, 2.45rem); line-height: 1; }
+  .service-visual__body small { color: #809db6; font-size: 0.68rem; }
+
+  .signal { display: flex; align-items: end; gap: 4px; height: 24px; margin-block: var(--space-4) var(--space-2); }
+  .signal i { width: 18px; height: 35%; border-radius: 3px; background: var(--visual-accent); opacity: 0.35; animation: signal 1.8s ease-in-out infinite; }
+  .signal i:nth-child(2) { height: 65%; animation-delay: -0.3s; }
+  .signal i:nth-child(3) { height: 100%; animation-delay: -0.7s; }
+  .signal i:nth-child(4) { height: 58%; animation-delay: -1s; }
+  .signal i:nth-child(5) { height: 80%; animation-delay: -1.3s; }
+
+  .visual-chip { position: absolute; z-index: 3; padding: 8px 12px; border: 1px solid rgb(255 255 255 / 0.16); border-radius: var(--radius-full); background: rgb(4 26 50 / 0.9); color: #deeffb; font-size: var(--fs-xs); font-weight: 700; box-shadow: 0 12px 26px rgb(0 0 0 / 0.24); }
+  .visual-chip--a { top: 18px; right: 20px; }
+  .visual-chip--b { right: 18px; bottom: 18px; color: var(--visual-accent); }
+
+  @keyframes signal { 50% { opacity: 0.9; transform: scaleY(0.72); } }
+
+  @media (max-width: 520px) {
+    .service-visual { min-height: 280px; }
+    .service-visual__panel { inset: 24px; }
+    .visual-chip { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .signal i { animation: none; } }
+</style>

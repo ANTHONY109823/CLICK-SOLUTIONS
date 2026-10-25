@@ -16,6 +16,7 @@ const { products } = Astro.props;
 const unique = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b, 'es'));
 const categories = unique(products.map((p) => p.category));
 const manufacturers = unique(products.map((p) => p.manufacturer));
+const hasOpenSourceProducts = products.some((p) => p.productModel === 'open-source-service');
 
 const formatPrice = (price: LicenseProduct['price']) =>
   price
@@ -25,11 +26,16 @@ const formatPrice = (price: LicenseProduct['price']) =>
 const availabilityClass: Record<LicenseProduct['availability'], string> = {
   disponible: 'badge--success',
   'bajo-pedido': 'badge--warning',
+  'fase-temprana': 'badge--info',
+  'en-desarrollo': 'badge--neutral',
   agotado: 'badge--danger',
 };
 
 const consultHref = (p: LicenseProduct) =>
   `/contacto?servicio=licencias-software&producto=${encodeURIComponent(`${p.name} (${p.edition})`)}`;
+
+const productHref = (p: LicenseProduct) =>
+  p.productModel === 'open-source-service' && p.officialUrl ? p.officialUrl : consultHref(p);
 ---
 
 {
@@ -44,7 +50,21 @@ const consultHref = (p: LicenseProduct) =>
     </div>
   ) : (
     <div class="catalog" data-catalog>
-      <div class="filters" role="search">
+      <div class="catalog-note">
+        <Icon name="info" size={18} />
+        <p>{hasOpenSourceProducts
+          ? 'El catálogo combina licencias comerciales con descargas gratuitas opcionales. Los productos ArtCraft son de código abierto: puedes descargarlos sin costo desde su fuente oficial y pedir instalación o soporte solo si lo necesitas.'
+          : 'Este catálogo presenta las líneas que podemos cotizar. La disponibilidad comercial se valida antes de confirmar cada pedido.'}</p>
+      </div>
+
+      <div class="category-bar" aria-label="Filtrar por categoría">
+        <button type="button" class="category-chip is-active" data-category-button="" aria-pressed="true">Todo</button>
+        {categories.map((category) => (
+          <button type="button" class="category-chip" data-category-button={category} aria-pressed="false">{category}</button>
+        ))}
+      </div>
+
+      <div class="filters" role="search" aria-label="Buscar y filtrar software">
         <div class="filter filter--search">
           <label for="lc-search">Buscar</label>
           <div class="search-input">
@@ -79,48 +99,53 @@ const consultHref = (p: LicenseProduct) =>
             data-product
             data-category={p.category}
             data-manufacturer={p.manufacturer}
-            data-search={`${p.name} ${p.manufacturer} ${p.category} ${p.licenseType} ${p.edition}`.toLowerCase()}
+            data-brand={p.manufacturer.toLowerCase().replace(/\s+/g, '-')}
+            data-search={`${p.name} ${p.manufacturer} ${p.category} ${p.licenseType} ${p.edition} ${p.productModel ?? ''}`.toLowerCase()}
           >
             <div class="product__head">
               {p.image ? (
                 <img src={p.image.src} alt={p.image.alt} width="56" height="56" loading="lazy" class="product__img" />
               ) : (
-                <span class="icon-tile product__icon"><Icon name="key" size={22} /></span>
+                <span class="product__brand" aria-hidden="true">{p.manufacturer.slice(0, 2).toUpperCase()}</span>
               )}
               <div class="product__badges">
                 {p.demo && <span class="badge badge--demo">Demostración</span>}
+                {p.productModel === 'open-source-service' && <span class="badge badge--free">Gratis · opcional</span>}
                 <span class={`badge ${availabilityClass[p.availability]}`}>{availabilityLabels[p.availability]}</span>
               </div>
             </div>
 
-            <p class="product__maker">{p.manufacturer} · {p.category}</p>
+            <p class="product__maker">{p.category}</p>
             <h3 class="product__name">{p.name}</h3>
+            <p class="product__manufacturer">por {p.manufacturer}</p>
+            {p.officialUrl && <a class="product__official" href={p.officialUrl} target="_blank" rel="noopener noreferrer">Ver información oficial <span aria-hidden="true">↗</span></a>}
             <p class="product__desc">{p.description}</p>
 
             <dl class="product__specs">
               <div><dt>Edición</dt><dd>{p.edition}</dd></div>
-              <div><dt>Tipo de licencia</dt><dd>{p.licenseType}</dd></div>
+              <div><dt>{p.productModel === 'open-source-service' ? 'Modalidad' : 'Tipo de licencia'}</dt><dd>{p.licenseType}</dd></div>
               <div><dt>Duración</dt><dd>{p.duration}</dd></div>
               <div><dt>Dispositivos</dt><dd>{p.devices ?? 'No aplica'}</dd></div>
               <div class="span-2"><dt>Compatible con</dt><dd>{p.platforms.join(', ')}</dd></div>
             </dl>
 
             <details class="product__terms">
-              <summary>Condiciones y devoluciones</summary>
+              <summary>{p.productModel === 'open-source-service' ? 'Condiciones del proyecto y servicio' : 'Condiciones y devoluciones'}</summary>
               <p><strong>Condiciones de uso:</strong> {p.terms}</p>
               <p><strong>Devoluciones:</strong> {p.refundPolicy}</p>
             </details>
 
             <div class="product__footer">
-              <p class="product__price">{formatPrice(p.price)}</p>
+              <p class="product__price">{p.priceLabel ?? formatPrice(p.price)}</p>
               <Button
-                href={consultHref(p)}
+                href={productHref(p)}
                 size="sm"
-                variant={p.availability === 'agotado' ? 'secondary' : 'primary'}
-                track="license_interest"
+                variant={p.availability === 'agotado' || p.availability === 'en-desarrollo' ? 'secondary' : 'primary'}
+                external={p.productModel === 'open-source-service'}
+                track={p.productModel === 'open-source-service' ? 'free_download' : 'license_interest'}
                 data-track-label={p.id}
               >
-                Consultar licencia
+                {p.productModel === 'open-source-service' ? 'Descarga gratuita' : (p.ctaLabel ?? 'Consultar disponibilidad')}
               </Button>
             </div>
           </li>
@@ -135,11 +160,80 @@ const consultHref = (p: LicenseProduct) =>
 }
 
 <style>
+  .catalog-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid #b9e6f8;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--info-bg), #f7fcff);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  .catalog-note :global(svg) {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--brand-blue);
+  }
+
+  .catalog-note p {
+    margin: 0;
+  }
+
+  .category-bar {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .category-chip {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    background: #fff;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+  }
+
+  .category-chip:hover {
+    border-color: var(--brand-cyan);
+    color: var(--brand-navy);
+    transform: translateY(-1px);
+  }
+
+  .category-chip.is-active {
+    border-color: var(--brand-navy);
+    background: var(--brand-navy);
+    color: #fff;
+    box-shadow: 0 10px 24px -16px rgb(3 63 92 / 0.8);
+  }
+
   .filters {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: var(--space-4);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(145deg, #fff, #f7fbfe);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .filter:not(.filter--search) {
+    display: none;
   }
 
   .filter {
@@ -192,22 +286,49 @@ const consultHref = (p: LicenseProduct) =>
   }
 
   .results-count {
+    margin-bottom: var(--space-3);
     font-size: var(--fs-sm);
+    font-weight: 650;
     color: var(--text-muted);
   }
 
   .products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-    gap: var(--space-6);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(300px, 330px);
+    gap: var(--space-4);
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 3px 2px var(--space-4);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
   }
 
   .product {
+    position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 460px;
+    padding: var(--space-5);
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    scroll-snap-align: start;
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base), border-color var(--dur-base);
+  }
+
+  .product::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue));
+  }
+
+  .product:hover {
+    transform: translateY(-5px);
+    border-color: #b9e6f8;
+    box-shadow: var(--shadow-lg);
   }
 
   .product[hidden] {
@@ -226,6 +347,43 @@ const consultHref = (p: LicenseProduct) =>
     object-fit: contain;
   }
 
+  .product__brand {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #e4f7ff, #ceeaff);
+    color: var(--brand-navy);
+    box-shadow: 0 14px 28px -20px rgb(0 111 205 / 0.9);
+    font-size: var(--fs-md);
+    font-weight: 850;
+    letter-spacing: -0.04em;
+  }
+
+  .product[data-brand='adobe'] .product__brand { background: linear-gradient(145deg, #fff0f0, #ffd8d8); color: #c92323; }
+  .product[data-brand='eset'] .product__brand { background: linear-gradient(145deg, #e7fbfa, #c7f1ef); color: #007d79; }
+  .product[data-brand='bitdefender'] .product__brand { background: linear-gradient(145deg, #fff0f2, #ffd8df); color: #b31533; }
+  .product[data-brand='corel'] .product__brand { background: linear-gradient(145deg, #effbe7, #d8f4c7); color: #378320; }
+  .product[data-brand='autodesk'] .product__brand { background: linear-gradient(145deg, #eef7ff, #d8eaff); color: #1268a6; }
+  .product[data-brand='artcraft'] .product__brand { background: linear-gradient(145deg, #211d35, #0c0a15); color: #d8ff61; }
+
+  .badge--free {
+    border: 1px solid #b8e7c4;
+    background: #effcf2;
+    color: #166534;
+  }
+
+  .badge--info {
+    background: #e8f6ff;
+    color: #075985;
+  }
+
+  .badge--neutral {
+    background: #f1f3f5;
+    color: #4b5563;
+  }
+
   .product__badges {
     display: flex;
     flex-wrap: wrap;
@@ -234,7 +392,7 @@ const consultHref = (p: LicenseProduct) =>
   }
 
   .product__maker {
-    margin: 0 0 var(--space-1);
+    margin: var(--space-3) 0 var(--space-1);
     font-size: var(--fs-xs);
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -243,22 +401,47 @@ const consultHref = (p: LicenseProduct) =>
   }
 
   .product__name {
-    font-size: var(--fs-md);
+    margin-bottom: 2px;
+    font-size: var(--fs-lg);
+  }
+
+  .product__manufacturer {
+    margin-bottom: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+  .product__official {
+    align-self: flex-start;
+    margin-bottom: var(--space-4);
+    color: var(--link);
+    font-size: var(--fs-xs);
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  .product__official:hover {
+    text-decoration: underline;
   }
 
   .product__desc {
+    display: -webkit-box;
+    overflow: hidden;
     font-size: var(--fs-sm);
     color: var(--text-muted);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .product__specs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    margin: 0 0 var(--space-4);
-    padding: var(--space-4);
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3);
+    padding: var(--space-3);
     border-radius: var(--radius-md);
-    background: var(--surface);
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, var(--surface), #fff);
     font-size: var(--fs-sm);
   }
 
@@ -277,7 +460,7 @@ const consultHref = (p: LicenseProduct) =>
   }
 
   .product__terms {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
     font-size: var(--fs-sm);
   }
 
@@ -298,13 +481,15 @@ const consultHref = (p: LicenseProduct) =>
     justify-content: space-between;
     gap: var(--space-3);
     margin-top: auto;
-    padding-top: var(--space-4);
+    padding-top: var(--space-3);
     border-top: 1px solid var(--border);
   }
 
   .product__price {
     margin: 0;
-    font-weight: 700;
+    max-width: 12ch;
+    font-weight: 750;
+    line-height: 1.25;
     color: var(--brand-ink);
   }
 
@@ -321,6 +506,38 @@ const consultHref = (p: LicenseProduct) =>
     .filter--search {
       grid-column: 1 / -1;
     }
+
+    .product {
+      min-height: 0;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .products {
+      grid-auto-columns: minmax(84vw, 1fr);
+    }
+
+    .filters {
+      grid-template-columns: 1fr;
+      padding: var(--space-4);
+    }
+
+    .filter--search {
+      grid-column: auto;
+    }
+
+    .product__footer {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .product__price {
+      max-width: none;
+    }
+
+    .product__footer :global(.btn) {
+      width: 100%;
+    }
   }
 </style>
 
@@ -332,6 +549,7 @@ const consultHref = (p: LicenseProduct) =>
     const count = catalog.querySelector<HTMLElement>('[data-results-count]')!;
     const empty = catalog.querySelector<HTMLElement>('[data-no-results]')!;
     const items = [...catalog.querySelectorAll<HTMLElement>('[data-product]')];
+    const categoryButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-category-button]')];
 
     const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
@@ -348,10 +566,21 @@ const consultHref = (p: LicenseProduct) =>
       }
       count.textContent = `${visible} ${visible === 1 ? 'producto' : 'productos'}`;
       empty.hidden = visible > 0;
+      categoryButtons.forEach((button) => {
+        const active = button.dataset.categoryButton === category.value;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
     };
 
     search.addEventListener('input', apply);
     category.addEventListener('change', apply);
     manufacturer.addEventListener('change', apply);
+    categoryButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        category.value = button.dataset.categoryButton ?? '';
+        apply();
+      });
+    });
   });
 </script>

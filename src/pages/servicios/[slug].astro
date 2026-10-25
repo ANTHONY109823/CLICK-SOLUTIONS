@@ -4,17 +4,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/sections/PageHero.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
-import ImagePlaceholder from '../../components/ui/ImagePlaceholder.astro';
-import Gallery from '../../components/sections/Gallery.astro';
-import ProjectCard from '../../components/sections/ProjectCard.astro';
-import ProcessSteps from '../../components/sections/ProcessSteps.astro';
-import FAQList from '../../components/sections/FAQList.astro';
-import ContactForm from '../../components/forms/ContactForm.astro';
 import LicenseCatalog from '../../components/licenses/LicenseCatalog.astro';
+import ServiceHeroVisual from '../../components/sections/ServiceHeroVisual.astro';
 import { site } from '../../config/site';
-import { getServices, getProjects, getLicenses } from '../../lib/content';
+import { getServices, getLicenses } from '../../lib/content';
 import { whatsappUrl } from '../../lib/links';
-import { serviceSchema, faqSchema, breadcrumbSchema } from '../../lib/seo';
+import { serviceSchema, breadcrumbSchema } from '../../lib/seo';
 import type { Service } from '../../data/services';
 
 export const getStaticPaths = (() =>
@@ -33,19 +28,10 @@ const breadcrumbs = [
   { label: service.name, href: path },
 ];
 
-const isDrones = service.slug === 'drones';
-const isWeb = service.slug === 'desarrollo-web';
-const isSupport = service.slug === 'soporte-tecnico';
 const isLicenses = service.slug === 'licencias-software';
 
 const whatsapp = whatsappUrl(`Hola ${site.name}, quisiera información sobre: ${service.name}.`);
-const projects = isWeb || isDrones ? getProjects(service.slug) : [];
 const products = isLicenses ? getLicenses() : [];
-
-const supportModes = [
-  site.support.onsite && { title: 'Presencial', text: 'Atención en tu domicilio u oficina, según tu ubicación.', icon: 'building' as const },
-  site.support.remote && { title: 'Remota', text: 'Asistencia a distancia, solo con tu autorización y durante la sesión que tú inicias.', icon: 'monitor' as const },
-].filter((mode): mode is Exclude<typeof mode, false> => Boolean(mode));
 ---
 
 <BaseLayout
@@ -53,11 +39,10 @@ const supportModes = [
   description={service.seo.description}
   schema={[
     serviceSchema(siteUrl, { name: service.name, description: service.seo.description, path }),
-    faqSchema(service.faqs),
     breadcrumbSchema(siteUrl, breadcrumbs),
   ]}
 >
-  <PageHero eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
+  <PageHero compact eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead} breadcrumbs={breadcrumbs}>
     <Fragment slot="actions">
       <Button href="#cotizar" variant="on-dark" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label={service.slug}>
         {service.cta.label}
@@ -70,226 +55,52 @@ const supportModes = [
         )
       }
     </Fragment>
-    <div slot="aside" class="hero-visual">
-      <ImagePlaceholder
-        dark
-        icon={isDrones ? 'camera' : service.icon}
-        label={isDrones ? 'Fotografía aérea propia pendiente' : 'Imagen del servicio pendiente'}
-      />
-    </div>
+    <div slot="aside" class="hero-visual"><ServiceHeroVisual service={service.slug} /></div>
   </PageHero>
 
-  <!-- Descripción y aplicaciones -->
-  <section class="section">
-    <div class="container intro">
-      <div class="intro__text">
-        <span class="eyebrow">El servicio</span>
-        <h2>{isLicenses ? 'Software original para cada necesidad' : 'Qué resolvemos'}</h2>
-        {service.description.map((p) => <p class="lead">{p}</p>)}
-      </div>
-      <ul class="audiences">
-        {
-          service.audiences.map((a) => (
-            <li class="audience">
-              <span class="icon-tile"><Icon name={a.icon} size={22} /></span>
-              <div>
-                <h3>{a.title}</h3>
-                <p>{a.text}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  {
-    service.offerings.length > 0 && (
-      <section class="section section--muted">
-        <div class="container">
-          <div class="section-header">
-            <span class="eyebrow">{service.hero.eyebrow}</span>
-            <h2>{service.offeringsTitle}</h2>
-          </div>
-          <div class={`grid ${isWeb ? 'grid--2' : 'grid--3'}`}>
-            {service.offerings.map((o) => (
-              <article class="card offering">
-                <span class="icon-tile"><Icon name={o.icon} size={22} /></span>
-                <h3>{o.title}</h3>
-                <p class="offering__summary">{o.summary}</p>
-                {(o.problem || o.audience) && (
-                  <dl class="offering__details">
-                    {o.problem && (<div><dt>Qué resuelve</dt><dd>{o.problem}</dd></div>)}
-                    {o.audience && (<div><dt>Para quién</dt><dd>{o.audience}</dd></div>)}
-                  </dl>
-                )}
-                {o.includes && (
-                  <>
-                    <p class="offering__label">Qué incluye</p>
-                    <ul class="check-list">
-                      {o.includes.map((item) => (
-                        <li><Icon name="check" size={16} />{item}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </article>
-            ))}
-          </div>
-          {isWeb && (
-            <p class="offering-note">El alcance exacto de cada proyecto se define en la propuesta según tus necesidades.</p>
-          )}
+  <section class="service-sheet" id={isLicenses ? 'catalogo' : 'trabajos'}>
+    <div class="container service-sheet__inner">
+      <header class="work-heading">
+        <div>
+          <span class="eyebrow">{isLicenses ? 'Catálogo' : 'Qué ofrecemos'}</span>
+          <h2>{isLicenses ? 'Licencias y descargas gratuitas' : service.offeringsTitle}</h2>
+          <p>{service.description[0]}</p>
         </div>
-      </section>
-    )
-  }
-
-  {
-    isSupport && supportModes.length > 0 && (
-      <section class="section">
-        <div class="container">
-          <div class="section-header">
-            <span class="eyebrow">Modalidad</span>
-            <h2>Cómo te atendemos</h2>
-          </div>
-          <div class="grid grid--2">
-            {supportModes.map((mode) => (
-              <div class="card mode">
-                <span class="icon-tile"><Icon name={mode.icon} size={22} /></span>
-                <h3>{mode.title}</h3>
-                <p>{mode.text}</p>
-              </div>
-            ))}
-          </div>
-          <div class="notice notice--info support-note">
-            <Icon name="info" size={20} />
-            <p>
-              Nunca accedemos a tus equipos sin tu autorización. Los tiempos de atención dependen de cada caso y se coordinan
-              al revisar tu solicitud.
-            </p>
-          </div>
+        <div class="audience-pills" aria-label="A quién está dirigido">
+          {service.audiences.map((audience) => <span><Icon name={audience.icon} size={15} />{audience.title}</span>)}
         </div>
-      </section>
-    )
-  }
+      </header>
 
-  {
-    isLicenses && (
-      <section class="section" id="catalogo">
-        <div class="container">
-          <div class="section-header">
-            <span class="eyebrow">Catálogo</span>
-            <h2>Licencias disponibles</h2>
-            <p>Busca por nombre, fabricante o tipo de software. Por ahora, los pedidos se coordinan por consulta.</p>
-          </div>
-          <LicenseCatalog products={products} />
-          <div class="notice notice--info licenses-note">
-            <Icon name="shield" size={20} />
-            <p>
-              Comercializamos únicamente licencias legítimas. Las claves de activación se entregan de forma privada tras confirmar
-              el pedido y nunca se publican en este sitio.
-            </p>
-          </div>
+      {isLicenses ? (
+        <LicenseCatalog products={products} />
+      ) : (
+        <div class="work-rail" aria-label={service.offeringsTitle}>
+          {service.offerings.map((offering) => (
+            <article class="work-card">
+              <span class="work-card__icon"><Icon name={offering.icon} size={21} /></span>
+              <h3>{offering.title}</h3>
+              <p>{offering.summary}</p>
+              <div class="work-card__bottom"><strong>Precio según alcance</strong><a href="#cotizar">Cotizar <Icon name="arrow-right" size={14} /></a></div>
+            </article>
+          ))}
         </div>
-      </section>
-    )
-  }
+      )}
 
-  {
-    (isDrones || isWeb) && (
-      <section class:list={['section', { 'section--muted': isSupport }]}>
-        <div class="container">
-          <div class="section-header section-header--row">
-            <div>
-              <span class="eyebrow">{isDrones ? 'Galería' : 'Portafolio'}</span>
-              <h2>{isDrones ? 'Trabajos realizados' : 'Proyectos web'}</h2>
-            </div>
-            {isWeb && projects.length > 0 && <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver todo el portafolio</Button>}
-          </div>
-          {projects.length > 0 ? (
-            <div class="grid grid--3">
-              {projects.map((project) => <ProjectCard project={project} />)}
-            </div>
-          ) : (
-            <Gallery
-              items={service.gallery}
-              placeholderIcon={isDrones ? 'camera' : 'layout'}
-              emptyText={isDrones ? 'Pronto publicaremos aquí fotografías y videos de trabajos reales.' : 'Pronto publicaremos aquí proyectos reales.'}
-            />
-          )}
+      {service.notes?.[0] && <p class="service-note"><Icon name="info" size={17} />{service.notes[0]}</p>}
+
+      <aside class="quote-strip" id="cotizar">
+        <div>
+          <span>Cotización clara</span>
+          <h2>{service.cta.formHeading}</h2>
+          <p>Cuéntanos lo esencial. Revisamos el alcance y te indicamos precio y próximos pasos antes de empezar.</p>
         </div>
-      </section>
-    )
-  }
-
-  {
-    service.notes && (
-      <div class="container notes">
-        {service.notes.map((note) => (
-          <div class="notice notice--info">
-            <Icon name="info" size={20} />
-            <p>{note}</p>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  <!-- Proceso -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Proceso</span>
-        <h2>{isLicenses ? 'Cómo adquirir una licencia' : 'Cómo trabajamos'}</h2>
-      </div>
-      <ProcessSteps steps={service.process} />
-    </div>
-  </section>
-
-  <!-- Requisitos + FAQ -->
-  <section class="section section--muted">
-    <div class="container two-col">
-      <div>
-        <span class="eyebrow">Antes de empezar</span>
-        <h2>Qué información necesitamos</h2>
-        <ul class="check-list requirements">
-          {service.requirements.map((r) => <li><Icon name="check" size={16} />{r}</li>)}
-        </ul>
-      </div>
-      <div>
-        <span class="eyebrow">Preguntas frecuentes</span>
-        <h2>Dudas comunes</h2>
-        <FAQList faqs={service.faqs} />
-      </div>
-    </div>
-  </section>
-
-  <!-- Formulario -->
-  <section class="section" id="cotizar">
-    <div class="container form-layout">
-      <div class="form-intro">
-        <span class="eyebrow">{service.cta.label}</span>
-        <h2>{service.cta.formHeading}</h2>
-        <p class="lead">Completa el formulario y te responderemos con los siguientes pasos. Solicitar información no tiene costo ni compromiso.</p>
-        {
-          whatsapp && (
-            <p>
-              ¿Prefieres conversar?{' '}
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track="whatsapp_click" data-track-label={`${service.slug}-form`}>
-                Escríbenos por WhatsApp
-              </a>.
-            </p>
-          )
-        }
-      </div>
-      <div class="card form-card">
-        <ContactForm
-          service={service.slug}
-          variant={isSupport ? 'soporte' : 'general'}
-          categories={service.offerings.map((o) => o.title)}
-          submitLabel={service.cta.label}
-        />
-      </div>
+        <div class="quote-strip__actions">
+          <Button href={`/contacto?servicio=${service.slug}`} size="lg" iconRight="arrow-right" track="quote_cta" data-track-label={`${service.slug}-compact`}>
+            {service.cta.label}
+          </Button>
+          {whatsapp && <Button href={whatsapp} variant="secondary" size="lg" icon="message" external track="whatsapp_click" data-track-label={`${service.slug}-compact`}>WhatsApp</Button>}
+        </div>
+      </aside>
     </div>
   </section>
 </BaseLayout>
@@ -392,6 +203,45 @@ const supportModes = [
     margin-top: var(--space-8);
   }
 
+  .store-promises {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+  }
+
+  .store-promises article {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(145deg, #fff, #f7fbfe);
+  }
+
+  .store-promises :global(svg) {
+    flex: 0 0 auto;
+    color: var(--brand-blue);
+  }
+
+  .store-promises strong,
+  .store-promises small {
+    display: block;
+  }
+
+  .store-promises strong {
+    color: var(--brand-ink);
+    font-size: var(--fs-sm);
+  }
+
+  .store-promises small {
+    margin-top: 3px;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1.45;
+  }
+
   .section-header--row {
     display: flex;
     flex-wrap: wrap;
@@ -443,5 +293,103 @@ const supportModes = [
     .form-intro {
       position: static;
     }
+
+    .store-promises {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .store-promises {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .service-sheet {
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(2.5rem, 5vh, 4.5rem);
+    background: radial-gradient(circle at 88% 8%, rgb(0 170 231 / 0.07), transparent 25%), var(--bg);
+  }
+
+  .service-sheet__inner { display: grid; gap: clamp(1.4rem, 3vh, 2.2rem); }
+
+  .work-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-8);
+  }
+
+  .work-heading h2 { margin-bottom: var(--space-2); }
+  .work-heading p { max-width: 68ch; margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+
+  .audience-pills { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+  .audience-pills span { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border: 1px solid var(--border); border-radius: var(--radius-full); background: #fff; color: var(--text-muted); font-size: var(--fs-xs); font-weight: 650; white-space: nowrap; }
+  .audience-pills :global(svg) { color: var(--link); }
+
+  .work-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(260px, 1fr);
+    gap: var(--space-4);
+    overflow-x: auto;
+    padding: 4px 2px var(--space-4);
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .work-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 270px;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(145deg, #fff, #f6fbff);
+    box-shadow: var(--shadow-sm);
+    scroll-snap-align: start;
+  }
+
+  .work-card__icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: var(--space-5); border-radius: 14px; background: linear-gradient(145deg, #daf5ff, #cee9ff); color: var(--brand-blue); }
+  .work-card h3 { font-size: var(--fs-md); }
+  .work-card > p { display: -webkit-box; margin-bottom: var(--space-5); overflow: hidden; color: var(--text-muted); font-size: var(--fs-sm); -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+  .work-card__bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--border); }
+  .work-card__bottom strong { font-size: var(--fs-xs); color: var(--brand-ink); }
+  .work-card__bottom a { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); font-weight: 700; text-decoration: none; }
+
+  .service-note { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; color: var(--text-muted); font-size: var(--fs-xs); }
+  .service-note :global(svg) { flex: 0 0 auto; margin-top: 2px; color: var(--link); }
+
+  .quote-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-8);
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    border-radius: 22px;
+    background: linear-gradient(125deg, #041a36, #073d69);
+    color: var(--dark-text);
+    box-shadow: 0 28px 55px -38px #001020;
+  }
+
+  .quote-strip > div > span { color: var(--dark-accent); font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+  .quote-strip h2 { margin: 3px 0 5px; color: #fff; font-size: var(--fs-xl); }
+  .quote-strip p { max-width: 62ch; margin: 0; color: #9db5ca; font-size: var(--fs-sm); }
+  .quote-strip__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
+
+  @media (min-width: 1100px) {
+    .work-rail { grid-auto-columns: minmax(250px, calc((100% - 3 * var(--space-4)) / 4)); }
+  }
+
+  @media (max-width: 820px) {
+    .service-sheet { min-height: auto; }
+    .work-heading, .quote-strip { grid-template-columns: 1fr; }
+    .audience-pills, .quote-strip__actions { justify-content: flex-start; }
+  }
+
+  @media (max-width: 520px) {
+    .work-rail { grid-auto-columns: minmax(84vw, 1fr); }
+    .quote-strip__actions { display: grid; }
+    .quote-strip__actions :global(.btn) { width: 100%; }
   }
 </style>

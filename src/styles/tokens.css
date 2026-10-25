@@ -6,30 +6,31 @@
 :root {
   /* Marca (del logo) */
   --brand-cyan: #00aae7;
+  --brand-blue: #087ff5;
   --brand-navy: #033f5c;
-  --brand-ink: #1b2b42;
+  --brand-ink: #071a33;
 
   /* Superficies claras (donde aparece el logo) */
   --bg: #ffffff;
-  --surface: #f5f8fb;
-  --surface-2: #eaf1f7;
+  --surface: #f4f8fc;
+  --surface-2: #e8f2fa;
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
   --text: #0f1c2e;
   --text-muted: #4b5b70;
 
   /* Superficies oscuras (hero, bandas de llamada a la acción) */
-  --dark-bg: #0b1220;
-  --dark-surface: #111827;
-  --dark-card: #172338;
-  --dark-border: #29384d;
+  --dark-bg: #031329;
+  --dark-surface: #071d38;
+  --dark-card: #0a2749;
+  --dark-border: #164066;
   --dark-text: #f8fafc;
-  --dark-muted: #a3b1c4;
-  --dark-accent: #38c3f2;
+  --dark-muted: #afc4d9;
+  --dark-accent: #33c7ff;
 
   /* Acciones */
   --primary: var(--brand-navy);
-  --primary-hover: #022d42;
+  --primary-hover: #005d91;
   --primary-contrast: #ffffff;
   --accent: var(--brand-cyan);
   --link: #035f8a;
@@ -79,9 +80,10 @@
   --radius-full: 999px;
 
   /* Sombras (discretas) */
-  --shadow-sm: 0 1px 2px rgb(15 28 46 / 0.06);
-  --shadow-md: 0 4px 12px -2px rgb(15 28 46 / 0.08), 0 2px 4px -2px rgb(15 28 46 / 0.05);
-  --shadow-lg: 0 16px 40px -12px rgb(15 28 46 / 0.18);
+  --shadow-sm: 0 1px 3px rgb(3 31 58 / 0.08);
+  --shadow-md: 0 14px 35px -22px rgb(3 31 58 / 0.36), 0 4px 12px rgb(3 31 58 / 0.06);
+  --shadow-lg: 0 28px 70px -30px rgb(1 21 43 / 0.42);
+  --shadow-glow: 0 18px 48px -22px rgb(0 170 231 / 0.62);
 
   /* Layout */
   --container: 1200px;
@@ -92,7 +94,8 @@
   /* Movimiento */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 150ms;
-  --dur-base: 220ms;
+  --dur-base: 260ms;
+  --dur-slow: 600ms;
 
   --focus-ring: 0 0 0 3px rgb(0 170 231 / 0.45);
 }

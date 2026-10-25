@@ -6,10 +6,6 @@
  * Astro solo genera copias redimensionadas para la web; el diseño y los colores no cambian.
  * Siempre sobre fondo claro: el texto del logo es azul marino.
  */
-import { Image } from 'astro:assets';
-import logoFull from '../../assets/brand/clicksolutions-logo.png';
-import isotipo from '../../assets/brand/clicksolutions-isotipo.png';
-
 interface Props {
   variant?: 'mark' | 'full';
   /** Ancho del logo completo en px. */
@@ -22,18 +18,20 @@ const { variant = 'mark', width = 120, loading = 'lazy' } = Astro.props;
 
 {
   variant === 'full' ? (
-    <Image
-      src={logoFull}
+    <img
+      src="/brand/clicksolutions-logo.png"
       alt="ClickSolutions"
       width={width}
-      densities={[1, 2]}
       loading={loading}
+      decoding="async"
       class="logo-full"
     />
   ) : (
     <span class="logo-mark">
-      <Image src={isotipo} alt="" width={36} densities={[1, 2]} loading="eager" class="logo-mark__icon" />
-      <span class="logo-mark__text">ClickSolutions</span>
+      <span class="logo-mark__symbol">
+        <img src="/brand/clicksolutions-isotipo.png" alt="" width="42" height="46" loading="eager" decoding="async" class="logo-mark__icon" />
+      </span>
+      <span class="logo-mark__text"><strong>Click</strong><span>solutions</span></span>
     </span>
   )
 }
@@ -42,19 +40,37 @@ const { variant = 'mark', width = 120, loading = 'lazy' } = Astro.props;
   .logo-mark {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
   }
 
   .logo-mark :global(.logo-mark__icon) {
-    width: 36px;
+    width: 42px;
     height: auto;
   }
 
+  .logo-mark__symbol {
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 7px 14px rgb(0 170 231 / 0.22));
+  }
+
   .logo-mark__text {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--brand-navy);
+    display: grid;
+    line-height: 0.82;
+    letter-spacing: -0.035em;
+    color: var(--logo-color, var(--brand-navy));
+  }
+
+  .logo-mark__text strong {
+    font-size: 1.28rem;
+    font-weight: 800;
+  }
+
+  .logo-mark__text span {
+    margin-left: 1px;
+    font-size: 0.82rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
   }
 
   :global(.logo-full) {

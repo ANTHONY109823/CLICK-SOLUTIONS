@@ -22,6 +22,7 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 img,
@@ -124,11 +125,14 @@ ol {
 }
 
 .section {
+  position: relative;
   padding-block: var(--section-y);
 }
 
 .section--muted {
-  background: var(--surface);
+  background:
+    linear-gradient(135deg, rgb(0 170 231 / 0.035), transparent 34%),
+    var(--surface);
 }
 
 .section--dark {
@@ -162,13 +166,23 @@ ol {
 }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
   font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--link);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: currentColor;
 }
 
 .section--dark .eyebrow {
@@ -197,10 +211,40 @@ ol {
 .card {
   position: relative;
   padding: var(--space-6);
-  background: var(--bg);
+  background: linear-gradient(145deg, var(--bg), #fbfdff);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Animaciones de entrada ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal='left'] {
+  transform: translateX(-28px);
+}
+
+[data-reveal='right'] {
+  transform: translateX(28px);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .card h3 {

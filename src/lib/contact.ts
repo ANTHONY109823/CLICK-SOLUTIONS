@@ -7,7 +7,7 @@ export const serviceOptions = [
   { value: 'drones', label: 'Servicios con drones' },
   { value: 'desarrollo-web', label: 'Desarrollo web' },
   { value: 'soporte-tecnico', label: 'Soporte técnico' },
-  { value: 'licencias-software', label: 'Licencias de software' },
+  { value: 'licencias-software', label: 'Software y licencias' },
   { value: 'otro', label: 'Otro / no estoy seguro' },
 ] as const;
 

@@ -2,222 +2,75 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
-import ServiceCard from '../components/sections/ServiceCard.astro';
 import ProjectCard from '../components/sections/ProjectCard.astro';
-import ProcessSteps from '../components/sections/ProcessSteps.astro';
-import FAQList from '../components/sections/FAQList.astro';
-import CTABand from '../components/sections/CTABand.astro';
-import { getServices, getProjects, getGeneralFaqs } from '../lib/content';
-import { faqSchema } from '../lib/seo';
+import HomeHero from '../components/sections/HomeHero.astro';
+import { getServices, getProjects } from '../lib/content';
 import type { IconName } from '../components/ui/icons';
 
 const services = getServices();
-const projects = getProjects().slice(0, 3);
-const faqs = getGeneralFaqs().slice(0, 4);
+const projects = getProjects().slice(0, 2);
 
-const audiences: { title: string; text: string; icon: IconName; links: { label: string; href: string }[] }[] = [
-  {
-    title: 'Para personas',
-    text: 'Soporte para tus equipos, licencias originales y registros aéreos de tus momentos importantes.',
-    icon: 'users',
-    links: [
-      { label: 'Soporte técnico', href: '/servicios/soporte-tecnico' },
-      { label: 'Licencias', href: '/servicios/licencias-software' },
-    ],
-  },
-  {
-    title: 'Para emprendedores',
-    text: 'Una presencia digital profesional para empezar a vender y contenido visual que destaque tu marca.',
-    icon: 'sparkles',
-    links: [
-      { label: 'Desarrollo web', href: '/servicios/desarrollo-web' },
-      { label: 'Drones', href: '/servicios/drones' },
-    ],
-  },
-  {
-    title: 'Para empresas',
-    text: 'Sistemas a medida, automatización, mantenimiento de equipos y software legítimo para tu equipo.',
-    icon: 'building',
-    links: [
-      { label: 'Sistemas web', href: '/servicios/desarrollo-web' },
-      { label: 'Soporte técnico', href: '/servicios/soporte-tecnico' },
-    ],
-  },
+const projectFormats: { title: string; text: string; icon: IconName; href: string }[] = [
+  { title: 'Experiencias web', text: 'Sitios, catálogos y sistemas enfocados en objetivos reales.', icon: 'code', href: '/servicios/desarrollo-web' },
+  { title: 'Contenido desde el aire', text: 'Fotografía y video para inmuebles, eventos y empresas.', icon: 'drone', href: '/servicios/drones' },
+  { title: 'Tecnología lista para usar', text: 'Equipos, software y soporte con orientación clara.', icon: 'cpu', href: '/servicios/soporte-tecnico' },
 ];
 
-// Compromisos de trabajo (verificables por el cliente), no afirmaciones de marketing.
-const commitments: { title: string; text: string; icon: IconName }[] = [
-  { title: 'Propuesta clara antes de empezar', text: 'Conoces el alcance y el costo antes de aprobar cualquier trabajo.', icon: 'clipboard' },
-  { title: 'Cuatro servicios, un solo contacto', text: 'Drones, web, soporte y licencias con el mismo equipo y la misma forma de trabajar.', icon: 'layout' },
-  { title: 'Solo software legítimo', text: 'Licencias originales y claves entregadas de forma privada, nunca publicadas.', icon: 'shield' },
-  { title: 'Tus datos, protegidos', text: 'Solo pedimos la información necesaria y la usamos para atender tu solicitud.', icon: 'lock' },
-];
-
-const process = [
-  { title: 'Cuéntanos tu necesidad', text: 'Por el formulario o los canales de contacto.' },
-  { title: 'Evaluamos y cotizamos', text: 'Te enviamos una propuesta con alcance y costo.' },
-  { title: 'Ejecutamos', text: 'Realizamos el trabajo y te mantenemos informado.' },
-  { title: 'Entrega y seguimiento', text: 'Revisamos contigo el resultado y los siguientes pasos.' },
+const values: { title: string; text: string; icon: IconName }[] = [
+  { title: 'Claridad', text: 'Alcance y precio antes de empezar.', icon: 'clipboard' },
+  { title: 'Criterio', text: 'La solución adecuada, no la más complicada.', icon: 'target' },
+  { title: 'Confianza', text: 'Software legítimo y datos protegidos.', icon: 'shield' },
 ];
 ---
 
 <BaseLayout
-  title="ClickSolutions | Drones, desarrollo web, soporte técnico y licencias de software"
+  title="ClickSolutions | Tecnología para personas y empresas"
   rawTitle
-  description="Soluciones tecnológicas en Perú: servicios con drones, desarrollo web, soporte técnico y licencias de software originales para personas y empresas."
-  schema={[faqSchema(faqs)]}
+  description="Soluciones tecnológicas en Perú: drones, desarrollo web, soporte técnico, licencias y herramientas de software para personas y empresas."
 >
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero__inner">
-      <div class="hero__content">
-        <span class="eyebrow">Drones · Desarrollo web · Soporte técnico · Licencias</span>
-        <h1>Tecnología inteligente para llevar tus ideas más lejos</h1>
-        <p class="hero__lead">
-          Soluciones en drones, desarrollo web, soporte técnico y licencias de software para personas y empresas.
-        </p>
-        <div class="hero__actions">
-          <Button href="/servicios" variant="on-dark" size="lg" iconRight="arrow-right" track="explore_services">
-            Explorar servicios
-          </Button>
-          <Button href="/contacto" variant="outline-dark" size="lg" track="quote_cta" data-track-label="hero">
-            Solicitar cotización
-          </Button>
+  <HomeHero services={services} />
+
+  <section class="home-panel projects-panel" id="proyectos">
+    <div class="container panel-inner">
+      <header class="panel-heading" data-reveal>
+        <div><span class="eyebrow">Proyectos</span><h2>Ideas convertidas en soluciones útiles</h2></div>
+        <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver portafolio</Button>
+      </header>
+      <div class:list={['projects-layout', { 'projects-layout--empty': projects.length === 0 }]}>
+        {projects.length > 0 && <div class="featured-project" data-reveal="left"><ProjectCard project={projects[0]} /></div>}
+        <div class="project-formats" data-reveal="right">
+          {projectFormats.map((item) => (
+            <a href={item.href} class="format-card">
+              <span><Icon name={item.icon} size={22} /></span>
+              <div><h3>{item.title}</h3><p>{item.text}</p></div>
+              <Icon name="arrow-right" size={17} />
+            </a>
+          ))}
         </div>
       </div>
-
-      <ul class="hero__services" aria-label="Nuestras líneas de servicio">
-        {
-          services.map((service) => (
-            <li>
-              <a href={`/servicios/${service.slug}`} class="hero-tile">
-                <span class="hero-tile__icon">
-                  <Icon name={service.icon} size={22} />
-                </span>
-                <span class="hero-tile__name">{service.name}</span>
-                <span class="hero-tile__text">{service.tagline}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      {projects.length === 0 && <p class="portfolio-note">Estamos documentando proyectos reales para publicarlos con autorización de cada cliente.</p>}
     </div>
   </section>
 
-  <!-- Cuatro líneas de negocio -->
-  <section class="section" id="servicios">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Servicios</span>
-        <h2>Cuatro líneas de servicio, un mismo compromiso</h2>
-        <p>Elige el área que necesitas y conoce en detalle qué incluye, cómo trabajamos y cómo solicitarlo.</p>
-      </div>
-      <div class="grid grid--4">
-        {services.map((service) => <ServiceCard service={service} />)}
-      </div>
-    </div>
-  </section>
-
-  <!-- Soluciones por tipo de cliente -->
-  <section class="section section--muted">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Para quién</span>
-        <h2>Soluciones según lo que necesitas</h2>
-      </div>
-      <div class="grid grid--3">
-        {
-          audiences.map((a) => (
-            <article class="card">
-              <span class="icon-tile"><Icon name={a.icon} size={22} /></span>
-              <h3>{a.title}</h3>
-              <p class="muted">{a.text}</p>
-              <ul class="inline-links">
-                {a.links.map((l) => (
-                  <li>
-                    <a href={l.href}>{l.label} <Icon name="arrow-right" size={14} /></a>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Proyectos -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header section-header--row">
-        <div>
-          <span class="eyebrow">Proyectos</span>
-          <h2>Trabajos realizados</h2>
+  <section class="home-panel about-panel" id="empresa">
+    <div class="container about-grid">
+      <div class="about-copy" data-reveal="left">
+        <span class="eyebrow">ClickSolutions</span>
+        <h2>Un socio tecnológico, sin complicaciones.</h2>
+        <p>Reunimos desarrollo web, drones, soporte y software para que personas y empresas resuelvan sus necesidades con un solo equipo.</p>
+        <div class="about-actions">
+          <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">Hablemos de tu proyecto</Button>
+          <Button href="/nosotros" variant="secondary" size="lg">Conocer la empresa</Button>
         </div>
-        {projects.length > 0 && <Button href="/proyectos" variant="ghost" iconRight="arrow-right">Ver portafolio</Button>}
       </div>
-      {
-        projects.length > 0 ? (
-          <div class="grid grid--3">
-            {projects.map((project) => <ProjectCard project={project} />)}
-          </div>
-        ) : (
-          <div class="empty-state">
-            <span class="icon-tile"><Icon name="image" size={22} /></span>
-            <h3>Portafolio en preparación</h3>
-            <p>Pronto publicaremos aquí trabajos reales. Si quieres conocer ejemplos de lo que podemos hacer, escríbenos.</p>
-          </div>
-        )
-      }
-    </div>
-  </section>
-
-  <!-- Compromisos -->
-  <section class="section section--muted">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Por qué ClickSolutions</span>
-        <h2>Cómo trabajamos contigo</h2>
-        <p>Compromisos concretos que puedes comprobar desde la primera conversación.</p>
-      </div>
-      <div class="grid grid--4">
-        {
-          commitments.map((c) => (
-            <div class="commitment">
-              <span class="icon-tile"><Icon name={c.icon} size={22} /></span>
-              <h3>{c.title}</h3>
-              <p>{c.text}</p>
-            </div>
-          ))
-        }
+      <div class="values" data-reveal="right">
+        {values.map((value) => (
+          <article><span><Icon name={value.icon} size={21} /></span><div><h3>{value.title}</h3><p>{value.text}</p></div></article>
+        ))}
+        <div class="availability"><span class="availability__dot"></span><div><strong>¿Tienes una idea?</strong><small>Cuéntanos qué necesitas y te orientamos.</small></div></div>
       </div>
     </div>
   </section>
-
-  <!-- Proceso -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Proceso</span>
-        <h2>Así de simple es empezar</h2>
-      </div>
-      <ProcessSteps steps={process} />
-    </div>
-  </section>
-
-  <!-- Preguntas frecuentes -->
-  <section class="section section--muted">
-    <div class="container faq-layout">
-      <div class="section-header">
-        <span class="eyebrow">Preguntas frecuentes</span>
-        <h2>Resolvemos tus dudas</h2>
-        <p>¿No encuentras lo que buscas? Revisa todas las <a href="/preguntas-frecuentes">preguntas frecuentes</a> o escríbenos.</p>
-      </div>
-      <FAQList faqs={faqs} />
-    </div>
-  </section>
-
-  <CTABand />
 </BaseLayout>
 
 <style>
@@ -411,5 +264,153 @@ const process = [
     .hero__actions :global(.btn) {
       width: 100%;
     }
+  }
+
+  .home-panel {
+    display: grid;
+    align-items: center;
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(3.5rem, 7vh, 6rem);
+    overflow: hidden;
+  }
+
+  .projects-panel {
+    background: radial-gradient(circle at 90% 15%, rgb(0 170 231 / 0.08), transparent 28%), var(--bg);
+  }
+
+  .panel-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-5);
+    margin-bottom: clamp(1.75rem, 4vh, 3rem);
+  }
+
+  .panel-heading h2 { max-width: 15ch; margin: 0; }
+
+  .projects-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(330px, 0.9fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: stretch;
+  }
+
+  .projects-layout--empty { grid-template-columns: 1fr; }
+  .featured-project :global(.project-card) { min-height: 360px; }
+  .project-formats { display: grid; gap: var(--space-4); }
+
+  .format-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 108px;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(145deg, #fff, #f5fbff);
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base);
+  }
+
+  .format-card:hover {
+    border-color: #a8ddf3;
+    box-shadow: var(--shadow-md);
+    color: inherit;
+    transform: translateX(6px);
+  }
+
+  .format-card > span {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #daf4ff, #c8e8ff);
+    color: var(--brand-blue);
+  }
+
+  .format-card h3 { margin: 0 0 4px; font-size: var(--fs-md); }
+  .format-card p { margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+  .format-card > :global(svg) { color: var(--link); }
+  .portfolio-note { margin: var(--space-5) 0 0; color: var(--text-muted); font-size: var(--fs-sm); }
+
+  .about-panel {
+    background: radial-gradient(circle at 14% 18%, rgb(0 170 231 / 0.2), transparent 26%), linear-gradient(135deg, #031329, #07345f);
+    color: var(--dark-text);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+    align-items: center;
+    gap: clamp(3rem, 9vw, 8rem);
+  }
+
+  .about-copy .eyebrow { color: var(--dark-accent); }
+  .about-copy h2 { max-width: 13ch; color: #fff; font-size: clamp(2.5rem, 5vw, 4.5rem); }
+  .about-copy > p { max-width: 54ch; color: var(--dark-muted); font-size: var(--fs-md); }
+  .about-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+
+  .values {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: 1px solid var(--dark-border);
+    border-radius: 24px;
+    background: rgb(5 27 52 / 0.72);
+    box-shadow: 0 38px 80px -42px #000;
+    backdrop-filter: blur(16px);
+  }
+
+  .values article,
+  .availability {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: rgb(255 255 255 / 0.035);
+  }
+
+  .values article > span {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border-radius: 13px;
+    background: rgb(0 170 231 / 0.13);
+    color: var(--dark-accent);
+  }
+
+  .values h3 { margin: 0 0 2px; color: #fff; font-size: var(--fs-sm); }
+  .values p { margin: 0; color: #8fa9c0; font-size: var(--fs-xs); }
+
+  .availability {
+    margin-top: var(--space-2);
+    border: 1px solid rgb(81 211 157 / 0.2);
+    background: rgb(29 168 105 / 0.08);
+  }
+
+  .availability__dot { width: 10px; height: 10px; border-radius: 50%; background: #45df9a; box-shadow: 0 0 16px #45df9a; }
+  .availability strong, .availability small { display: block; }
+  .availability strong { color: #fff; font-size: var(--fs-sm); }
+  .availability small { color: #8fa9c0; font-size: var(--fs-xs); }
+
+  @media (max-width: 860px) {
+    .home-panel { min-height: auto; }
+    .projects-layout, .about-grid { grid-template-columns: 1fr; }
+    .featured-project :global(.project-card) { min-height: 0; }
+    .about-grid { gap: var(--space-10); }
+  }
+
+  @media (max-width: 560px) {
+    .panel-heading { align-items: flex-start; flex-direction: column; }
+    .format-card { min-height: 92px; padding: var(--space-4); }
+    .about-actions { display: grid; }
+    .about-actions :global(.btn) { width: 100%; }
   }
 </style>

@@ -47,6 +47,7 @@ const whatsapp = whatsappUrl(whatsappMessage);
     position: relative;
     overflow: hidden;
     isolation: isolate;
+    background: linear-gradient(120deg, #031329, #06416f);
   }
 
   .cta-band::after {
@@ -57,7 +58,19 @@ const whatsapp = whatsappUrl(whatsappMessage);
     z-index: -1;
     width: 50%;
     aspect-ratio: 1;
-    background: radial-gradient(circle, rgb(0 170 231 / 0.16), transparent 65%);
+    background: radial-gradient(circle, rgb(0 170 231 / 0.26), transparent 65%);
+  }
+
+  .cta-band::before {
+    content: '';
+    position: absolute;
+    top: -120%;
+    right: 8%;
+    z-index: -1;
+    width: 26%;
+    height: 320%;
+    border: 1px solid rgb(95 207 251 / 0.14);
+    transform: rotate(28deg);
   }
 
   .cta-band__inner {
