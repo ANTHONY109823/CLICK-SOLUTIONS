@@ -6,22 +6,28 @@ type Specialty = { name: string; detail: string; icon: IconName; col: number; ro
 // Coordinates share the same grid as the empty tiles. Nothing sits over another tile.
 const specialties: Specialty[] = [
   { name: 'Desarrollo web', detail: 'Ideas que conectan', icon: 'code', col: 8, row: 6, tone: 'cyan' },
-  { name: 'Drones', detail: 'Una nueva perspectiva', icon: 'drone', col: 7, row: 7, tone: 'navy' },
-  { name: 'Soporte', detail: 'Siempre a tu lado', icon: 'headset', col: 9, row: 7, tone: 'blue' },
-  { name: 'Software', detail: 'Herramientas originales', icon: 'key', col: 9, row: 9, tone: 'navy' },
-  { name: 'Mantenimiento', detail: 'Tecnología a punto', icon: 'cpu', col: 7, row: 9, tone: 'blue' },
+  { name: 'Drones', detail: 'Una nueva perspectiva', icon: 'drone', col: 6, row: 7, tone: 'navy' },
+  { name: 'Soporte', detail: 'Siempre a tu lado', icon: 'headset', col: 10, row: 7, tone: 'blue' },
+  { name: 'Software', detail: 'Herramientas originales', icon: 'key', col: 10, row: 9, tone: 'navy' },
+  { name: 'Mantenimiento', detail: 'Tecnología a punto', icon: 'cpu', col: 6, row: 9, tone: 'blue' },
   { name: 'Consultoría', detail: 'Visión para avanzar', icon: 'workflow', col: 8, row: 10, tone: 'cyan' },
-  { name: 'Tiendas online', detail: 'Comercio digital', icon: 'cart', col: 6, row: 7, tone: 'cyan' },
-  { name: 'Sistemas web', detail: 'Soluciones a medida', icon: 'layout', col: 6, row: 9, tone: 'blue' },
-  { name: 'Fotografía aérea', detail: 'Imágenes desde el aire', icon: 'camera', col: 10, row: 7, tone: 'navy' },
-  { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', col: 10, row: 9, tone: 'cyan' },
+  { name: 'Tiendas online', detail: 'Comercio digital', icon: 'cart', col: 4, row: 7, tone: 'cyan' },
+  { name: 'Sistemas web', detail: 'Soluciones a medida', icon: 'layout', col: 4, row: 9, tone: 'blue' },
+  { name: 'Fotografía aérea', detail: 'Imágenes desde el aire', icon: 'camera', col: 12, row: 7, tone: 'navy' },
+  { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', col: 12, row: 9, tone: 'cyan' },
 ];
-const gridSize = 17;
+const gridSize = 18;
+const mainSlots = [...specialties, { col: 8, row: 8 }];
 const tiles = Array.from({ length: gridSize * gridSize }, (_, index) => {
   const col = index % gridSize;
   const row = Math.floor(index / gridSize);
-  return { index, col, row, specialty: specialties.find((item) => item.col === col && item.row === row), brand: col === 8 && row === 8, distance: Math.hypot(col - 8, row - 8) };
-});
+  const specialty = specialties.find((item) => item.col === col && item.row === row);
+  const brand = col === 8 && row === 8;
+  // Each main octagon replaces four small cells; no empty tile sits underneath it.
+  if (!specialty && !brand && mainSlots.some((slot) => col >= slot.col && col < slot.col + 2 && row >= slot.row && row < slot.row + 2)) return null;
+  const span = specialty || brand ? 2 : 1;
+  return { index, col, row, specialty, brand, span, distance: Math.hypot(col + span / 2 - 9, row + span / 2 - 9) };
+}).filter((tile) => tile !== null);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -31,7 +37,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <li
         class:list={['tile', { 'tile--specialty': !!tile.specialty, 'tile--brand': tile.brand, 'tile--empty': !tile.specialty && !tile.brand, 'tile--lit': !!tile.specialty || tile.brand || tile.index % 5 === 0 }]}
         data-tone={tile.specialty?.tone ?? (tile.index % 11 === 0 ? 'mist' : 'pale')}
-        style={`--wave-delay:${tile.distance * .12}s;--edge-delay:${tile.index % 13 * -.31}s`}
+        style={`grid-column:${tile.col + 1} / span ${tile.span};grid-row:${tile.row + 1} / span ${tile.span};--wave-delay:${tile.distance * .12}s;--edge-delay:${tile.index % 13 * -.31}s`}
         aria-hidden={!tile.specialty && !tile.brand ? 'true' : undefined}
       >
         <div class="tile__body">
@@ -56,7 +62,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <style>
   .constellation {
-    --cell: clamp(64px, min(17vw, 16svh), 170px);
+    --cell: clamp(34px, min(8.8vw, 10svh), 92px);
     position: relative;
     isolation: isolate;
     min-height: max(600px, calc(100svh - var(--header-h)));
@@ -69,9 +75,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     top: 50%;
     translate: -50% -50%;
     display: grid;
-    grid-template-columns: repeat(17, minmax(0, 1fr));
-    grid-template-rows: repeat(17, minmax(0, 1fr));
-    width: max(100%, calc(var(--cell) * 17));
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+    grid-template-rows: repeat(18, minmax(0, 1fr));
+    width: max(100%, calc(var(--cell) * 18));
     aspect-ratio: 1;
     padding: 0;
     margin: 0;
@@ -87,8 +93,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .tile[data-tone='blue'] .tile__face { background: linear-gradient(145deg, #e0efff, #accff5); color: #075bb7; }
   .tile[data-tone='navy'] .tile__face { background: linear-gradient(145deg, #087cb5, #033f5c); color: #83e3ff; }
   .tile--specialty .tile__body::before, .tile--brand .tile__body::before { background: linear-gradient(135deg, #00aae7, #087ff5, #033f5c); }
-  .tile--specialty .tile__face, .tile--brand .tile__face { inset: 2px; }
-  .tile h3 { max-width: 100%; margin: 0; font-size: clamp(.7rem, 1.1vw, .95rem); text-align: center; line-height: 1.15; color: #103b55; letter-spacing: -.025em; }
+  .tile--specialty .tile__body, .tile--brand .tile__body { filter: drop-shadow(0 4px 0 #70b6d3) drop-shadow(0 0 9px #00aae738); z-index: 1; }
+  .tile--empty { opacity: .6; }
+  .tile--specialty .tile__face, .tile--brand .tile__face { inset: 3px; }
+  .tile h3 { max-width: 100%; margin: 0; font-size: clamp(.7rem, 1.2vw, 1.05rem); font-weight: 750; text-align: center; line-height: 1.15; color: #103b55; letter-spacing: -.025em; }
   .tile__detail { font-size: clamp(.5rem, .7vw, .65rem); text-align: center; line-height: 1.25; color: #47687f; }
   .tile[data-tone='navy'] h3 { color: #fff; }
   .tile[data-tone='navy'] .tile__detail { color: #d0efff; }
