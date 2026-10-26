@@ -38,18 +38,26 @@ const specialties: { name: string; detail: string; icon: IconName; x: number; y:
       <div class="brand-core__inner">
         <img src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/brand/clicksolutions-logo.png`} alt="Click Solutions" width="1386" height="2500" loading="lazy" decoding="async" />
       </div>
+      <svg class="edge-light edge-light--core" viewBox="0 0 100 100" aria-hidden="true"><path d="M29 1H71L99 29V71L71 99H29L1 71V29Z" /></svg>
     </div>
     <ul class="specialties" aria-label="Especialidades de Click Solutions">
-      {specialties.map((item) => (
-        <li class="specialty" style={`--x:${item.x}%;--y:${item.y}%;--dx:${(item.x - 50) * .07}%;--dy:${(item.y - 50) * .07}%;--delay:${Math.abs(item.x - 50) > 30 ? ".18s" : "0s"}`}>
+      {specialties.map((item, index) => (
+        <li class="specialty" style={`--x:${item.x}%;--y:${item.y}%;--dx:${(item.x - 50) * .11}%;--dy:${(item.y - 50) * .11}%;--delay:${Math.abs(item.x - 50) > 30 ? ".22s" : "0s"};--edge-delay:${index * -.37}s`}>
           <div class="specialty__face">
             <Icon name={item.icon} size={36} />
             <h3>{item.name}</h3>
             <span>{item.detail}</span>
           </div>
+          <svg class="edge-light" viewBox="0 0 100 100" aria-hidden="true"><path d="M29 1H71L99 29V71L71 99H29L1 71V29Z" /></svg>
         </li>
       ))}
     </ul>
+    <svg class="energy-particles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      {Array.from({ length: 32 }, (_, index) => {
+        const angle = index * Math.PI * 2 / 32;
+        return <circle cx="50" cy="50" r={index % 3 === 0 ? '.23' : '.12'} style={`--tx:${Math.cos(angle) * 53}px;--ty:${Math.sin(angle) * 53}px;--particle-delay:${index * -.19}s;--flight:${2.8 + index % 4 * .4}s`} />;
+      })}
+    </svg>
   </div>
 </div>
 
@@ -61,28 +69,37 @@ const specialties: { name: string; detail: string; icon: IconName; x: number; y:
   .ambient--one { background: #00b8ed17; left: 8%; top: 3%; }
   .ambient--two { background: #477dff12; right: 5%; bottom: 5%; }
   .connections { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .connections line { stroke: #54bddd; stroke-width: .18; stroke-dasharray: 1 1.3; animation: signal 8s linear infinite; }
+  .connections line { stroke: #00aae7; stroke-width: .22; stroke-dasharray: 2 3; animation: signal 3s linear infinite; }
   .connections circle { fill: none; stroke: #72cbe1; stroke-width: .12; stroke-dasharray: .3 1.3; opacity: .5; }
   .brand-core, .specialty { position: absolute; width: 22%; aspect-ratio: 1; translate: -50% -50%; }
-  .brand-core { width: 22%; left: 50%; top: 50%; display: grid; place-items: center; filter: drop-shadow(0 12px 25px #0087c525); }
+  .brand-core { width: 22%; left: 50%; top: 50%; z-index: 2; display: grid; place-items: center; filter: drop-shadow(0 10px 0 #beddea) drop-shadow(0 15px 20px #00aae74d); }
   .brand-core::before, .brand-core__inner, .specialty::before, .specialty__face { clip-path: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%); }
   .brand-core::before { content: ''; position: absolute; inset: -2px; background: linear-gradient(135deg, #17b9e9, #b7eafa 45%, #2375d8); animation: core-glow 5s ease-in-out infinite; }
   .brand-core__inner { position: absolute; inset: 0; background: #fff; }
   .brand-core__inner img { position: absolute; left: 17%; top: 12%; display: block; width: 66%; height: 76%; max-width: none; max-height: none; object-fit: contain; object-position: center; }
   .specialties { list-style: none; padding: 0; margin: 0; }
-  .specialty { left: var(--x); top: var(--y); animation: radial-pulse 4.2s ease-in-out infinite; animation-delay: var(--delay); filter: drop-shadow(0 12px 15px #153f7010); }
+  .specialty { left: var(--x); top: var(--y); animation: radial-pulse 3.6s ease-in-out infinite; animation-delay: var(--delay); filter: drop-shadow(0 6px 0 #9fc4d5) drop-shadow(0 12px 12px #033f5c24); }
   .specialty::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #00aae7, #087ff5 60%, #033f5c); }
-  .specialty__face { position: absolute; inset: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .65rem; background: linear-gradient(145deg, #d9f7ff, #91daf4); color: #033f5c; }
+  .specialty__face { position: absolute; inset: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .65rem; background: linear-gradient(145deg, #eefcff, #91daf4); color: #033f5c; }
+  .specialty__face::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 20%, #ffffff75 45%, transparent 65%); transform: translateX(-150%); animation: surface-sweep 5s ease-in-out infinite; animation-delay: var(--edge-delay); }
+  .edge-light { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; filter: drop-shadow(0 0 3px #00bfff) drop-shadow(0 0 8px #00aae780); }
+  .edge-light path { fill: none; stroke: #b5f6ff; stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 36 294; animation: edge-flow 3s linear infinite; animation-delay: var(--edge-delay, 0s); }
+  .edge-light--core path { stroke: #00bfff; stroke-width: 2; stroke-dasharray: 75 255; animation-duration: 2s; }
+  .energy-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; overflow: visible; pointer-events: none; }
+  .energy-particles circle { fill: #00aae7; opacity: 0; filter: drop-shadow(0 0 .4px #087ff5); animation: spark-flight var(--flight) linear infinite; animation-delay: var(--particle-delay); }
   .specialty:nth-child(3n + 2) .specialty__face { background: linear-gradient(145deg, #e0eeff, #a6cfff); color: #075bb7; }
   .specialty:nth-child(3n) .specialty__face { background: linear-gradient(145deg, #087cb5, #033f5c); color: #6bddff; }
   .specialty:nth-child(3n) h3 { color: #fff; }
   .specialty:nth-child(3n) .specialty__face > span { color: #d0efff; }
   .specialty h3 { margin: 0; color: #102f4f; font-size: clamp(.6rem, 1.35vw, 1.05rem); letter-spacing: -.035em; }
   .specialty__face > span { font-size: clamp(.45rem, 1.05vw, .7rem); color: #5c768c; }
-  .center-wave { position: absolute; left: 50%; top: 50%; width: 21%; aspect-ratio: 1; translate: -50% -50%; border: 1px solid #00aae7; border-radius: 30%; opacity: 0; pointer-events: none; animation: center-wave 4.2s ease-out infinite; }
-  .center-wave--second { animation-delay: 2.1s; }
+  .center-wave { position: absolute; left: 50%; top: 50%; width: 21%; aspect-ratio: 1; translate: -50% -50%; border: 2px solid #00aae7; box-shadow: 0 0 18px #00aae72b; border-radius: 30%; opacity: 0; pointer-events: none; animation: center-wave 3.6s ease-out infinite; }
+  .center-wave--second { animation-delay: 1.8s; }
   @keyframes center-wave { 0% { transform: scale(.8); opacity: 0; } 15% { opacity: .4; } 100% { transform: scale(4.6); opacity: 0; } }
   @keyframes radial-pulse { 0%, 100% { transform: translate(0, 0) scale(1); } 45% { transform: translate(var(--dx), var(--dy)) scale(.985); } }
+  @keyframes edge-flow { to { stroke-dashoffset: -330; } }
+  @keyframes spark-flight { 0% { transform: translate(0, 0); opacity: 0; } 18% { opacity: .8; } 75% { opacity: .5; } 100% { transform: translate(var(--tx), var(--ty)); opacity: 0; } }
+  @keyframes surface-sweep { 0%, 35% { transform: translateX(-150%); } 85%, 100% { transform: translateX(150%); } }
   @keyframes signal { to { stroke-dashoffset: -46; } }
   @keyframes core-glow { 0%, 100% { opacity: .65; } 50% { opacity: 1; } }
   @media (max-width: 640px) {
@@ -91,7 +108,9 @@ const specialties: { name: string; detail: string; icon: IconName; x: number; y:
     .specialty h3 { font-size: clamp(.44rem, 1.9vw, .8rem); text-align: center; max-width: 90%; }
     .specialty__face :global(svg) { width: clamp(17px, 5vw, 28px); height: clamp(17px, 5vw, 28px); }
     .specialty__face > span { display: none; }
-  }  @media (prefers-reduced-motion: reduce) {
-    .specialty, .connections line, .brand-core::before, .center-wave { animation: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .specialty, .connections line, .brand-core::before, .center-wave, .edge-light path, .energy-particles circle, .specialty__face::after { animation: none; }
+    .specialty__face::after, .energy-particles, .center-wave { display: none; }
   }
 </style>
