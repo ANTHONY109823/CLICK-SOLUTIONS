@@ -11,8 +11,8 @@ El sitio se publica en **https://anthony109823.github.io/CLICK-SOLUTIONS/** con 
   (la integración `integrations/github-pages-base.mjs` agrega la subruta a los enlaces).
 - Limitaciones de GitHub Pages:
   - **No hay servidor**: el formulario queda deshabilitado con su aviso. Para recibir
-    solicitudes por el formulario, publicar en Netlify (abajo).
-  - **No permite cabeceras propias**: la CSP y demás cabeceras de `netlify.toml` no se aplican.
+    solicitudes por el formulario, usar Railway (abajo).
+  - **No ejecuta el middleware del servidor**: las cabeceras de seguridad se aplican en Railway.
   - Plan gratuito: el repositorio debe ser público.
 - Dominio propio en Pages: Settings → Pages → Custom domain. Al usar un dominio propio, el
   sitio queda en la raíz: cambiar `GITHUB_PAGES` en `astro.config.mjs` (site = dominio, base = '/').
@@ -22,7 +22,7 @@ Para probarlo localmente (Git Bash): `DEPLOY_TARGET=github npm run build` y lueg
 
 ---
 
-# Netlify (recomendado cuando se active el formulario)
+# Railway (servidor principal)
 
 ## 1. Repositorio en GitHub
 
@@ -37,11 +37,12 @@ git push -u origin main
 
 Antes de subir, confirma que no haya archivos `.env` ni hojas de cálculo (`git status`).
 
-## 2. Netlify
+## 2. Railway
 
-1. Entra a [app.netlify.com](https://app.netlify.com) → **Add new site → Import an existing project** → GitHub.
-2. Elige el repositorio. La configuración se lee de `netlify.toml` (comando `npm run build`, carpeta `dist`).
-3. En **Site configuration → Environment variables** agrega:
+1. Ejecuta `railway login` y autoriza tu cuenta.
+2. Crea y vincula el proyecto con `railway init --name clicksolutions`.
+3. Despliega con `railway up`. Railway usa `railway.json`, ejecuta `npm run build` y luego `npm run start`.
+4. En **Service → Variables** agrega:
 
 | Variable | Valor | Notas |
 |---|---|---|
@@ -51,25 +52,23 @@ Antes de subir, confirma que no haya archivos `.env` ni hojas de cálculo (`git 
 | `CONTACT_FROM_EMAIL` | `ClickSolutions <web@tudominio.pe>` | Debe pertenecer a un dominio verificado en Resend. |
 | `PUBLIC_CONTACT_FORM_ENABLED` | `true` | Solo cuando las tres anteriores estén configuradas. |
 
-4. Despliega (**Deploys → Trigger deploy**).
+5. Genera una URL pública con `railway domain`.
 
 ## 3. Formulario de contacto (Resend)
 
 1. Crea una cuenta en [resend.com](https://resend.com) (plan gratuito: 3 000 correos/mes).
 2. **Domains → Add domain**: agrega tu dominio y crea en tu proveedor DNS los registros que indica (SPF/DKIM).
-3. **API Keys → Create**: permiso “Sending access”. Copia la clave solo en Netlify, nunca en el código.
+3. **API Keys → Create**: permiso “Sending access”. Copia la clave solo en Railway, nunca en el código.
 4. Configura las variables del paso 2 y vuelve a desplegar.
 5. Prueba: envía el formulario desde el sitio publicado y confirma que el correo llega.
    Si falla, el visitante verá un mensaje de error (nunca un falso “enviado”) y en
-   **Netlify → Logs → Functions** verás el código de estado devuelto por Resend.
+   `railway logs` mostrará el código de estado devuelto por Resend.
 
 ## 4. Dominio propio
 
 1. Compra el dominio (`.pe` en un registrador acreditado por PUNTO.pe, o `.com`).
-2. En Netlify: **Domain management → Add a domain** y sigue las instrucciones:
-   - Opción simple: usar los DNS de Netlify (cambias los nameservers en tu registrador).
-   - Opción alternativa: registros `A`/`CNAME` que indica Netlify.
-3. Netlify emite el certificado HTTPS automáticamente (Let’s Encrypt).
+2. En Railway: **Settings → Networking → Custom Domain** y sigue las instrucciones DNS.
+3. Railway emite el certificado HTTPS automáticamente.
 4. Actualiza `SITE_URL` con el dominio definitivo y vuelve a desplegar.
 
 ## 5. Lista de comprobación antes de publicar

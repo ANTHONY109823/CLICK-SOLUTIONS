@@ -1,7 +1,7 @@
 # ClickSolutions — sitio web
 
 Sitio comercial de ClickSolutions: drones, desarrollo web, soporte técnico y licencias de software.
-Construido con [Astro](https://astro.build) + TypeScript, desplegable en Netlify.
+Construido con [Astro](https://astro.build) + TypeScript y desplegado en Railway.
 
 - Plan, arquitectura y datos pendientes: [docs/PLAN.md](docs/PLAN.md)
 - Publicación, variables de entorno y dominio: [docs/DEPLOY.md](docs/DEPLOY.md)
@@ -16,6 +16,7 @@ Node.js 22.23 o superior (probado con Node 24).
 npm install        # instalar dependencias
 npm run dev        # servidor local en http://localhost:4321
 npm run build      # verificación de tipos + compilación de producción en dist/
+npm start          # ejecutar el servidor Node compilado
 ```
 
 ## Dónde se edita cada cosa

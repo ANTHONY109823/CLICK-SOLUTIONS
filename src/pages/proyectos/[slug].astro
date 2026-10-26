@@ -10,6 +10,8 @@ import { getProjects, getService } from '../../lib/content';
 import { breadcrumbSchema } from '../../lib/seo';
 import type { Project } from '../../data/projects';
 
+export const prerender = true;
+
 export const getStaticPaths = (() =>
   getProjects().map((project) => ({ params: { slug: project.slug }, props: { project } }))) satisfies GetStaticPaths;
 

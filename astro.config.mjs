@@ -1,12 +1,12 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
-import netlify from '@astrojs/netlify';
+import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import githubPagesBase from './integrations/github-pages-base.mjs';
 
 /**
  * Dos destinos de publicación:
- * - Netlify (por defecto): sitio + función /api/contacto para el formulario.
+ * - Railway (por defecto): servidor Node + endpoint /api/contacto.
  * - GitHub Pages (DEPLOY_TARGET=github): solo archivos estáticos en una subruta;
  *   sin servidor, así que el formulario queda deshabilitado con su aviso.
  */
@@ -33,8 +33,8 @@ const contactApi = {
 export default defineConfig({
   site: isGithubPages ? GITHUB_PAGES.site : SITE_URL,
   base: isGithubPages ? GITHUB_PAGES.base : undefined,
-  output: 'static',
-  adapter: isGithubPages ? undefined : netlify(),
+  output: isGithubPages ? 'static' : 'server',
+  adapter: isGithubPages ? undefined : node({ mode: 'standalone' }),
   trailingSlash: 'never',
   build: { format: 'file' },
   integrations: [

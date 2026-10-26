@@ -17,7 +17,7 @@ Fecha: 2026-10-24 · Estado: Fase 1–3 (primera versión) en curso.
 
 ## 2. Arquitectura recomendada
 
-**Astro 7 + TypeScript + CSS propio con variables** (opción A), desplegado en **Netlify** (plan gratuito con uso comercial permitido).
+**Astro 7 + TypeScript + CSS propio con variables** (opción A), desplegado como servidor Node en **Railway**.
 
 | | Astro (elegido) | React + Vite |
 |---|---|---|
@@ -25,9 +25,9 @@ Fecha: 2026-10-24 · Estado: Fase 1–3 (primera versión) en curso.
 | SEO | Excelente: cada página es HTML real | Necesita SSR/prerender adicional |
 | Interactividad | Solo donde hace falta (menú, formulario, buscador) | Total, pero innecesaria en un sitio comercial |
 | Crecimiento | Permite rutas de servidor (API) y componentes React más adelante | Habría que sumar un framework de servidor |
-| Costo | Gratis en Netlify | Igual |
+| Costo | Depende del consumo de Railway | Igual |
 
-- **Formulario**: ruta de servidor `/api/contacto` (función serverless de Netlify) que valida en
+- **Formulario**: ruta de servidor `/api/contacto` ejecutada por Astro Node en Railway, que valida en
   el servidor y envía el correo mediante la API de **Resend**. Sin claves configuradas, el
   formulario se muestra deshabilitado con un aviso honesto: **nunca se simula el envío**.
 - **Sin base de datos, sin login, sin pagos** en la v1: no son necesarios todavía.
@@ -115,7 +115,7 @@ Tipografía: **Inter** (variable, alojada en el propio sitio, sin Google Fonts �
 - Botón de WhatsApp y enlaces de correo **solo si** se configura un dato válido.
 - SEO: títulos y descripciones únicos, Open Graph, sitemap, robots, JSON-LD (Organization,
   Service) solo con datos reales.
-- Cabeceras de seguridad (CSP, etc.) en `netlify.toml`.
+- Cabeceras de seguridad (CSP, etc.) desde el middleware del servidor.
 - Analítica preparada (`data-track` + `track()`), **desactivada**: no se instala ningún rastreador.
 
 ## 7. Segunda fase (no se construye ahora)
@@ -153,7 +153,7 @@ Deseables:
 |---|---|
 | Dominio `.pe` (PUNTO.pe) | ~USD 30–45/año |
 | Dominio `.com` | ~USD 10–15/año |
-| Hosting Netlify (plan gratuito) | Gratis (uso comercial permitido, con límites de uso) |
+| Hosting Railway | Variable según plan y consumo |
 | Envío de correos (Resend) | Gratis hasta 3 000 correos/mes |
 | Correo corporativo (Google Workspace / Zoho) | ~USD 0–7/usuario/mes |
 | Fotografía profesional / bancos de imágenes | Variable |
