@@ -1,6 +1,7 @@
 ---
 import Icon from '../ui/Icon.astro';
 import type { ServiceSlug } from '../../data/services';
+import droneQuote from '../../data/drone-quote.json';
 
 interface Plan {
   name: string;
@@ -18,6 +19,17 @@ interface Props {
 }
 
 const { service } = Astro.props;
+
+const dronePlans: Plan[] = droneQuote.packages.map((plan) => ({
+  name: plan.name,
+  eyebrow: plan.eyebrow,
+  price: plan.priceLabel,
+  timing: plan.timing,
+  support: plan.support,
+  description: plan.description,
+  includes: plan.includes,
+  featured: plan.featured,
+}));
 
 const plans: Record<Props['service'], Plan[]> = {
   'desarrollo-web': [
@@ -50,42 +62,13 @@ const plans: Record<Props['service'], Plan[]> = {
       includes: ['Flujos personalizados', 'Automatizaciones', 'Pagos o integraciones', 'Paneles y capacitación'],
     },
   ],
-  drones: [
-    {
-      eyebrow: 'Contenido puntual',
-      name: 'Fotografía aérea',
-      price: 'Cotización por proyecto',
-      timing: 'Según ubicación',
-      support: 'Entrega digital',
-      description: 'Imágenes aéreas de inmuebles, terrenos, eventos o espacios comerciales.',
-      includes: ['Evaluación de la zona', 'Plan básico de vuelo', 'Selección de fotografías', 'Entrega en alta resolución'],
-    },
-    {
-      eyebrow: 'Contenido completo',
-      name: 'Foto + video',
-      price: 'Cotización por proyecto',
-      timing: 'Según producción',
-      support: 'Entrega lista para usar',
-      description: 'Cobertura visual para campañas, eventos, redes sociales y presentación de propiedades.',
-      includes: ['Fotografía y clips aéreos', 'Planificación de tomas', 'Edición del material acordado', 'Formatos para web o redes'],
-      featured: true,
-    },
-    {
-      eyebrow: 'Registro especializado',
-      name: 'Empresa e inspección visual',
-      price: 'Cotización por alcance',
-      timing: 'Previa evaluación',
-      support: 'Entrega documentada',
-      description: 'Registro de obras, instalaciones y zonas de difícil acceso como apoyo visual.',
-      includes: ['Revisión de viabilidad', 'Ruta de captura acordada', 'Material ordenado por zona', 'Entrega según requerimiento'],
-    },
-  ],
+  drones: dronePlans,
 };
 
 const items = plans[service];
 const note = service === 'desarrollo-web'
   ? 'Precios referenciales basados en un alcance estándar. Dominio, hosting, servicios de terceros, impuestos y funciones fuera del alcance se cotizan por separado.'
-  : 'El precio se define con la ubicación, duración, permisos, complejidad de vuelo y tipo de entrega. La cotización confirma todo antes de reservar.';
+  : droneQuote.note;
 ---
 
 <div class="plans-shell" data-service={service}>
@@ -108,6 +91,27 @@ const note = service === 'desarrollo-web'
     ))}
   </div>
   <p class="plans-note"><Icon name="info" size={16} />{note}</p>
+  {service === 'drones' && (
+    <div class="drone-conditions">
+      <section>
+        <span class="drone-conditions__eyebrow">Servicios adicionales</span>
+        <div class="addon-list">
+          {droneQuote.addons.map((addon) => (
+            <article>
+              <div><strong>{addon.name}</strong><small>{addon.description}</small></div>
+              <b>+ S/ {addon.price.toFixed(2)}</b>
+            </article>
+          ))}
+        </div>
+      </section>
+      <details>
+        <summary>Condiciones principales del servicio</summary>
+        <ol>
+          {droneQuote.terms.map((term) => <li><strong>{term.title}:</strong> {term.text}</li>)}
+        </ol>
+      </details>
+    </div>
+  )}
 </div>
 
 <style>
@@ -172,8 +176,28 @@ const note = service === 'desarrollo-web'
   .plans-note { display: flex; gap: 8px; margin: 0; color: var(--text-muted); font-size: var(--fs-xs); }
   .plans-note :global(svg) { flex: 0 0 auto; margin-top: 2px; color: var(--link); }
 
+  .drone-conditions { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr); gap: var(--space-4); margin-top: var(--space-2); }
+  .drone-conditions > section,
+  .drone-conditions > details { min-width: 0; padding: var(--space-5); border: 1px solid #bde8ef; border-radius: 20px; background: linear-gradient(145deg, #f7fdfe, #eaf9fc); }
+  .drone-conditions__eyebrow { display: block; margin-bottom: var(--space-3); color: #087f99; font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .addon-list { display: grid; gap: 1px; overflow: hidden; border: 1px solid #cae9ef; border-radius: 14px; background: #cae9ef; }
+  .addon-list article { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: 11px 13px; background: #fff; }
+  .addon-list strong,
+  .addon-list small { display: block; }
+  .addon-list strong { color: var(--brand-ink); font-size: var(--fs-sm); }
+  .addon-list small { margin-top: 2px; color: var(--text-muted); font-size: var(--fs-xs); }
+  .addon-list b { flex: 0 0 auto; color: #075d71; font-size: var(--fs-sm); }
+  .drone-conditions summary { color: var(--brand-ink); font-weight: 750; cursor: pointer; }
+  .drone-conditions ol { display: grid; gap: var(--space-3); margin: var(--space-4) 0 0; padding-left: 1.15rem; color: var(--text-muted); font-size: var(--fs-xs); }
+  .drone-conditions li::marker { color: #0c9fbd; font-weight: 800; }
+
   @media (max-width: 860px) {
     .plans { grid-template-columns: 1fr; }
     .plan { min-height: 0; }
+    .drone-conditions { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .addon-list article { align-items: flex-start; flex-direction: column; gap: 5px; }
   }
 </style>

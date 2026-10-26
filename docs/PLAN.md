@@ -33,7 +33,9 @@ Fecha: 2026-10-24 · Estado: Fase 1–3 (primera versión) en curso.
 - **Sin base de datos, sin login, sin pagos** en la v1: no son necesarios todavía.
 - **Contenido centralizado** en `src/data/*` y leído a través de `src/lib/content.ts`.
 - **Panel editorial preparado con Pages CMS**: `.pages.yml` permite editar datos de la empresa,
-  textos de inicio e imágenes desde GitHub. Cada guardado dispara la publicación automática.
+  textos de inicio, imágenes y tarifas de drones desde GitHub. Cada guardado dispara la publicación automática.
+- **Cotizador privado local**: `npm run admin` abre un portal solo en `127.0.0.1` para crear
+  propuestas de drones y descargarlas como PDF sin enviar datos de clientes a la web pública.
 - **Fase futura transaccional**: API ASP.NET Core o funciones de servidor + PostgreSQL para
   pedidos, clientes, pagos y entrega autorizada de licencias.
 

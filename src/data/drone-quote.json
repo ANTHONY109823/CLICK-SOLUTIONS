@@ -1,0 +1,106 @@
+{
+  "document": {
+    "prefix": "COT-CS",
+    "nextNumber": 25,
+    "currency": "PEN",
+    "currencySymbol": "S/",
+    "depositPercent": 50,
+    "minimumNoticeDays": 3,
+    "validityDays": 15
+  },
+  "packages": [
+    {
+      "id": "standard",
+      "eyebrow": "Grabación sin edición",
+      "name": "Servicio estándar",
+      "price": 350,
+      "unit": "hora",
+      "priceLabel": "S/ 350.00 por hora",
+      "timing": "Por hora en locación",
+      "support": "Originales RAW en 4K",
+      "description": "Cobertura aérea profesional con entrega del material bruto para que conserves todos los originales.",
+      "includes": [
+        "Grabación con equipo profesional y operador acreditado por el MTC",
+        "Videos y fotografías sin edición",
+        "Material bruto RAW en 4K mediante Drive"
+      ],
+      "featured": false
+    },
+    {
+      "id": "express",
+      "eyebrow": "Reel y redes sociales",
+      "name": "Video Express",
+      "price": 450,
+      "unit": "proyecto",
+      "priceLabel": "S/ 450.00 por proyecto",
+      "timing": "Video final de 30 a 60 s",
+      "support": "Originales RAW en 4K",
+      "description": "Contenido corto y dinámico para Reel, TikTok y campañas en redes sociales.",
+      "includes": [
+        "Grabación con los vuelos necesarios para el proyecto",
+        "Edición profesional de 30 a 60 segundos",
+        "Entrega del video final y los originales en 4K"
+      ],
+      "featured": true
+    },
+    {
+      "id": "corporate",
+      "eyebrow": "Empresas, obras e instituciones",
+      "name": "Video corporativo",
+      "price": 600,
+      "unit": "proyecto",
+      "priceLabel": "S/ 600.00 por proyecto",
+      "timing": "Video final de 2 a 3 min",
+      "support": "Edición y colorización",
+      "description": "Presentación audiovisual formal para empresas, obras, instalaciones o instituciones.",
+      "includes": [
+        "Grabación con los vuelos necesarios para el proyecto",
+        "Edición profesional y colorización",
+        "Entrega del video final y los originales en 4K"
+      ],
+      "featured": false
+    }
+  ],
+  "addons": [
+    {
+      "id": "express-edit",
+      "name": "Edición de Video Express",
+      "description": "Reel o TikTok de 30 a 60 segundos",
+      "price": 150,
+      "standardOnly": true
+    },
+    {
+      "id": "corporate-edit",
+      "name": "Edición corporativa / institucional",
+      "description": "Video de 2 a 3 minutos con colorización",
+      "price": 250,
+      "standardOnly": true
+    },
+    {
+      "id": "extra-hour",
+      "name": "Hora adicional en el sitio",
+      "description": "Hora no agendada previamente",
+      "price": 300,
+      "standardOnly": false
+    }
+  ],
+  "terms": [
+    {
+      "title": "Forma de pago",
+      "text": "50% de adelanto para separar la fecha, con tres días de anticipación como mínimo, y 50% al finalizar la jornada de grabación, antes de entregar el material final."
+    },
+    {
+      "title": "Condiciones climáticas y legales",
+      "text": "Los vuelos están sujetos a condiciones climáticas seguras y a las regulaciones de zonas de exclusión aérea de la DGAC. En caso de fuerza mayor, la fecha se reprograma de mutuo acuerdo."
+    },
+    {
+      "title": "Viáticos",
+      "text": "La tarifa incluye traslado en distritos del radio céntrico de Lima. Las zonas periféricas, playas del sur o ubicaciones fuera de Lima Metropolitana pueden generar un recargo de movilidad."
+    },
+    {
+      "title": "Hora de inicio, ingreso y acceso",
+      "text": "El tiempo se contabiliza desde la llegada del operador a la locación e incluye esperas por coordinaciones o autorizaciones de ingreso. Los permisos de acceso y equipos de protección personal requeridos son responsabilidad del cliente."
+    }
+  ],
+  "note": "Los alcances adicionales, más locaciones, videos extra o piezas distintas se cotizan por separado según el proyecto."
+}

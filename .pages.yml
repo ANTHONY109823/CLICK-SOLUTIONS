@@ -87,6 +87,76 @@ content:
       - { name: aboutLead, label: Texto de empresa, type: text, required: true }
       - { name: aboutCta, label: Texto del botón final, type: string, required: true }
 
+  - name: droneQuote
+    label: Tarifas y cotizaciones de drones
+    type: file
+    path: src/data/drone-quote.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - name: document
+        label: Configuración del documento
+        type: object
+        fields:
+          - { name: prefix, label: Prefijo de cotización, type: string, required: true }
+          - { name: nextNumber, label: Próximo número, type: number, required: true }
+          - { name: currency, label: Código de moneda, type: string, required: true }
+          - { name: currencySymbol, label: Símbolo de moneda, type: string, required: true }
+          - { name: depositPercent, label: Adelanto (%), type: number, required: true }
+          - { name: minimumNoticeDays, label: Anticipación mínima (días), type: number, required: true }
+          - { name: validityDays, label: Vigencia de la cotización (días), type: number, required: true }
+      - name: packages
+        label: Paquetes
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{name} · {priceLabel}"
+        fields:
+          - { name: id, label: Identificador, type: string, required: true }
+          - { name: eyebrow, label: Categoría corta, type: string, required: true }
+          - { name: name, label: Nombre, type: string, required: true }
+          - { name: price, label: Precio numérico, type: number, required: true }
+          - name: unit
+            label: Modalidad
+            type: select
+            required: true
+            options:
+              values:
+                - { label: Por hora, value: hora }
+                - { label: Por proyecto, value: proyecto }
+          - { name: priceLabel, label: Precio visible, type: string, required: true }
+          - { name: timing, label: Duración o modalidad, type: string, required: true }
+          - { name: support, label: Entrega principal, type: string, required: true }
+          - { name: description, label: Descripción, type: text, required: true }
+          - { name: includes, label: Incluye, type: string, list: true, required: true }
+          - { name: featured, label: Mostrar como recomendado, type: boolean }
+      - name: addons
+        label: Servicios adicionales
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{name} · S/ {price}"
+        fields:
+          - { name: id, label: Identificador, type: string, required: true }
+          - { name: name, label: Nombre, type: string, required: true }
+          - { name: description, label: Descripción, type: text, required: true }
+          - { name: price, label: Precio, type: number, required: true }
+          - { name: standardOnly, label: Solo para paquete estándar, type: boolean }
+      - name: terms
+        label: Términos y condiciones
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - { name: title, label: Título, type: string, required: true }
+          - { name: text, label: Condición, type: text, required: true }
+      - { name: note, label: Nota comercial final, type: text, required: true }
+
   - name: advanced
     label: Contenido avanzado
     type: group

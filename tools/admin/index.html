@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Portal privado | ClickSolutions</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#resumen"><img src="/brand/clicksolutions-isotipo.png" alt="" /><span><strong>Click</strong><small>solutions</small></span></a>
+      <nav aria-label="Portal privado">
+        <a href="#resumen">Resumen</a>
+        <a href="#cotizador">Cotizador</a>
+        <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">Contenido ↗</a>
+      </nav>
+      <span class="local-state"><i></i> Solo local</span>
+    </header>
+
+    <main>
+      <section class="dashboard" id="resumen">
+        <div>
+          <span class="kicker">Portal de gestión</span>
+          <h1>Cotizaciones claras,<br /><em>sin rehacer cálculos.</em></h1>
+          <p>Los precios y condiciones de este panel vienen del mismo archivo que alimenta la página pública de Drones.</p>
+        </div>
+        <aside class="sync-card">
+          <span>Sincronización</span>
+          <strong>Web + cotizador</strong>
+          <ul>
+            <li><b data-package-count>3</b> paquetes comerciales</li>
+            <li><b data-addon-count>3</b> servicios adicionales</li>
+            <li><b>PDF</b> generado en esta PC</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="workspace" id="cotizador">
+        <div class="form-panel">
+          <header class="section-heading">
+            <div><span class="kicker">Nueva propuesta</span><h2>Datos de la cotización</h2></div>
+            <span class="draft-state" data-draft-state>Sin guardar</span>
+          </header>
+
+          <form data-quote-form>
+            <fieldset>
+              <legend>Documento y cliente</legend>
+              <div class="form-grid form-grid--3">
+                <label>N.º de cotización<input name="quoteNumber" required /></label>
+                <label>Fecha de emisión<input name="issueDate" type="date" required /></label>
+                <label>Válida por<input name="validityDays" type="number" min="1" max="90" required /></label>
+              </div>
+              <div class="form-grid form-grid--2">
+                <label>Cliente o contacto<input name="clientName" placeholder="Nombre completo" required /></label>
+                <label>Empresa / proyecto<input name="clientCompany" placeholder="Opcional" /></label>
+                <label>Cargo o tratamiento<input name="clientRole" placeholder="Ej. Arq., Ing., Sr." /></label>
+                <label>Correo o teléfono<input name="clientContact" placeholder="Opcional" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Información del servicio</legend>
+              <div class="form-grid form-grid--2">
+                <label>Nombre del proyecto<input name="projectName" placeholder="Ej. Registro de avance de obra" /></label>
+                <label>Ubicación<input name="location" placeholder="Distrito, ciudad" /></label>
+                <label>Fecha tentativa<input name="serviceDate" type="date" /></label>
+                <label>Movilidad adicional (S/)<input name="mobility" type="number" min="0" step="10" value="0" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Paquete</legend>
+              <div class="package-picker" data-package-picker></div>
+              <label class="hours-field" data-hours-field>Horas de grabación<input name="hours" type="number" min="1" max="24" step="0.5" value="1" /></label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Servicios adicionales</legend>
+              <div class="addon-picker" data-addon-picker></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Ajustes finales</legend>
+              <div class="form-grid form-grid--2">
+                <label>Descuento (S/)<input name="discount" type="number" min="0" step="10" value="0" /></label>
+                <label>Responsable<input name="owner" value="Ing. Anthony Ccayo" /></label>
+              </div>
+              <label>Observaciones<textarea name="notes" rows="4" placeholder="Alcances particulares, entregables o coordinaciones especiales"></textarea></label>
+            </fieldset>
+
+            <div class="form-actions">
+              <button type="button" class="button button--ghost" data-save-draft>Guardar borrador</button>
+              <button type="reset" class="button button--ghost">Limpiar</button>
+              <button type="submit" class="button button--primary">Generar y descargar PDF</button>
+            </div>
+            <p class="privacy-note">Los datos del cliente permanecen en este navegador. No se envían a internet ni se guardan en la web pública.</p>
+          </form>
+        </div>
+
+        <aside class="preview-panel" aria-live="polite">
+          <div class="preview-paper">
+            <header><img src="/brand/clicksolutions-isotipo.png" alt="" /><div><small>PROPUESTA COMERCIAL</small><strong data-preview-number>—</strong></div></header>
+            <section class="preview-client"><small>PARA</small><strong data-preview-client>Completa el nombre del cliente</strong><span data-preview-project>Servicio de drones</span></section>
+            <section class="preview-package"><small>PAQUETE SELECCIONADO</small><h3 data-preview-package>Servicio estándar</h3><p data-preview-description></p></section>
+            <dl>
+              <div><dt>Servicio base</dt><dd data-preview-base>S/ 0.00</dd></div>
+              <div><dt>Adicionales y movilidad</dt><dd data-preview-extras>S/ 0.00</dd></div>
+              <div><dt>Descuento</dt><dd data-preview-discount>- S/ 0.00</dd></div>
+              <div class="preview-total"><dt>Inversión total</dt><dd data-preview-total>S/ 0.00</dd></div>
+              <div><dt>Adelanto para reservar</dt><dd data-preview-deposit>S/ 0.00</dd></div>
+            </dl>
+            <footer><span>ClickSolutions</span><span data-preview-contact></span></footer>
+          </div>
+          <div class="preview-help"><strong>PDF profesional de 2 páginas</strong><span>Incluye propuesta, partidas, total, adelanto, condiciones y datos de contacto.</span></div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast" role="status" aria-live="polite" hidden data-toast></div>
+    <script src="/vendor/jspdf.umd.min.js"></script>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
