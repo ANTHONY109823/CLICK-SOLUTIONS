@@ -253,8 +253,11 @@ const values: { title: string; text: string; icon: IconName }[] = [
   }
 
   .projects-panel {
+    padding-block: 0;
     background: radial-gradient(circle at 90% 15%, rgb(0 170 231 / 0.08), transparent 28%), var(--bg);
   }
+
+  .projects-panel > .panel-inner { width: 100%; max-width: none; padding-inline: 0; }
 
   .panel-heading {
     display: flex;
