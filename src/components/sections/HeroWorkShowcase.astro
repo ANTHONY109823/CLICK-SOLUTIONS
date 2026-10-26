@@ -39,16 +39,8 @@ const slides: { category: string; title: string; description: string; image: str
       </div>
       <div class="monitor__chin"><span></span><strong>Click<span>solutions</span></strong><span></span></div>
     </div>
-    <div class="monitor__stand" aria-hidden="true"></div>
-    <div class="monitor__base" aria-hidden="true"></div>
   </div>
-  <div class="showcase-controls">
-    <div class="showcase-dots" aria-label="Elegir una especialidad">
-      {slides.map((slide, index) => <button class:list={{ 'is-active': index === 0 }} type="button" data-work-dot aria-label={`Mostrar ${slide.category}`} aria-pressed={index === 0}><span></span></button>)}
-    </div>
-    <span class="showcase-count" data-work-count>01 / 04</span>
-    <button class="showcase-pause" type="button" data-work-pause aria-label="Pausar presentación" aria-pressed="false"><span data-work-pause-label>Pausar</span><span data-work-pause-symbol aria-hidden="true">Ⅱ</span></button>
-  </div>
+
 </div>
 
 <style>
@@ -83,16 +75,6 @@ const slides: { category: string; title: string; description: string; image: str
   .monitor__chin > span { width: 20px; height: 1px; background: #77bdd955; }
   .monitor__chin strong { color: #e2f4ff; font-size: .57rem; letter-spacing: -.02em; }
   .monitor__chin strong span { font-weight: 400; color: #89cde5; }
-  .monitor__stand { width: 19%; height: 33px; margin: auto; background: linear-gradient(90deg, #12324c, #285573, #12324c); clip-path: polygon(23% 0, 77% 0, 100% 100%, 0 100%); }
-  .monitor__base { width: 42%; height: 9px; margin: auto; border-radius: 50% 50% 5px 5px; background: linear-gradient(180deg, #35647f, #102c46); box-shadow: 0 15px 24px #0006; }
-  .showcase-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
-  .showcase-dots { display: flex; gap: 5px; }
-  .showcase-dots button { display: grid; align-items: center; min-width: 30px; height: 32px; padding: 8px 3px; border: 0; background: transparent; cursor: pointer; }
-  .showcase-dots button span { display: block; width: 24px; height: 3px; border-radius: 5px; background: #2b5674; transition: background .3s; }
-  .showcase-dots button.is-active span { background: #49d4ff; box-shadow: 0 0 10px #00aae74d; }
-  .showcase-count { color: #7198b6; font-size: .6rem; letter-spacing: .06em; }
-  .showcase-pause { display: inline-flex; gap: 7px; align-items: center; border: 1px solid #4f9cbd40; border-radius: 20px; padding: 6px 10px; background: #05213a; color: #a8cadd; font-size: .58rem; cursor: pointer; }
-  .showcase-pause:hover { color: #fff; border-color: #50c5eb; }
   @keyframes monitor-zoom { 0%, 100% { transform: scale(.98) translateY(3px); } 50% { transform: scale(1.025) translateY(-4px); } }
   @keyframes photo-zoom { from { transform: scale(1); } to { transform: scale(1.12); } }
   @media (max-width: 860px) { .work-showcase { max-width: 640px; margin: 1rem auto; } .monitor__screen { height: 320px; } .work-slide h2 { font-size: 2rem; } }
@@ -103,42 +85,22 @@ const slides: { category: string; title: string; description: string; image: str
 <script>
   document.querySelectorAll<HTMLElement>('[data-work-showcase]').forEach((showcase) => {
     const slides = [...showcase.querySelectorAll<HTMLElement>('[data-work-slide]')];
-    const dots = [...showcase.querySelectorAll<HTMLButtonElement>('[data-work-dot]')];
-    const pause = showcase.querySelector<HTMLButtonElement>('[data-work-pause]');
-    const count = showcase.querySelector<HTMLElement>('[data-work-count]');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let active = 0;
-    let paused = false;
-    let hovered = false;
-    let focused = false;
     let timer: number | undefined;
-    const show = (index: number) => {
-      active = (index + slides.length) % slides.length;
-      slides.forEach((slide, i) => { slide.classList.toggle('is-active', i === active); slide.setAttribute('aria-hidden', String(i !== active)); });
-      dots.forEach((dot, i) => { dot.classList.toggle('is-active', i === active); dot.setAttribute('aria-pressed', String(i === active)); });
-      if (count) count.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    const showNext = () => {
+      active = (active + 1) % slides.length;
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('is-active', index === active);
+        slide.setAttribute('aria-hidden', String(index !== active));
+      });
     };
     const schedule = () => {
       window.clearInterval(timer);
       timer = undefined;
-      if (paused || hovered || focused || document.hidden || reducedMotion.matches) return;
-      timer = window.setInterval(() => show(active + 1), 5000);
+      if (document.hidden || reducedMotion.matches || slides.length < 2) return;
+      timer = window.setInterval(showNext, 5000);
     };
-    dots.forEach((dot, index) => dot.addEventListener('click', () => { show(index); schedule(); }));
-    pause?.addEventListener('click', () => {
-      paused = !paused;
-      pause.setAttribute('aria-pressed', String(paused));
-      pause.setAttribute('aria-label', paused ? 'Reanudar presentación' : 'Pausar presentación');
-      const label = pause.querySelector('[data-work-pause-label]');
-      const symbol = pause.querySelector('[data-work-pause-symbol]');
-      if (label) label.textContent = paused ? 'Reanudar' : 'Pausar';
-      if (symbol) symbol.textContent = paused ? '▶' : 'Ⅱ';
-      schedule();
-    });
-    showcase.addEventListener('pointerenter', () => { hovered = true; schedule(); });
-    showcase.addEventListener('pointerleave', () => { hovered = false; schedule(); });
-    showcase.addEventListener('focusin', () => { focused = true; schedule(); });
-    showcase.addEventListener('focusout', (event) => { focused = event.relatedTarget instanceof Node && showcase.contains(event.relatedTarget); schedule(); });
     document.addEventListener('visibilitychange', schedule);
     reducedMotion.addEventListener('change', schedule);
     schedule();
