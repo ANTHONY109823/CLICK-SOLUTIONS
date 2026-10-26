@@ -9,12 +9,13 @@ const specialties: Specialty[] = [
   { name: 'Software', detail: 'Herramientas originales', icon: 'key', q: 1, r: 0, tone: 'navy' },
   { name: 'Mantenimiento', detail: 'Tecnología a punto', icon: 'cpu', q: -1, r: 1, tone: 'blue' },
   { name: 'Fotografía y video', detail: 'Producción audiovisual aérea', icon: 'camera', q: 1, r: -1, tone: 'blue' },
-  { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', q: 2, r: 0, tone: 'cyan' },
+  { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', q: 2, r: -2, tone: 'cyan' },
   { name: 'Fotogrametría', detail: 'Modelado y medición 3D', icon: 'photogrammetry', q: 0, r: 1, tone: 'cyan' },
-  { name: 'Automatización', detail: 'Procesos más simples', icon: 'workflow', q: -1, r: -1, tone: 'blue' },
-  { name: 'Diagnóstico', detail: 'Identificamos las fallas', icon: 'search', q: -1, r: 2, tone: 'cyan' },
-  { name: 'Licencias originales', detail: 'Software para tu equipo', icon: 'shield', q: 1, r: 1, tone: 'navy' },
+  { name: 'Automatización', detail: 'Procesos más simples', icon: 'workflow', q: -2, r: 0, tone: 'blue' },
+  { name: 'Diagnóstico', detail: 'Identificamos las fallas', icon: 'search', q: -2, r: 2, tone: 'cyan' },
+  { name: 'Licencias originales', detail: 'Software para tu equipo', icon: 'shield', q: 2, r: 0, tone: 'navy' },
 ];
+const emptyTones = ['pale', 'cyan', 'blue', 'pale', 'aqua', 'cyan', 'pale', 'blue', 'aqua', 'pale', 'cyan', 'mist', 'navy'];
 // Every cell, including the logo and specialties, belongs to this ONE axial mesh.
 const cells = Array.from({ length: 285 }, (_, index) => {
   const q = index % 15 - 7;
@@ -30,7 +31,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <ul class="honeycomb-scene" aria-label="Especialidades de Click Solutions">
       {cells.map((cell) => (
         <li class:list={['cell', { 'cell--main': !!cell.specialty, 'cell--brand': cell.brand, 'cell--empty': !cell.specialty && !cell.brand, 'cell--small': cell.index % 3 === 0 }]}
-          data-tone={cell.specialty?.tone ?? (cell.index % 7 === 0 ? 'blue' : 'pale')}
+          data-tone={cell.specialty?.tone ?? emptyTones[Math.abs(cell.q * 7 + cell.r * 11 + cell.index % 3) % emptyTones.length]}
           style={`--x:${cell.x};--y:${cell.y};--delay:${-cell.index % 17 * .43}s;--wave:${cell.distance * -.18}s;--duration:${6 + cell.index % 5}s`}
           aria-hidden={!cell.specialty && !cell.brand ? 'true' : undefined}
         >
@@ -60,6 +61,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .cell[data-tone='blue'] .cell__surface { background: linear-gradient(145deg, #ddecff, #99c7f3); color: #075bb7; }
   .cell[data-tone='cyan'] .cell__surface { background: linear-gradient(145deg, #d8f8ff, #88d9ef); }
   .cell[data-tone='navy'] .cell__surface { background: linear-gradient(145deg, #087cb5, #033f5c); color: #8ce9ff; }
+  .cell[data-tone='aqua'] .cell__surface { background: linear-gradient(145deg, #b8f3ff, #4cc8e4); }
+  .cell[data-tone='mist'] .cell__surface { background: linear-gradient(145deg, #c4e4f7, #69a8d5); }
+  .cell--empty[data-tone='cyan'] .cell__foundation { background: linear-gradient(135deg, #c4edf9, #dff6ff); }
+  .cell--empty[data-tone='blue'] .cell__foundation { background: linear-gradient(135deg, #c9e2f9, #e2efff); }
+  .cell--empty[data-tone='aqua'] .cell__foundation { background: linear-gradient(135deg, #bce9f2, #dcf7fa); }
+  .cell--empty:nth-child(5n) .cell__surface::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 20%, #ffffff70 45%, transparent 65%); transform: translateX(-140%); animation: surface-shine 7s ease-in-out infinite; animation-delay: var(--delay); pointer-events: none; }
   .cell--small .cell__depth { animation-name: small-zoom; }
   .cell--main, .cell--brand { z-index: 2; }
   .cell--main .cell__depth, .cell--brand .cell__depth { background: linear-gradient(135deg, #00aae7, #087ff5, #033f5c); animation: main-zoom 7s ease-in-out infinite; animation-delay: var(--wave); }
@@ -75,12 +82,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .edge-light path { fill: none; stroke: #00aae7; stroke-width: 1; stroke-dasharray: 35 265; animation: edge-flow 4s linear infinite; animation-delay: var(--delay); }
   .cell--main .edge-light path, .cell--brand .edge-light path { stroke: #a4f1ff; stroke-width: 1.6; }
   .cell--brand .edge-light path { stroke: #00bfff; stroke-width: 2; }
+  .cell--empty .edge-light path { stroke: #009fdd; stroke-width: 1.4; }
   @keyframes camera-zoom { 0% { transform: scale(1) translate(0, 0); } 40% { transform: scale(1.06) translate(-.8%, .8%); } 75% { transform: scale(1.11) translate(.8%, -.6%); } 100% { transform: scale(1.025) translate(.3%, .2%); } }
   @keyframes empty-zoom { 0%, 100% { transform: scale(.94); opacity: .9; } 30% { transform: scale(.64); opacity: .28; } 55% { transform: scale(.35); opacity: 0; } 80% { transform: scale(1); opacity: 1; } }
   @keyframes small-zoom { 0%, 100% { transform: scale(.53); opacity: .55; } 35% { transform: scale(.9); opacity: .95; } 65% { transform: scale(.3); opacity: 0; } 85% { transform: scale(.65); opacity: .7; } }
   @keyframes main-zoom { 0%, 100% { transform: scale(.94) translateY(0); opacity: .88; } 45% { transform: scale(1.04) translateY(-2px); opacity: 1; } 70% { transform: scale(.98) translateY(1px); opacity: .96; } }
   @keyframes brand-zoom { 0%, 100% { transform: scale(.98); } 50% { transform: scale(1.035); } }
   @keyframes edge-flow { to { stroke-dashoffset: -300; } }
+  @keyframes surface-shine { 0%, 30% { transform: translateX(-140%); } 75%, 100% { transform: translateX(140%); } }
   @media (max-width: 640px) {
     .constellation { --diameter: clamp(76px, 22vw, 140px); min-height: max(520px, calc(100svh - var(--header-h))); }
     .honeycomb-camera { animation-name: camera-mobile; }
@@ -91,7 +100,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
   @keyframes camera-mobile { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
   @media (prefers-reduced-motion: reduce) {
-    .honeycomb-camera, .cell__depth, .cell--main .cell__depth, .cell--brand .cell__depth, .edge-light path { animation: none; }
+    .honeycomb-camera, .cell__depth, .cell--main .cell__depth, .cell--brand .cell__depth, .edge-light path, .cell--empty:nth-child(5n) .cell__surface::after { animation: none; }
     .cell--empty .cell__depth { transform: scale(.8); opacity: .75; }
   }
 </style>
