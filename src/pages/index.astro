@@ -2,20 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
-import ProjectCard from '../components/sections/ProjectCard.astro';
+import SolutionsConstellation from '../components/sections/SolutionsConstellation.astro';
 import HomeHero from '../components/sections/HomeHero.astro';
-import { getServices, getProjects, getHomeContent } from '../lib/content';
+import { getServices, getHomeContent } from '../lib/content';
 import type { IconName } from '../components/ui/icons';
 
 const services = getServices();
-const projects = getProjects().slice(0, 2);
 const home = getHomeContent();
 
-const projectFormats: { title: string; text: string; icon: IconName; href: string }[] = [
-  { title: 'Experiencias web', text: 'Sitios, catálogos y sistemas enfocados en objetivos reales.', icon: 'code', href: '/servicios/desarrollo-web' },
-  { title: 'Contenido desde el aire', text: 'Fotografía y video para inmuebles, eventos y empresas.', icon: 'drone', href: '/servicios/drones' },
-  { title: 'Tecnología lista para usar', text: 'Equipos, software y soporte con orientación clara.', icon: 'cpu', href: '/servicios/soporte-tecnico' },
-];
 
 const values: { title: string; text: string; icon: IconName }[] = [
   { title: 'Claridad', text: 'Alcance y precio antes de empezar.', icon: 'clipboard' },
@@ -35,21 +29,9 @@ const values: { title: string; text: string; icon: IconName }[] = [
     <div class="container panel-inner">
       <header class="panel-heading" data-reveal>
         <div><span class="eyebrow">{home.projectsEyebrow}</span><h2>{home.projectsTitle}</h2></div>
-        <p>{home.projectsLead}</p>
+        <p>Un mismo equipo. Un universo de soluciones.</p>
       </header>
-      <div class:list={['projects-layout', { 'projects-layout--empty': projects.length === 0 }]}>
-        {projects.length > 0 && <div class="featured-project" data-reveal="left"><ProjectCard project={projects[0]} /></div>}
-        <div class="project-formats" data-reveal="right">
-          {projectFormats.map((item) => (
-            <a href={item.href} class="format-card">
-              <span><Icon name={item.icon} size={22} /></span>
-              <div><h3>{item.title}</h3><p>{item.text}</p></div>
-              <Icon name="arrow-right" size={17} />
-            </a>
-          ))}
-        </div>
-      </div>
-      {projects.length === 0 && <p class="portfolio-note">Estamos documentando proyectos reales para publicarlos con autorización de cada cliente.</p>}
+      <SolutionsConstellation />
     </div>
   </section>
 
@@ -289,55 +271,6 @@ const values: { title: string; text: string; icon: IconName }[] = [
   .panel-heading h2 { max-width: 15ch; margin: 0; }
   .panel-heading > p { max-width: 28ch; margin: 0; color: var(--text-muted); font-size: var(--fs-sm); text-align: right; }
 
-  .projects-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(330px, 0.9fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: stretch;
-  }
-
-  .projects-layout--empty { grid-template-columns: 1fr; }
-  .featured-project :global(.project-card) { min-height: 360px; }
-  .project-formats { display: grid; gap: var(--space-4); }
-
-  .format-card {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: var(--space-4);
-    min-height: 108px;
-    padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: linear-gradient(145deg, #fff, #f5fbff);
-    box-shadow: var(--shadow-sm);
-    color: inherit;
-    text-decoration: none;
-    transition: transform var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base);
-  }
-
-  .format-card:hover {
-    border-color: #a8ddf3;
-    box-shadow: var(--shadow-md);
-    color: inherit;
-    transform: translateX(6px);
-  }
-
-  .format-card > span {
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-    background: linear-gradient(145deg, #daf4ff, #c8e8ff);
-    color: var(--brand-blue);
-  }
-
-  .format-card h3 { margin: 0 0 4px; font-size: var(--fs-md); }
-  .format-card p { margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
-  .format-card > :global(svg) { color: var(--link); }
-  .portfolio-note { margin: var(--space-5) 0 0; color: var(--text-muted); font-size: var(--fs-sm); }
-
   .about-panel {
     background: radial-gradient(circle at 14% 18%, rgb(0 170 231 / 0.2), transparent 26%), linear-gradient(135deg, #031329, #07345f);
     color: var(--dark-text);
@@ -403,15 +336,13 @@ const values: { title: string; text: string; icon: IconName }[] = [
 
   @media (max-width: 860px) {
     .home-panel { min-height: auto; }
-    .projects-layout, .about-grid { grid-template-columns: 1fr; }
-    .featured-project :global(.project-card) { min-height: 0; }
+    .about-grid { grid-template-columns: 1fr; }
     .about-grid { gap: var(--space-10); }
   }
 
   @media (max-width: 560px) {
     .panel-heading { align-items: flex-start; flex-direction: column; }
     .panel-heading > p { text-align: left; }
-    .format-card { min-height: 92px; padding: var(--space-4); }
     .about-actions { display: grid; }
     .about-actions :global(.btn) { width: 100%; }
   }
