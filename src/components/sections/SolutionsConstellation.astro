@@ -14,6 +14,12 @@ const specialties: Specialty[] = [
   { name: 'Sistemas web', detail: 'Soluciones a medida', icon: 'layout', q: -2, r: 2, tone: 'blue' },
   { name: 'Fotografía aérea', detail: 'Imágenes desde el aire', icon: 'camera', q: 2, r: -2, tone: 'navy' },
   { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', q: 2, r: 0, tone: 'cyan' },
+  { name: 'Fotometría', detail: 'Medición de luz', icon: 'photometry', q: -2, r: 1, tone: 'navy' },
+  { name: 'Video aéreo', detail: 'Historias desde el aire', icon: 'video', q: 2, r: -1, tone: 'blue' },
+  { name: 'Automatización', detail: 'Procesos más simples', icon: 'workflow', q: -1, r: -1, tone: 'blue' },
+  { name: 'Catálogos digitales', detail: 'Tus productos en línea', icon: 'layout', q: 1, r: -2, tone: 'cyan' },
+  { name: 'Diagnóstico', detail: 'Identificamos las fallas', icon: 'search', q: -1, r: 2, tone: 'cyan' },
+  { name: 'Licencias originales', detail: 'Software para tu equipo', icon: 'shield', q: 1, r: 1, tone: 'navy' },
 ];
 // Every cell, including the logo and specialties, belongs to this ONE axial mesh.
 const cells = Array.from({ length: 285 }, (_, index) => {
@@ -48,7 +54,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 </div>
 
 <style>
-  .constellation { --diameter: clamp(88px, min(22vw, 25svh), 215px); position: relative; isolation: isolate; min-height: max(680px, calc(100svh - var(--header-h))); overflow: hidden; background: #edf7fc; }
+  .constellation { --diameter: clamp(88px, min(22vw, 21svh), 200px); position: relative; isolation: isolate; min-height: max(680px, calc(100svh - var(--header-h))); overflow: hidden; background: #edf7fc; }
   .honeycomb-camera { position: absolute; inset: 0; transform-origin: 50% 50%; animation: camera-zoom 19s ease-in-out infinite alternate; }
   .honeycomb-scene { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
   .cell { position: absolute; left: calc(50% + var(--x) * var(--diameter)); top: calc(50% + var(--y) * var(--diameter)); width: var(--diameter); height: calc(var(--diameter) * .866025404); translate: -50% -50%; }
