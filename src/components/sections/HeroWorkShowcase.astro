@@ -1,0 +1,146 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { IconName } from '../ui/icons';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const slides: { category: string; title: string; description: string; image: string; alt: string; icon: IconName; tag: string }[] = [
+  { category: 'Desarrollo web', title: 'Tu negocio, a un clic', description: 'Diseñamos páginas, tiendas y sistemas a medida para conectar con tus clientes.', image: 'desarrollo-web', alt: 'Computadora con un proyecto de desarrollo web en pantalla', icon: 'code', tag: 'Diseño · Desarrollo · Publicación' },
+  { category: 'Producción aérea', title: 'Otra forma de mirar', description: 'Capturamos fotografías y videos con drones para mostrar espacios, marcas y proyectos.', image: 'drones', alt: 'Drone volando sobre un lago rodeado de montañas', icon: 'drone', tag: 'Fotografía · Video · Drones' },
+  { category: 'Soporte técnico', title: 'Todo vuelve a funcionar', description: 'Revisamos, diagnosticamos y ponemos a punto tus equipos para que sigas adelante.', image: 'mantenimiento', alt: 'Técnico diagnosticando los componentes de una computadora', icon: 'cpu', tag: 'Diagnóstico · Mantenimiento' },
+  { category: 'Software y licencias', title: 'Listo para tu día a día', description: 'Te orientamos para elegir e instalar programas originales compatibles con tu equipo.', image: 'software', alt: 'Laptop con herramientas de trabajo y software en pantalla', icon: 'shield', tag: 'Instalación · Configuración' },
+];
+---
+
+<div class="work-showcase" data-work-showcase role="region" aria-roledescription="carrusel" aria-label="Lo que hacemos">
+  <div class="showcase-tag"><span class="showcase-tag__pulse"></span> LO QUE HACEMOS</div>
+  <div class="monitor-motion">
+    <div class="monitor">
+      <div class="monitor__bar">
+        <span class="monitor__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>clicksolutions.pe</span>
+        <span class="monitor__online"><i></i> EN LÍNEA</span>
+      </div>
+      <div class="monitor__screen">
+        {slides.map((slide, index) => (
+          <article class:list={['work-slide', { 'is-active': index === 0 }]} data-work-slide role="group" aria-roledescription="diapositiva" aria-label={`${index + 1} de ${slides.length}: ${slide.category}`} aria-hidden={index !== 0 ? 'true' : 'false'}>
+            <div class="work-slide__photo">
+              <img src={`${base}/images/hero/${slide.image}.jpg`} alt={slide.alt} width="1100" height="733" loading="eager" fetchpriority={index === 0 ? 'high' : 'low'} decoding="async" />
+              <span class="work-slide__image-note">Imagen ilustrativa</span>
+              <div class="work-slide__photo-tag"><Icon name={slide.icon} size={20} /><span>{slide.tag}</span></div>
+            </div>
+            <div class="work-slide__copy">
+              <span class="work-slide__category">{slide.category}</span>
+              <h2>{slide.title}</h2>
+              <span class="work-slide__line" aria-hidden="true"></span>
+              <p>{slide.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="monitor__chin"><span></span><strong>Click<span>solutions</span></strong><span></span></div>
+    </div>
+    <div class="monitor__stand" aria-hidden="true"></div>
+    <div class="monitor__base" aria-hidden="true"></div>
+  </div>
+  <div class="showcase-controls">
+    <div class="showcase-dots" aria-label="Elegir una especialidad">
+      {slides.map((slide, index) => <button class:list={{ 'is-active': index === 0 }} type="button" data-work-dot aria-label={`Mostrar ${slide.category}`} aria-pressed={index === 0}><span></span></button>)}
+    </div>
+    <span class="showcase-count" data-work-count>01 / 04</span>
+    <button class="showcase-pause" type="button" data-work-pause aria-label="Pausar presentación" aria-pressed="false"><span data-work-pause-label>Pausar</span><span data-work-pause-symbol aria-hidden="true">Ⅱ</span></button>
+  </div>
+</div>
+
+<style>
+  .work-showcase { position: relative; width: 100%; }
+  .showcase-tag { display: flex; align-items: center; gap: 9px; width: fit-content; margin: 0 0 1rem auto; color: #b7e7fa; font-size: .64rem; font-weight: 750; letter-spacing: .16em; }
+  .showcase-tag__pulse { width: 6px; height: 6px; border-radius: 50%; background: #4eddb9; box-shadow: 0 0 12px #4eddb9; }
+  .monitor-motion { animation: monitor-zoom 9s ease-in-out infinite; transform-origin: 50% 60%; }
+  .monitor { position: relative; overflow: hidden; border: 1px solid #52b4e14d; border-radius: 22px; background: #05192f; box-shadow: 0 35px 75px -30px #0009, 0 0 65px #00aae71c; }
+  .monitor__bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; height: 42px; padding: 0 15px; border-bottom: 1px solid #51a4d02b; background: #0c233b; color: #7f9eb7; font-size: .65rem; }
+  .monitor__dots { display: flex; gap: 6px; }
+  .monitor__dots i { width: 7px; height: 7px; border-radius: 50%; background: #ff777e; }
+  .monitor__dots i:nth-child(2) { background: #ffd06d; }
+  .monitor__dots i:nth-child(3) { background: #45d79a; }
+  .monitor__online { display: flex; gap: 5px; align-items: center; font-size: .5rem; font-weight: 750; letter-spacing: .1em; color: #61e8bd; }
+  .monitor__online i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+  .monitor__screen { position: relative; height: clamp(290px, 25vw, 350px); overflow: hidden; }
+  .work-slide { position: absolute; inset: 0; display: grid; grid-template-columns: 1.05fr 1fr; opacity: 0; visibility: hidden; transform: scale(.98); transition: opacity .65s ease, transform .9s ease, visibility .65s; pointer-events: none; }
+  .work-slide.is-active { opacity: 1; visibility: visible; transform: scale(1); }
+  .work-slide__photo { position: relative; overflow: hidden; background: #12354d; }
+  .work-slide__photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #03182def, transparent 65%); }
+  .work-slide__photo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1); }
+  .work-slide.is-active .work-slide__photo img { animation: photo-zoom 5s ease-out both; }
+  .work-slide__image-note { position: absolute; top: 12px; left: 12px; z-index: 1; padding: 4px 7px; border-radius: 6px; background: #06172c8c; color: #e3f1fa; font-size: .48rem; }
+  .work-slide__photo-tag { position: absolute; z-index: 1; bottom: 20px; left: 18px; right: 15px; display: flex; gap: 10px; align-items: center; color: #c9ecff; font-size: .6rem; line-height: 1.4; }
+  .work-slide__photo-tag :global(svg) { flex: 0 0 auto; color: #4dd7ff; }
+  .work-slide__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(15px, 2vw, 28px); background: radial-gradient(circle at 100% 0, #063f63, transparent 70%), #041b32; }
+  .work-slide__category { color: #4dd7ff; font-size: .57rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .work-slide h2 { margin: 14px 0 0; color: #fff; font-size: clamp(1.4rem, 2.4vw, 2.2rem); line-height: 1.05; letter-spacing: -.045em; }
+  .work-slide__line { width: 35px; height: 3px; margin: 16px 0; border-radius: 2px; background: linear-gradient(90deg, #51dbff, #087ff5); }
+  .work-slide p { margin: 0; color: #a8c0d6; font-size: clamp(.7rem, .85vw, .83rem); line-height: 1.6; }
+  .monitor__chin { display: flex; justify-content: center; align-items: center; gap: 13px; height: 33px; border-top: 1px solid #3a8cb32b; background: linear-gradient(90deg, #0c263d, #183f58, #0c263d); }
+  .monitor__chin > span { width: 20px; height: 1px; background: #77bdd955; }
+  .monitor__chin strong { color: #e2f4ff; font-size: .57rem; letter-spacing: -.02em; }
+  .monitor__chin strong span { font-weight: 400; color: #89cde5; }
+  .monitor__stand { width: 19%; height: 33px; margin: auto; background: linear-gradient(90deg, #12324c, #285573, #12324c); clip-path: polygon(23% 0, 77% 0, 100% 100%, 0 100%); }
+  .monitor__base { width: 42%; height: 9px; margin: auto; border-radius: 50% 50% 5px 5px; background: linear-gradient(180deg, #35647f, #102c46); box-shadow: 0 15px 24px #0006; }
+  .showcase-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
+  .showcase-dots { display: flex; gap: 5px; }
+  .showcase-dots button { display: grid; align-items: center; min-width: 30px; height: 32px; padding: 8px 3px; border: 0; background: transparent; cursor: pointer; }
+  .showcase-dots button span { display: block; width: 24px; height: 3px; border-radius: 5px; background: #2b5674; transition: background .3s; }
+  .showcase-dots button.is-active span { background: #49d4ff; box-shadow: 0 0 10px #00aae74d; }
+  .showcase-count { color: #7198b6; font-size: .6rem; letter-spacing: .06em; }
+  .showcase-pause { display: inline-flex; gap: 7px; align-items: center; border: 1px solid #4f9cbd40; border-radius: 20px; padding: 6px 10px; background: #05213a; color: #a8cadd; font-size: .58rem; cursor: pointer; }
+  .showcase-pause:hover { color: #fff; border-color: #50c5eb; }
+  @keyframes monitor-zoom { 0%, 100% { transform: scale(.98) translateY(3px); } 50% { transform: scale(1.025) translateY(-4px); } }
+  @keyframes photo-zoom { from { transform: scale(1); } to { transform: scale(1.12); } }
+  @media (max-width: 860px) { .work-showcase { max-width: 640px; margin: 1rem auto; } .monitor__screen { height: 320px; } .work-slide h2 { font-size: 2rem; } }
+  @media (max-width: 480px) { .monitor { border-radius: 16px; } .monitor__screen { height: 280px; } .monitor__bar { padding-inline: 10px; } .monitor__online { display: none; } .work-slide { grid-template-columns: 1fr 1.1fr; } .work-slide__copy { padding: 14px; } .work-slide h2 { font-size: 1.5rem; } .work-slide__photo-tag { left: 10px; bottom: 15px; font-size: .5rem; } .work-slide__photo-tag :global(svg) { display: none; } .work-slide__category { font-size: .48rem; } }
+  @media (prefers-reduced-motion: reduce) { .monitor-motion, .work-slide.is-active .work-slide__photo img { animation: none; } .work-slide { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-work-showcase]').forEach((showcase) => {
+    const slides = [...showcase.querySelectorAll<HTMLElement>('[data-work-slide]')];
+    const dots = [...showcase.querySelectorAll<HTMLButtonElement>('[data-work-dot]')];
+    const pause = showcase.querySelector<HTMLButtonElement>('[data-work-pause]');
+    const count = showcase.querySelector<HTMLElement>('[data-work-count]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let active = 0;
+    let paused = false;
+    let hovered = false;
+    let focused = false;
+    let timer: number | undefined;
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => { slide.classList.toggle('is-active', i === active); slide.setAttribute('aria-hidden', String(i !== active)); });
+      dots.forEach((dot, i) => { dot.classList.toggle('is-active', i === active); dot.setAttribute('aria-pressed', String(i === active)); });
+      if (count) count.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    };
+    const schedule = () => {
+      window.clearInterval(timer);
+      timer = undefined;
+      if (paused || hovered || focused || document.hidden || reducedMotion.matches) return;
+      timer = window.setInterval(() => show(active + 1), 5000);
+    };
+    dots.forEach((dot, index) => dot.addEventListener('click', () => { show(index); schedule(); }));
+    pause?.addEventListener('click', () => {
+      paused = !paused;
+      pause.setAttribute('aria-pressed', String(paused));
+      pause.setAttribute('aria-label', paused ? 'Reanudar presentación' : 'Pausar presentación');
+      const label = pause.querySelector('[data-work-pause-label]');
+      const symbol = pause.querySelector('[data-work-pause-symbol]');
+      if (label) label.textContent = paused ? 'Reanudar' : 'Pausar';
+      if (symbol) symbol.textContent = paused ? '▶' : 'Ⅱ';
+      schedule();
+    });
+    showcase.addEventListener('pointerenter', () => { hovered = true; schedule(); });
+    showcase.addEventListener('pointerleave', () => { hovered = false; schedule(); });
+    showcase.addEventListener('focusin', () => { focused = true; schedule(); });
+    showcase.addEventListener('focusout', (event) => { focused = event.relatedTarget instanceof Node && showcase.contains(event.relatedTarget); schedule(); });
+    document.addEventListener('visibilitychange', schedule);
+    reducedMotion.addEventListener('change', schedule);
+    schedule();
+  });
+</script>

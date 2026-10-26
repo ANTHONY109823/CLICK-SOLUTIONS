@@ -1,5 +1,6 @@
 ---
 import Button from '../ui/Button.astro';
+import HeroWorkShowcase from './HeroWorkShowcase.astro';
 import Icon from '../ui/Icon.astro';
 import type { Service } from '../../data/services';
 import type { HomeContent } from '../../lib/content';
@@ -14,6 +15,14 @@ const { services, content } = Astro.props;
 
 <section class="hero">
   <div class="hero__grid" aria-hidden="true"></div>
+  <svg class="hero__traces" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 170H230L320 260H650L790 120H1440M0 650H290L410 530H850L1040 720H1440M760 0V180L900 320V900" />
+  </svg>
+  <svg class="hero__orbit" viewBox="0 0 600 600" aria-hidden="true">
+    <circle class="orbit-track" cx="300" cy="300" r="270" />
+    <g class="orbit-spin"><circle class="orbit-arc" cx="300" cy="300" r="270" /><circle class="orbit-dot" cx="300" cy="30" r="5" /><circle class="orbit-dot orbit-dot--small" cx="300" cy="570" r="3" /></g>
+    <g class="orbit-spin orbit-spin--reverse"><circle class="orbit-inner" cx="300" cy="300" r="226" /><circle class="orbit-dot" cx="74" cy="300" r="3" /></g>
+  </svg>
   <div class="container hero__inner">
     <div class="hero__content" data-reveal="left">
       <span class="hero__badge"><span></span> {content.badge}</span>
@@ -29,43 +38,14 @@ const { services, content } = Astro.props;
       <div class="hero__assurance" aria-label="Nuestra forma de trabajar">
         <span><Icon name="check" size={16} /> Propuesta clara</span>
         <span><Icon name="check" size={16} /> Atención personalizada</span>
-        <span><Icon name="check" size={16} /> Software legítimo</span>
+        <span><Icon name="check" size={16} /> Acompañamiento cercano</span>
       </div>
     </div>
 
-    <div class="hero-visual" data-reveal="right" data-tilt>
-      <div class="browser-window">
-        <div class="browser-window__bar">
-          <div class="browser-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-          <span class="browser-url">clicksolutions.pe</span>
-          <span class="browser-status">EN LÍNEA</span>
-        </div>
-        <div class="browser-window__body">
-          <div class="code-card">
-            <div class="code-card__top"><span>soluciones.ts</span><span>●</span></div>
-            <div class="code-lines" aria-hidden="true">
-              <span><i>01</i><b>const</b> idea = <em>'tu proyecto'</em>;</span>
-              <span><i>02</i><b>const</b> equipo = <em>'ClickSolutions'</em>;</span>
-              <span><i>03</i></span>
-              <span><i>04</i><b>function</b> crearSolucion() {'{'}</span>
-              <span><i>05</i>&nbsp;&nbsp;<b>return</b> idea + experiencia;</span>
-              <span><i>06</i>{'}'}</span>
-            </div>
-          </div>
-          <div class="visual-copy">
-            <span>DESARROLLO WEB</span>
-            <strong>Tu idea.<br />Una web real.</strong>
-            <i></i>
-            <p>Experiencias rápidas, modernas y listas para crecer.</p>
-          </div>
-        </div>
-      </div>
-      <div class="floating-chip floating-chip--top"><Icon name="code" size={18} /> Desarrollo</div>
-      <div class="floating-chip floating-chip--bottom"><Icon name="shield" size={18} /> Tecnología confiable</div>
-    </div>
+    <div class="hero-visual" data-reveal="right"><HeroWorkShowcase /></div>
   </div>
 
-  <div class="service-showcase" id="servicios" data-carousel data-carousel-autoplay="4400" data-reveal>
+  <div class="service-showcase" id="servicios" data-carousel data-carousel-autoplay="5000" data-reveal>
     <div class="container service-showcase__bar">
       <span>Explora cada especialidad</span>
       <div class="carousel-controls" aria-label="Cambiar servicio destacado">
@@ -94,7 +74,7 @@ const { services, content } = Astro.props;
 <style>
   .hero {
     position: relative;
-    overflow: hidden;
+    overflow: clip;
     min-height: calc(100svh - var(--header-h));
     padding-block: clamp(1.75rem, 4vh, 3.25rem) 0;
     background:
@@ -104,18 +84,18 @@ const { services, content } = Astro.props;
     isolation: isolate;
   }
 
-  .hero::after {
-    content: '';
-    position: absolute;
-    right: -13%;
-    bottom: 8%;
-    z-index: -1;
-    width: 46%;
-    aspect-ratio: 1;
-    border: 1px solid rgb(99 208 249 / 0.16);
-    border-radius: 50%;
-    box-shadow: 0 0 0 80px rgb(0 170 231 / 0.025), 0 0 0 160px rgb(0 170 231 / 0.02);
-  }
+  .hero__traces { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+  .hero__traces path { fill: none; stroke: #34c8ff; stroke-width: 1; stroke-dasharray: 45 380; opacity: .25; animation: trace-flow 14s linear infinite; }
+  .hero__orbit { position: absolute; z-index: -1; width: min(80vw, 950px); right: -12%; top: -7%; opacity: .65; pointer-events: none; overflow: visible; }
+  .orbit-track { fill: none; stroke: #63d0f926; stroke-width: .6; }
+  .orbit-spin { transform-origin: 300px 300px; animation: orbit-turn 35s linear infinite; }
+  .orbit-spin--reverse { animation-direction: reverse; animation-duration: 48s; }
+  .orbit-arc { fill: none; stroke: #35c8ff; stroke-width: 1.4; stroke-dasharray: 100 450 25 1121; opacity: .55; }
+  .orbit-inner { fill: none; stroke: #5cdfff; stroke-width: .6; stroke-dasharray: 2 16; opacity: .35; }
+  .orbit-dot { fill: #5ae5ff; filter: drop-shadow(0 0 6px #00aae7); }
+  .orbit-dot--small { fill: #087ff5; }
+  @keyframes orbit-turn { to { transform: rotate(360deg); } }
+  @keyframes trace-flow { to { stroke-dashoffset: -1700; } }
 
   .hero__grid {
     position: absolute;
@@ -124,7 +104,7 @@ const { services, content } = Astro.props;
     background-image:
       linear-gradient(rgb(94 190 241 / 0.06) 1px, transparent 1px),
       linear-gradient(90deg, rgb(94 190 241 / 0.06) 1px, transparent 1px);
-    background-size: 52px 52px;
+    background-size: 52px 52px; animation: grid-drift 32s linear infinite;
     mask-image: linear-gradient(to right, black, transparent 82%);
   }
 
@@ -132,7 +112,7 @@ const { services, content } = Astro.props;
     display: grid;
     grid-template-columns: minmax(0, 0.92fr) minmax(440px, 1.08fr);
     align-items: center;
-    gap: clamp(3rem, 7vw, 7rem);
+    gap: clamp(2rem, 5vw, 5rem);
     padding-bottom: clamp(1.75rem, 4vh, 3rem);
   }
 
@@ -167,7 +147,7 @@ const { services, content } = Astro.props;
     max-width: 12ch;
     margin-bottom: var(--space-6);
     color: #fff;
-    font-size: clamp(2.9rem, 4.8vw, 5.3rem);
+    font-size: clamp(2.9rem, 4.6vw, 5rem);
     line-height: 0.98;
     letter-spacing: -0.055em;
   }
@@ -194,47 +174,16 @@ const { services, content } = Astro.props;
   .hero__assurance span { display: inline-flex; align-items: center; gap: 6px; }
   .hero__assurance :global(svg) { color: var(--dark-accent); }
 
-  .hero-visual { position: relative; perspective: 1000px; transition: transform 350ms var(--ease-out); }
-  .browser-window { overflow: hidden; border: 1px solid rgb(83 185 237 / 0.28); border-radius: 22px; background: rgb(4 20 40 / 0.78); box-shadow: 0 45px 90px -35px rgb(0 0 0 / 0.8), 0 0 70px rgb(0 170 231 / 0.1); backdrop-filter: blur(18px); transform: rotateY(-4deg) rotateX(1.5deg); }
-  .browser-window__bar { display: flex; align-items: center; gap: var(--space-4); min-height: 48px; padding-inline: var(--space-4); border-bottom: 1px solid rgb(83 185 237 / 0.16); background: rgb(255 255 255 / 0.035); }
-  .browser-dots { display: flex; gap: 6px; }
-  .browser-dots span { width: 8px; height: 8px; border-radius: 50%; background: #2c5375; }
-  .browser-dots span:first-child { background: #ff6b72; }
-  .browser-dots span:nth-child(2) { background: #ffbd55; }
-  .browser-dots span:last-child { background: #27d17f; }
-  .browser-url { flex: 1; color: #7995ae; font-size: 0.72rem; text-align: center; }
-  .browser-status { color: #42dc9b; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.09em; }
+  .hero-visual { position: relative; min-width: 0; }
 
-  .browser-window__body { display: grid; grid-template-columns: 1.12fr 0.88fr; min-height: 290px; padding: clamp(1rem, 2.2vw, 1.7rem); background: linear-gradient(145deg, rgb(0 170 231 / 0.055), transparent 45%), radial-gradient(circle at 82% 32%, rgb(0 130 255 / 0.14), transparent 32%); }
-  .code-card { align-self: center; overflow: hidden; border: 1px solid rgb(102 185 230 / 0.16); border-radius: 14px; background: #041428; box-shadow: var(--shadow-lg); }
-  .code-card__top { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgb(102 185 230 / 0.14); color: #829bb2; font: 0.68rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; }
-  .code-card__top span:last-child { color: #20ce83; }
-  .code-lines { display: grid; gap: 11px; padding: 20px 15px 22px; color: #c7d9e9; font: 0.72rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace; }
-  .code-lines span { white-space: nowrap; }
-  .code-lines i { display: inline-block; width: 28px; color: #355675; font-style: normal; }
-  .code-lines b { color: #4cc9ff; font-weight: 600; }
-  .code-lines em { color: #77e9a8; font-style: normal; }
-  .visual-copy { align-self: center; padding-left: clamp(1rem, 3vw, 2.1rem); }
-  .visual-copy > span { color: var(--dark-accent); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; }
-  .visual-copy strong { display: block; margin-block: var(--space-3); color: #fff; font-size: clamp(1.55rem, 2.6vw, 2.35rem); line-height: 1.02; letter-spacing: -0.04em; }
-  .visual-copy i { display: block; width: 52px; height: 3px; margin-block: var(--space-4); border-radius: 10px; background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue)); }
-  .visual-copy p { margin: 0; color: #8fa8be; font-size: 0.82rem; line-height: 1.55; }
-
-  .floating-chip { position: absolute; display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid rgb(112 205 248 / 0.28); border-radius: var(--radius-full); background: rgb(4 27 53 / 0.9); box-shadow: 0 16px 34px rgb(0 0 0 / 0.28); color: #e5f5ff; font-size: var(--fs-xs); font-weight: 700; backdrop-filter: blur(14px); animation: float 5s ease-in-out infinite; }
-  .floating-chip :global(svg) { color: var(--dark-accent); }
-  .floating-chip--top { top: -20px; right: 36px; }
-  .floating-chip--bottom { bottom: -20px; left: 34px; animation-delay: -2s; }
-
-  .service-showcase { position: relative; z-index: 3; }
+  .service-showcase { position: relative; z-index: 3; padding-bottom: 1.75rem; }
   .service-showcase__bar { display: none; }
-  .service-ribbon { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .service-ribbon__item { --tile-accent: var(--brand-cyan); --tile-deep: #07315b; position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); min-height: 92px; padding: var(--space-4); overflow: hidden; border: 1px solid color-mix(in srgb, var(--tile-accent) 25%, transparent); border-bottom: 0; background: linear-gradient(145deg, var(--tile-deep), #051c37); color: #fff; text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base); }
+  .service-ribbon { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .service-ribbon__item { --tile-accent: var(--brand-cyan); --tile-deep: #07315b; position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); min-height: 110px; padding: var(--space-4); overflow: hidden; border: 1px solid color-mix(in srgb, var(--tile-accent) 25%, transparent); border-radius: 22px; box-shadow: 0 10px 30px #0000001a; background: linear-gradient(145deg, var(--tile-deep), #051c37); color: #fff; text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base); }
   .service-ribbon__item[data-service='drones'] { --tile-accent: #63e5ff; --tile-deep: #07536b; }
   .service-ribbon__item[data-service='desarrollo-web'] { --tile-accent: #5ee1aa; --tile-deep: #075044; }
   .service-ribbon__item[data-service='soporte-tecnico'] { --tile-accent: #86a7ff; --tile-deep: #263e79; }
   .service-ribbon__item[data-service='licencias-software'] { --tile-accent: #c9ef5a; --tile-deep: #374f42; }
-  .service-ribbon__item:first-child { border-radius: 20px 0 0; }
-  .service-ribbon__item:last-child { border-radius: 0 20px 0 0; }
   .service-ribbon__item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(125deg, color-mix(in srgb, var(--tile-accent) 24%, transparent), transparent 48%); opacity: 0; transition: opacity var(--dur-base); }
   .service-ribbon__item:hover { z-index: 2; transform: translateY(-8px); border-color: color-mix(in srgb, var(--tile-accent) 55%, transparent); color: #fff; }
   .service-ribbon__item:hover::after { opacity: 1; }
@@ -253,15 +202,12 @@ const { services, content } = Astro.props;
   .carousel-controls button:disabled { opacity: 0.35; cursor: default; }
 
   @keyframes pulse { 50% { opacity: 0.45; box-shadow: 0 0 4px var(--brand-cyan); } }
-  @keyframes float { 50% { transform: translateY(-8px); } }
+  @keyframes grid-drift { to { background-position: 52px 52px; } }
 
   @media (max-width: 1080px) {
     .hero__inner { grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr); gap: 3rem; }
     h1 { font-size: clamp(2.7rem, 5vw, 4.2rem); }
-    .browser-window__body { min-height: 350px; }
     .service-ribbon { grid-template-columns: repeat(2, 1fr); }
-    .service-ribbon__item:nth-child(2) { border-radius: 0 20px 0 0; }
-    .service-ribbon__item:last-child { border-radius: 0; }
   }
 
   @media (max-width: 860px) {
@@ -269,40 +215,22 @@ const { services, content } = Astro.props;
     .hero__inner { grid-template-columns: 1fr; }
     .hero__content { max-width: 680px; }
     h1 { max-width: 13ch; }
-    .hero-visual { display: none; }
+    .hero-visual { width: 100%; max-width: 640px; margin-inline: auto; }
   }
 
   @media (max-width: 620px) {
     .hero__actions { display: grid; }
     .hero__actions :global(.btn) { width: 100%; }
     .hero__assurance { display: grid; gap: var(--space-2); }
-    .browser-window { border-radius: 16px; transform: none; }
-    .browser-window__body { grid-template-columns: 1fr; min-height: auto; }
-    .visual-copy { padding: var(--space-6) 0 0; }
-    .floating-chip { display: none; }
     .service-showcase { padding-top: var(--space-3); background: linear-gradient(180deg, transparent, rgb(0 8 22 / 0.3)); }
     .service-showcase__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-bottom: var(--space-3); color: #a9bfd2; font-size: var(--fs-xs); font-weight: 750; }
     .service-ribbon { grid-auto-flow: column; grid-auto-columns: minmax(82vw, 1fr); grid-template-columns: none; overflow-x: auto; padding-inline: var(--gutter); scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
     .service-ribbon::-webkit-scrollbar { display: none; }
-    .service-ribbon__item, .service-ribbon__item:first-child, .service-ribbon__item:nth-child(2), .service-ribbon__item:last-child { min-height: 88px; border-radius: 16px 16px 0 0; scroll-snap-align: start; }
+    .service-ribbon__item, .service-ribbon__item:first-child, .service-ribbon__item:nth-child(2), .service-ribbon__item:last-child { min-height: 88px; border-radius: 22px; scroll-snap-align: start; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero__badge > span, .floating-chip { animation: none; }
+    .hero__badge > span, .hero__grid, .hero__traces path, .orbit-spin { animation: none; }
     .hero-visual { transform: none !important; }
   }
 </style>
-
-<script>
-  const tilt = document.querySelector<HTMLElement>('[data-tilt]');
-  const canTilt = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches;
-  if (tilt && canTilt) {
-    tilt.addEventListener('pointermove', (event) => {
-      const rect = tilt.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-      tilt.style.transform = `rotateX(${y * -3}deg) rotateY(${x * 4}deg)`;
-    });
-    tilt.addEventListener('pointerleave', () => { tilt.style.transform = ''; });
-  }
-</script>

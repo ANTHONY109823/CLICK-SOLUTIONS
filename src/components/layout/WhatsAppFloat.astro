@@ -1,9 +1,9 @@
 ---
-import Icon from '../ui/Icon.astro';
 import { whatsappUrl } from '../../lib/links';
 
 // Solo se muestra si hay un número de WhatsApp válido en src/config/site.ts.
 const url = whatsappUrl();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 {
@@ -17,7 +17,7 @@ const url = whatsappUrl();
       data-track="whatsapp_click"
       data-track-label="float"
     >
-      <Icon name="message" size={26} />
+      <img src={`${base}/brand/whatsapp.svg`} alt="" width="30" height="30" aria-hidden="true" />
     </a>
   )
 }
@@ -30,17 +30,25 @@ const url = whatsappUrl();
     z-index: 40;
     display: grid;
     place-items: center;
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid #8cf0b994;
     border-radius: var(--radius-full);
-    background: #128c4b;
+    background: linear-gradient(145deg, #28d878, #0fa45a);
     color: #fff;
-    box-shadow: var(--shadow-lg);
-    transition: transform var(--dur-fast) var(--ease-out);
+    box-shadow: 0 7px 0 #07844533, 0 12px 32px #075c4a40, inset 0 1px 0 #ffffff66;
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast);
   }
 
+  .whatsapp-float::before { content: ''; position: absolute; inset: -6px; border: 1px solid #25d36666; border-radius: inherit; opacity: 0; animation: whatsapp-ring 4s ease-out infinite; pointer-events: none; }
+  .whatsapp-float img { position: relative; display: block; }
+
   .whatsapp-float:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 16px 36px #08744955, inset 0 1px 0 #ffffff66;
     color: #fff;
   }
+  .whatsapp-float:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+  @keyframes whatsapp-ring { 0%, 20% { transform: scale(.9); opacity: 0; } 35% { opacity: .5; } 75%, 100% { transform: scale(1.3); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .whatsapp-float::before { animation: none; } }
 </style>
