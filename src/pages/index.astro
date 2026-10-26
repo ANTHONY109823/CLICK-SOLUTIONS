@@ -25,12 +25,8 @@ const values: { title: string; text: string; icon: IconName }[] = [
 >
   <HomeHero services={services} content={home} />
 
-  <section class="home-panel projects-panel" id="proyectos">
+  <section class="home-panel projects-panel" id="proyectos" aria-label="Soluciones de Click Solutions">
     <div class="container panel-inner">
-      <header class="panel-heading" data-reveal>
-        <div><span class="eyebrow">{home.projectsEyebrow}</span><h2>{home.projectsTitle}</h2></div>
-        <p>Un mismo equipo. Un universo de soluciones.</p>
-      </header>
       <SolutionsConstellation />
     </div>
   </section>
