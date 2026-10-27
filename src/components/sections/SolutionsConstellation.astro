@@ -16,12 +16,30 @@ const specialties: Specialty[] = [
   { name: 'Licencias originales', detail: 'Software para tu equipo', icon: 'shield', q: 2, r: 0, tone: 'blue' },
 ];
 const emptyTones = ['pale', 'cyan', 'blue', 'pale', 'aqua', 'cyan', 'pale', 'blue', 'aqua', 'pale', 'cyan', 'mist', 'navy'];
+// Portrait arrangement: three / two / logo / two / three, all in the same mesh.
+const mobilePositions: Record<string, { q: number; r: number }> = {
+  'Automatización': { q: 0, r: -2 },
+  'Desarrollo web': { q: 1, r: -2 },
+  'Impresoras': { q: 2, r: -2 },
+  'Drones': { q: 0, r: -1 },
+  'Fotografía y video': { q: 1, r: -1 },
+  'Mantenimiento': { q: -1, r: 1 },
+  'Software': { q: 0, r: 1 },
+  'Diagnóstico': { q: -2, r: 2 },
+  'Fotogrametría': { q: -1, r: 2 },
+  'Licencias originales': { q: 0, r: 2 },
+};
+const mobileOccupied = new Set(Object.values(mobilePositions).map(({ q, r }) => `${q},${r}`));
+const mobileEmptySlots = specialties.filter(({ q, r }) => !mobileOccupied.has(`${q},${r}`));
+let mobileEmptyIndex = 0;
 // Every cell, including the logo and specialties, belongs to this ONE axial mesh.
 const cells = Array.from({ length: 285 }, (_, index) => {
   const q = index % 15 - 7;
   const r = Math.floor(index / 15) - 9;
   const specialty = specialties.find((item) => item.q === q && item.r === r);
-  return { index, q, r, specialty, brand: q === 0 && r === 0, x: q * .75, y: (r + q / 2) * Math.sqrt(3) / 2, distance: Math.hypot(q * 1.5, (r + q / 2) * Math.sqrt(3)) };
+  // Move displaced empty cells into the freed slots, so mobile has no overlapping cells.
+  const mobile = specialty ? mobilePositions[specialty.name] : mobileOccupied.has(`${q},${r}`) ? mobileEmptySlots[mobileEmptyIndex++] : { q, r };
+  return { index, q, r, specialty, brand: q === 0 && r === 0, x: q * .75, y: (r + q / 2) * Math.sqrt(3) / 2, mobileX: (mobile.q + mobile.r / 2) * Math.sqrt(3) / 2, mobileY: mobile.r * .75, distance: Math.hypot(q * 1.5, (r + q / 2) * Math.sqrt(3)) };
 });
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -32,7 +50,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       {cells.map((cell) => (
         <li class:list={['cell', { 'cell--main': !!cell.specialty, 'cell--brand': cell.brand, 'cell--empty': !cell.specialty && !cell.brand, 'cell--small': cell.index % 3 === 0 }]}
           data-tone={cell.specialty?.tone ?? emptyTones[Math.abs(cell.q * 7 + cell.r * 11 + cell.index % 3) % emptyTones.length]}
-          style={`--x:${cell.x};--y:${cell.y};--delay:${-cell.index % 17 * .43}s;--wave:${cell.distance * -.18}s;--duration:${6 + cell.index % 5}s`}
+          style={`--x:${cell.x};--y:${cell.y};--mobile-x:${cell.mobileX};--mobile-y:${cell.mobileY};--delay:${-cell.index % 17 * .43}s;--wave:${cell.distance * -.18}s;--duration:${6 + cell.index % 5}s`}
           aria-hidden={!cell.specialty && !cell.brand ? 'true' : undefined}
         >
           <span class="cell__foundation" aria-hidden="true"></span>
@@ -40,7 +58,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             <div class="cell__surface">
               {cell.brand ? <img class="brand-logo" src={`${base}/brand/clicksolutions-logo.png`} alt="Click Solutions" width="1386" height="2500" loading="lazy" decoding="async" /> : cell.specialty ? <><Icon name={cell.specialty.icon} size={30} /><h3>{cell.specialty.name}</h3><span class="cell__detail">{cell.specialty.detail}</span></> : null}
             </div>
-            <svg class="edge-light" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M25 1H75L99 50 75 99H25L1 50Z" /></svg>
+            <svg class="edge-light" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="edge-light__landscape" d="M25 1H75L99 50 75 99H25L1 50Z" /><path class="edge-light__portrait" d="M50 1 99 25V75L50 99 1 75V25Z" /></svg>
           </div>
         </li>
       ))}
@@ -80,6 +98,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .cell[data-tone='navy'] h3 { color: #fff; }
   .cell[data-tone='navy'] .cell__detail { color: #d0efff; }
   .edge-light { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .edge-light__portrait { display: none; }
   .edge-light path { fill: none; stroke: #00aae7; stroke-width: 1; stroke-dasharray: 35 265; animation: edge-flow 4s linear infinite; animation-delay: var(--delay); }
   .cell--main .edge-light path, .cell--brand .edge-light path { stroke: #a4f1ff; stroke-width: 1.6; }
   .cell--brand .edge-light path { stroke: #00bfff; stroke-width: 2; }
@@ -92,12 +111,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   @keyframes edge-flow { to { stroke-dashoffset: -300; } }
   @keyframes surface-shine { 0%, 30% { transform: translateX(-140%); } 75%, 100% { transform: translateX(140%); } }
   @media (max-width: 640px) {
-    .constellation { --diameter: clamp(76px, 22vw, 140px); min-height: calc(max(520px, 100svh - var(--header-h)) + var(--extra-bottom)); }
+    .constellation { --extra-bottom: 0px; --diameter: clamp(110px, 34vw, 184px); min-height: max(calc(100svh - var(--header-h)), calc(var(--diameter) * 4 + 48px)); }
     .honeycomb-camera { animation-name: camera-mobile; }
-    .cell h3 { font-size: clamp(.48rem, 2vw, .78rem); }
+    .cell { left: calc(50% + var(--mobile-x) * var(--diameter)); top: calc(50% + var(--mobile-y) * var(--diameter)); width: calc(var(--diameter) * .866025404); height: var(--diameter); }
+    .cell__foundation, .cell__depth, .cell__surface { clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+    .cell h3 { font-size: clamp(.72rem, 3vw, 1rem); line-height: 1.18; overflow-wrap: normal; word-break: normal; hyphens: none; }
     .cell__detail { display: none; }
-    .cell__surface { gap: .2rem; }
-    .cell__surface :global(svg) { width: clamp(18px, 4.5vw, 26px); height: clamp(18px, 4.5vw, 26px); }
+    .cell__surface { gap: .45rem; padding: 12% 0; }
+    .cell__surface :global(svg) { width: clamp(26px, 7vw, 34px); height: clamp(26px, 7vw, 34px); flex-shrink: 0; }
+    .brand-logo { inset: 12% 17%; width: 66%; height: 76%; }
+    .edge-light__landscape { display: none; }
+    .edge-light__portrait { display: block; }
   }
   @keyframes camera-mobile { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
   @media (prefers-reduced-motion: reduce) {
