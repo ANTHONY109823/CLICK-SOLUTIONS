@@ -67,12 +67,12 @@ export const services: Service[] = [
     slug: 'drones',
     name: 'Servicios con drones',
     icon: 'drone',
-    tagline: 'Fotografía, video y registro visual aéreo.',
-    highlights: ['Fotografía y video aéreo', 'Registro de eventos', 'Material audiovisual para empresas'],
+    tagline: 'Servicios aéreos y drones FPV armados por encargo.',
+    highlights: ['Fotografía y video aéreo', 'Armado de drones FPV', 'Drones de carrera por encargo'],
     hero: {
       eyebrow: 'Drones',
       title: 'Una perspectiva aérea para tus proyectos',
-      lead: 'Fotografía y video con drones para personas y empresas: eventos, inmuebles, obras y contenido para tu marca. Evaluamos cada solicitud según el lugar y la normativa vigente.',
+      lead: 'Fotografía y video aéreo para personas y empresas. También armamos drones FPV y de carrera por encargo: importamos los componentes confirmados y los ensamblamos localmente.',
     },
     cta: { label: 'Cotizar servicio', formHeading: 'Cotiza tu servicio con drones' },
     description: [
@@ -83,6 +83,7 @@ export const services: Service[] = [
       { title: 'Personas', text: 'Recuerdos de eventos, celebraciones y lugares especiales desde el aire.', icon: 'users' },
       { title: 'Negocios y marcas', text: 'Contenido visual para redes sociales, web y presentaciones comerciales.', icon: 'building' },
       { title: 'Inmuebles y obras', text: 'Registro visual de terrenos, propiedades y avance de proyectos.', icon: 'eye' },
+      { title: 'Aficionados FPV', text: 'Configuraciones por encargo para iniciarse, practicar o competir.', icon: 'target' },
     ],
     offeringsTitle: 'Qué podemos hacer por ti',
     offerings: [
@@ -117,7 +118,7 @@ export const services: Service[] = [
     ],
     seo: {
       title: 'Servicios con drones: fotografía y video aéreo',
-      description: 'Fotografía aérea, video, registro de eventos e inspecciones visuales con drones en Perú. Cotiza tu servicio con ClickSolutions.',
+      description: 'Servicios de fotografía y video aéreo, además de armado por encargo de drones FPV y de carrera con componentes importados en Perú.',
     },
   },
   {

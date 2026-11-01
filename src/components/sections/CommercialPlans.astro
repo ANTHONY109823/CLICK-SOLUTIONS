@@ -1,5 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
+import DroneBuildProduct from './DroneBuildProduct.astro';
 import type { ServiceSlug } from '../../data/services';
 import droneQuote from '../../data/drone-quote.json';
 
@@ -90,6 +91,7 @@ const note = service === 'desarrollo-web'
       </article>
     ))}
   </div>
+  {service === 'drones' && <DroneBuildProduct />}
   <p class="plans-note"><Icon name="info" size={16} />{note}</p>
   {service === 'drones' && (
     <div class="drone-conditions">

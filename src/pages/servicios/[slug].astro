@@ -64,7 +64,7 @@ const products = isLicenses ? getLicenses() : [];
       <header class="work-heading">
         <div>
           <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
-          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Paquetes según tu objetivo' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
+          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Servicios aéreos y armado FPV' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
           <p>{service.description[0]}</p>
         </div>
         <div class="audience-pills" aria-label="A quién está dirigido">

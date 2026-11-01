@@ -106,6 +106,32 @@ content:
           - { name: depositPercent, label: Adelanto (%), type: number, required: true }
           - { name: minimumNoticeDays, label: Anticipación mínima (días), type: number, required: true }
           - { name: validityDays, label: Vigencia de la cotización (días), type: number, required: true }
+      - name: customBuild
+        label: Armado de drones FPV por encargo
+        type: object
+        fields:
+          - { name: eyebrow, label: Etiqueta superior, type: string, required: true }
+          - { name: name, label: Nombre del producto, type: string, required: true }
+          - { name: description, label: Descripción, type: text, required: true }
+          - { name: image, label: Ruta de la imagen, type: string, required: true }
+          - { name: imageAlt, label: Descripción accesible de la imagen, type: string, required: true }
+          - { name: priceLabel, label: Texto de inversión, type: string, required: true }
+          - { name: paymentLabel, label: Texto del adelanto, type: string, required: true }
+          - { name: tags, label: Perfiles o categorías, type: string, list: true, required: true }
+          - { name: includes, label: Qué incluye, type: string, list: true, required: true }
+          - name: process
+            label: Proceso de compra y armado
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{title}"
+            fields:
+              - { name: title, label: Paso, type: string, required: true }
+              - { name: text, label: Explicación, type: text, required: true }
+          - { name: terms, label: Condiciones comerciales, type: string, list: true, required: true }
+          - { name: ctaLabel, label: Texto del botón, type: string, required: true }
+          - { name: whatsappMessage, label: Mensaje de WhatsApp, type: text, required: true }
       - name: packages
         label: Paquetes
         type: object

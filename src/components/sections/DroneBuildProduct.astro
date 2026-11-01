@@ -1,0 +1,159 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import droneQuote from '../../data/drone-quote.json';
+import { whatsappUrl } from '../../lib/links';
+
+const product = droneQuote.customBuild;
+const whatsapp = whatsappUrl(product.whatsappMessage);
+---
+
+<section class="fpv-product" aria-labelledby="fpv-product-title">
+  <div class="fpv-product__main">
+    <div class="fpv-product__visual">
+      <span class="fpv-product__signal" aria-hidden="true"></span>
+      <img src={product.image} alt={product.imageAlt} width="486" height="190" loading="lazy" decoding="async" />
+      <div class="fpv-product__tags" aria-label="Tipos de proyecto">
+        {product.tags.map((tag) => <span>{tag}</span>)}
+      </div>
+    </div>
+
+    <div class="fpv-product__copy">
+      <span class="fpv-product__eyebrow">{product.eyebrow}</span>
+      <h3 id="fpv-product-title">{product.name}</h3>
+      <p>{product.description}</p>
+
+      <div class="fpv-product__commercial">
+        <div><small>Inversión</small><strong>{product.priceLabel}</strong></div>
+        <div><small>Inicio del pedido</small><strong>{product.paymentLabel}</strong></div>
+      </div>
+
+      <ul>
+        {product.includes.map((item) => <li><Icon name="check" size={16} />{item}</li>)}
+      </ul>
+
+      <div class="fpv-product__actions">
+        <Button href="/contacto?servicio=drones&producto=armado-fpv" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="drone-fpv-build">
+          {product.ctaLabel}
+        </Button>
+        {whatsapp && (
+          <Button href={whatsapp} variant="secondary" size="lg" icon="message" external track="whatsapp_click" data-track-label="drone-fpv-build">
+            Consultar por WhatsApp
+          </Button>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="fpv-product__process" aria-label="Proceso de armado por encargo">
+    {product.process.map((step, index) => (
+      <article>
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <div><strong>{step.title}</strong><p>{step.text}</p></div>
+      </article>
+    ))}
+  </div>
+
+  <details class="fpv-product__terms">
+    <summary>Condiciones del armado por encargo</summary>
+    <ul>{product.terms.map((term) => <li>{term}</li>)}</ul>
+  </details>
+</section>
+
+<style>
+  .fpv-product {
+    position: relative;
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    overflow: hidden;
+    border: 1px solid rgb(36 208 227 / 0.34);
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 12% 15%, rgb(22 183 216 / 0.18), transparent 30%),
+      linear-gradient(135deg, #031d2d, #073f54 58%, #062d3e);
+    color: #fff;
+    box-shadow: 0 30px 60px -44px #001620;
+  }
+
+  .fpv-product::after {
+    content: '';
+    position: absolute;
+    right: -85px;
+    top: -110px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgb(87 223 239 / 0.16);
+    border-radius: 50%;
+    box-shadow: 0 0 0 38px rgb(87 223 239 / 0.04), 0 0 0 76px rgb(87 223 239 / 0.025);
+    pointer-events: none;
+  }
+
+  .fpv-product__main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  .fpv-product__visual {
+    position: relative;
+    min-width: 0;
+    padding: clamp(1rem, 2.5vw, 1.65rem);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #fff, #edf7f8);
+    box-shadow: 0 24px 48px -35px #000;
+  }
+
+  .fpv-product__visual img { display: block; width: 100%; height: auto; object-fit: contain; }
+  .fpv-product__signal { position: absolute; top: 13px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 5px rgb(74 222 128 / 0.14), 0 0 15px #4ade80; }
+  .fpv-product__tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: var(--space-3); }
+  .fpv-product__tags span { padding: 5px 9px; border: 1px solid #c9e5e9; border-radius: var(--radius-full); color: #285469; font-size: 0.7rem; font-weight: 750; }
+
+  .fpv-product__copy { min-width: 0; }
+  .fpv-product__eyebrow { color: #60dcef; font-size: var(--fs-xs); font-weight: 850; letter-spacing: 0.11em; text-transform: uppercase; }
+  .fpv-product h3 { max-width: 18ch; margin: 7px 0 var(--space-3); color: #fff; font-size: clamp(1.7rem, 3vw, 2.55rem); line-height: 1.05; }
+  .fpv-product__copy > p { max-width: 62ch; margin: 0; color: #bad2dc; font-size: var(--fs-sm); }
+
+  .fpv-product__commercial { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 1px; margin-block: var(--space-5); overflow: hidden; border: 1px solid rgb(125 224 236 / 0.22); border-radius: 14px; background: rgb(125 224 236 / 0.22); }
+  .fpv-product__commercial div { padding: 11px 13px; background: rgb(2 26 40 / 0.72); }
+  .fpv-product__commercial small,
+  .fpv-product__commercial strong { display: block; }
+  .fpv-product__commercial small { margin-bottom: 3px; color: #7fc5d3; font-size: 0.68rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; }
+  .fpv-product__commercial strong { color: #fff; font-size: var(--fs-sm); }
+
+  .fpv-product__copy > ul { display: grid; grid-template-columns: 1fr 1fr; gap: 9px var(--space-4); margin: 0; padding: 0; list-style: none; }
+  .fpv-product__copy > ul li { display: flex; align-items: flex-start; gap: 7px; color: #d8e7ec; font-size: var(--fs-xs); }
+  .fpv-product__copy > ul :global(svg) { flex: 0 0 auto; margin-top: 1px; color: #50d2e6; }
+  .fpv-product__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+  .fpv-product__actions :global(.btn--secondary) { border-color: rgb(255 255 255 / 0.25); background: rgb(255 255 255 / 0.09); color: #fff; }
+  .fpv-product__actions :global(.btn--secondary:hover) { background: rgb(255 255 255 / 0.16); color: #fff; }
+
+  .fpv-product__process { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 16px; background: rgb(255 255 255 / 0.1); }
+  .fpv-product__process article { display: flex; gap: 10px; min-width: 0; padding: 13px; background: rgb(2 24 37 / 0.76); }
+  .fpv-product__process article > span { flex: 0 0 auto; color: #55d3e6; font-size: 0.72rem; font-weight: 850; }
+  .fpv-product__process strong { display: block; color: #fff; font-size: var(--fs-xs); }
+  .fpv-product__process p { margin: 3px 0 0; color: #96b4c0; font-size: 0.7rem; line-height: 1.45; }
+
+  .fpv-product__terms { position: relative; z-index: 1; color: #a9c2cc; font-size: var(--fs-xs); }
+  .fpv-product__terms summary { width: fit-content; color: #dcebef; font-weight: 750; cursor: pointer; }
+  .fpv-product__terms ul { display: grid; gap: 7px; margin: var(--space-3) 0 0; padding-left: 1.1rem; }
+  .fpv-product__terms li::marker { color: #50d2e6; }
+
+  @media (max-width: 900px) {
+    .fpv-product__main { grid-template-columns: 1fr; }
+    .fpv-product__visual { max-width: 620px; }
+    .fpv-product__process { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 560px) {
+    .fpv-product__copy > ul,
+    .fpv-product__commercial,
+    .fpv-product__process { grid-template-columns: 1fr; }
+    .fpv-product__actions { display: grid; }
+    .fpv-product__actions :global(.btn) { width: 100%; white-space: normal; }
+  }
+</style>

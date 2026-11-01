@@ -8,6 +8,52 @@
     "minimumNoticeDays": 3,
     "validityDays": 15
   },
+  "customBuild": {
+    "eyebrow": "Armado personalizado por encargo",
+    "name": "Drones FPV y de carrera armados a tu medida",
+    "description": "Para aficionados que quieren empezar o mejorar su equipo. Definimos la configuración según tu experiencia, objetivo y presupuesto; con el adelanto confirmado importamos las piezas y realizamos el armado local.",
+    "image": "/images/drones/fpv-racing-build.png",
+    "imageAlt": "Componentes, motores, electrónica y chasis para el armado de un dron FPV de carrera",
+    "priceLabel": "Según componentes y configuración",
+    "paymentLabel": "Adelanto acordado para importar piezas",
+    "tags": [
+      "Aficionados",
+      "Drones FPV",
+      "Drones de carrera"
+    ],
+    "includes": [
+      "Selección de componentes según presupuesto y objetivo",
+      "Importación de las piezas confirmadas en la cotización",
+      "Ensamblaje, soldadura y organización del cableado",
+      "Configuración inicial y pruebas funcionales antes de la entrega"
+    ],
+    "process": [
+      {
+        "title": "Definimos el proyecto",
+        "text": "Uso, experiencia, presupuesto y tipo de vuelo esperado."
+      },
+      {
+        "title": "Cotizamos componentes",
+        "text": "Confirmamos piezas, compatibilidad, armado y costo total."
+      },
+      {
+        "title": "Adelanto e importación",
+        "text": "Con el adelanto acordado realizamos el pedido de las piezas."
+      },
+      {
+        "title": "Armado y entrega",
+        "text": "Ensamblamos, configuramos, probamos y coordinamos la entrega."
+      }
+    ],
+    "terms": [
+      "La disponibilidad, marca y modelo de cada componente se confirman antes del pago.",
+      "Los plazos de entrega dependen del proveedor, transporte internacional y proceso de importación.",
+      "La cotización final detalla componentes, mano de obra, adelanto, saldo y alcance de las pruebas.",
+      "Gafas, radio, baterías, cargador y otros accesorios solo se incluyen cuando figuran expresamente en la cotización."
+    ],
+    "ctaLabel": "Cotizar mi dron FPV",
+    "whatsappMessage": "Hola ClickSolutions, quiero cotizar el armado de un dron FPV o de carrera por encargo."
+  },
   "packages": [
     {
       "id": "standard",
