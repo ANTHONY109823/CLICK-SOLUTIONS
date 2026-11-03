@@ -1,0 +1,280 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import type { IconName } from '../ui/icons';
+import type { HomeContent } from '../../lib/content';
+
+interface Props {
+  content: HomeContent;
+}
+
+const { content } = Astro.props;
+
+const values: { title: string; text: string; icon: IconName }[] = [
+  { title: 'Claridad', text: 'Alcance y propuesta antes de empezar.', icon: 'clipboard' },
+  { title: 'Criterio', text: 'La solución necesaria, sin complicarla.', icon: 'target' },
+  { title: 'Confianza', text: 'Tecnología legítima y datos protegidos.', icon: 'shield' },
+];
+
+const process: { title: string; text: string }[] = [
+  { title: 'Escuchamos', text: 'Entendemos tu necesidad, contexto y objetivo real.' },
+  { title: 'Definimos', text: 'Acordamos alcance, entregables, inversión y tiempos.' },
+  { title: 'Construimos', text: 'Ejecutamos con avances claros y validaciones contigo.' },
+  { title: 'Entregamos', text: 'Dejamos la solución lista y te acompañamos al usarla.' },
+];
+---
+
+<section class="company-panel" id="empresa" aria-labelledby="company-panel-title">
+  <div class="company-panel__grid" aria-hidden="true"></div>
+  <div class="container company-panel__inner">
+    <div class="company-panel__copy" data-reveal="left">
+      <div class="company-panel__meta">
+        <span class="eyebrow">{content.aboutEyebrow}</span>
+        <span class="company-panel__status"><i></i> Atención directa</span>
+      </div>
+
+      <h2 id="company-panel-title">{content.aboutTitle}</h2>
+      <p class="company-panel__lead">{content.aboutLead}</p>
+
+      <div class="company-panel__values" aria-label="Nuestros principios de trabajo">
+        {values.map((value) => (
+          <article>
+            <span><Icon name={value.icon} size={19} /></span>
+            <div><h3>{value.title}</h3><p>{value.text}</p></div>
+          </article>
+        ))}
+      </div>
+
+      <div class="company-panel__action">
+        <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">
+          {content.aboutCta}
+        </Button>
+        <small>Primero entendemos tu objetivo. Luego te proponemos el camino.</small>
+      </div>
+    </div>
+
+    <div class="project-route" data-reveal="right" aria-label="Cómo trabajamos un proyecto">
+      <header class="project-route__bar">
+        <div class="project-route__lights" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="project-route__file">ruta-de-proyecto.cs</span>
+        <span class="project-route__online"><i></i> EN LÍNEA</span>
+      </header>
+
+      <div class="project-route__heading">
+        <div>
+          <span>PROCESO CLICK</span>
+          <h3>De la necesidad a una solución lista.</h3>
+        </div>
+        <strong aria-hidden="true">01—04</strong>
+      </div>
+
+      <div class="project-route__steps">
+        {process.map((step, index) => (
+          <article>
+            <span class="project-route__number">{String(index + 1).padStart(2, '0')}</span>
+            <div><h4>{step.title}</h4><p>{step.text}</p></div>
+            <span class="project-route__check"><Icon name="check" size={14} /></span>
+          </article>
+        ))}
+      </div>
+
+      <footer class="project-route__footer">
+        <Icon name="shield" size={17} />
+        <span><strong>Decisiones informadas</strong> · alcance definido antes de ejecutar</span>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<style>
+  .company-panel {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(3rem, 6vh, 5.5rem);
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 9% 14%, rgb(0 170 231 / 0.18), transparent 27%),
+      radial-gradient(circle at 88% 78%, rgb(13 111 180 / 0.2), transparent 31%),
+      linear-gradient(135deg, #02172e 0%, #062d54 52%, #073b68 100%);
+    color: var(--dark-text);
+    isolation: isolate;
+  }
+
+  .company-panel::after {
+    content: '';
+    position: absolute;
+    right: -9rem;
+    bottom: -15rem;
+    z-index: -1;
+    width: 34rem;
+    aspect-ratio: 1;
+    border: 1px solid rgb(73 194 239 / 0.11);
+    border-radius: 50%;
+    box-shadow: 0 0 0 70px rgb(73 194 239 / 0.025), 0 0 0 140px rgb(73 194 239 / 0.018);
+  }
+
+  .company-panel__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.34;
+    background-image:
+      linear-gradient(rgb(126 205 239 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(126 205 239 / 0.06) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: linear-gradient(90deg, transparent, black 30%, black 82%, transparent);
+  }
+
+  .company-panel__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(480px, 1.1fr);
+    align-items: center;
+    gap: clamp(3rem, 7vw, 7rem);
+  }
+
+  .company-panel__copy { min-width: 0; }
+  .company-panel__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+  .company-panel__meta .eyebrow { margin: 0; color: #55d7ff; }
+  .company-panel__status { display: inline-flex; align-items: center; gap: 7px; color: #93b4c9; font-size: 0.7rem; font-weight: 750; letter-spacing: 0.05em; text-transform: uppercase; }
+  .company-panel__status i,
+  .project-route__online i { width: 6px; height: 6px; border-radius: 50%; background: #4ee3a3; box-shadow: 0 0 0 5px rgb(78 227 163 / 0.1), 0 0 13px #4ee3a3; animation: status-pulse 2.4s ease-in-out infinite; }
+
+  .company-panel h2 {
+    max-width: 13ch;
+    margin: var(--space-4) 0 var(--space-4);
+    color: #fff;
+    font-size: clamp(2.65rem, 5.5vw, 5.15rem);
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+    text-wrap: balance;
+  }
+
+  .company-panel__lead { max-width: 55ch; margin: 0; color: #b5cad9; font-size: clamp(1rem, 1.4vw, 1.16rem); line-height: 1.7; }
+
+  .company-panel__values {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: clamp(1.4rem, 3vh, 2rem);
+  }
+
+  .company-panel__values article {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid rgb(122 198 231 / 0.14);
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.04);
+    transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base), background-color var(--dur-base);
+  }
+
+  .company-panel__values article:hover { border-color: rgb(80 211 247 / 0.35); background: rgb(255 255 255 / 0.07); transform: translateY(-3px); }
+  .company-panel__values article > span { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 10px; border-radius: 10px; background: rgb(0 170 231 / 0.12); color: #54d9ff; }
+  .company-panel__values h3 { margin: 0 0 3px; color: #fff; font-size: var(--fs-xs); }
+  .company-panel__values p { margin: 0; color: #88a7bc; font-size: 0.68rem; line-height: 1.45; }
+
+  .company-panel__action { display: flex; align-items: center; gap: var(--space-4); margin-top: clamp(1.5rem, 3.5vh, 2.25rem); }
+  .company-panel__action small { max-width: 29ch; color: #7898ae; font-size: 0.7rem; line-height: 1.5; }
+
+  .project-route {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgb(75 190 235 / 0.25);
+    border-radius: 24px;
+    background: rgb(2 20 39 / 0.78);
+    box-shadow: 0 35px 80px -45px #000;
+    backdrop-filter: blur(18px);
+  }
+
+  .project-route::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgb(57 197 238 / 0.045) 50%, transparent 65%);
+    translate: -120% 0;
+    animation: route-scan 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .project-route__bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 48px;
+    padding-inline: var(--space-5);
+    border-bottom: 1px solid rgb(102 188 224 / 0.13);
+    background: rgb(255 255 255 / 0.025);
+  }
+
+  .project-route__lights { display: flex; gap: 5px; }
+  .project-route__lights span { width: 7px; height: 7px; border-radius: 50%; background: #ff6f79; }
+  .project-route__lights span:nth-child(2) { background: #ffc85d; }
+  .project-route__lights span:nth-child(3) { background: #4ce3a1; }
+  .project-route__file { color: #6e91aa; font: 0.68rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .project-route__online { display: inline-flex; align-items: center; gap: 7px; color: #55dfa5; font-size: 0.62rem; font-weight: 850; letter-spacing: 0.08em; }
+
+  .project-route__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); padding: clamp(1.4rem, 3vw, 2rem) clamp(1.4rem, 3vw, 2.15rem) var(--space-4); }
+  .project-route__heading span { color: #42c7ef; font: 750 0.65rem ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 0.12em; }
+  .project-route__heading h3 { max-width: 14ch; margin: 8px 0 0; color: #fff; font-size: clamp(1.55rem, 2.7vw, 2.25rem); line-height: 1.08; }
+  .project-route__heading > strong { color: rgb(76 202 239 / 0.2); font: 850 clamp(1.8rem, 4vw, 3.3rem)/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: -0.08em; }
+
+  .project-route__steps { position: relative; display: grid; padding: 0 clamp(1.4rem, 3vw, 2.15rem) var(--space-4); }
+  .project-route__steps::before { content: ''; position: absolute; top: 21px; bottom: 36px; left: calc(clamp(1.4rem, 3vw, 2.15rem) + 16px); width: 1px; background: linear-gradient(#31c8f2, rgb(49 200 242 / 0.06)); }
+  .project-route__steps article { position: relative; display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: var(--space-3); min-width: 0; padding: 10px 0; border-bottom: 1px solid rgb(123 187 216 / 0.09); }
+  .project-route__steps article:last-child { border-bottom: 0; }
+  .project-route__number { position: relative; z-index: 1; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgb(64 201 242 / 0.3); border-radius: 10px; background: #062941; color: #5edcff; font: 800 0.64rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .project-route__steps h4 { margin: 0 0 2px; color: #effaff; font-size: var(--fs-xs); }
+  .project-route__steps p { margin: 0; color: #7f9db1; font-size: 0.7rem; line-height: 1.45; }
+  .project-route__check { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgb(73 225 163 / 0.08); color: #4ce0a2; }
+
+  .project-route__footer { display: flex; align-items: center; gap: 9px; min-height: 48px; padding-inline: clamp(1.4rem, 3vw, 2.15rem); border-top: 1px solid rgb(102 188 224 / 0.12); background: rgb(18 121 160 / 0.08); color: #8aaabd; font-size: 0.69rem; }
+  .project-route__footer :global(svg) { flex: 0 0 auto; color: #4ce0a2; }
+  .project-route__footer strong { color: #d8eef5; }
+
+  @keyframes status-pulse { 50% { opacity: 0.55; transform: scale(0.82); } }
+  @keyframes route-scan { 0%, 20% { translate: -120% 0; } 70%, 100% { translate: 120% 0; } }
+
+  @media (max-width: 1020px) {
+    .company-panel { min-height: auto; }
+    .company-panel__inner { grid-template-columns: 1fr; gap: var(--space-10); }
+    .company-panel h2 { max-width: 14ch; }
+    .project-route { width: min(100%, 720px); }
+  }
+
+  @media (min-width: 1021px) and (max-height: 780px) {
+    .company-panel { padding-block: 2.25rem; }
+    .company-panel h2 { font-size: clamp(2.65rem, 5vw, 4.4rem); }
+    .company-panel__lead { line-height: 1.55; }
+    .company-panel__values { margin-top: 1.25rem; }
+    .company-panel__values article { padding: 11px; }
+    .company-panel__values article > span { margin-bottom: 7px; }
+    .company-panel__action { margin-top: 1.25rem; }
+  }
+
+  @media (max-width: 620px) {
+    .company-panel { padding-block: var(--space-12); }
+    .company-panel__grid { background-size: 40px 40px; }
+    .company-panel__values { grid-template-columns: 1fr; }
+    .company-panel__values article { display: grid; grid-template-columns: 34px 1fr; gap: 11px; align-items: center; }
+    .company-panel__values article > span { margin: 0; grid-row: span 2; }
+    .company-panel__action { align-items: stretch; flex-direction: column; }
+    .company-panel__action :global(.btn) { width: 100%; }
+    .company-panel__action small { max-width: none; }
+    .project-route__bar { grid-template-columns: auto 1fr; }
+    .project-route__online { display: none; }
+    .project-route__heading > strong { display: none; }
+    .project-route__heading h3 { max-width: 18ch; }
+    .project-route__steps article { grid-template-columns: 34px 1fr; }
+    .project-route__check { display: none; }
+    .project-route__footer { align-items: flex-start; padding-block: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .company-panel__status i,
+    .project-route__online i,
+    .project-route::after { animation: none; }
+  }
+</style>

@@ -1,21 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Button from '../components/ui/Button.astro';
-import Icon from '../components/ui/Icon.astro';
 import SolutionsConstellation from '../components/sections/SolutionsConstellation.astro';
 import HomeHero from '../components/sections/HomeHero.astro';
+import CompanyPanel from '../components/sections/CompanyPanel.astro';
 import { getServices, getHomeContent } from '../lib/content';
-import type { IconName } from '../components/ui/icons';
 
 const services = getServices();
 const home = getHomeContent();
-
-
-const values: { title: string; text: string; icon: IconName }[] = [
-  { title: 'Claridad', text: 'Alcance y precio antes de empezar.', icon: 'clipboard' },
-  { title: 'Criterio', text: 'La solución adecuada, no la más complicada.', icon: 'target' },
-  { title: 'Confianza', text: 'Software legítimo y datos protegidos.', icon: 'shield' },
-];
 ---
 
 <BaseLayout
@@ -31,24 +22,7 @@ const values: { title: string; text: string; icon: IconName }[] = [
     </div>
   </section>
 
-  <section class="home-panel about-panel" id="empresa">
-    <div class="container about-grid">
-      <div class="about-copy" data-reveal="left">
-        <span class="eyebrow">{home.aboutEyebrow}</span>
-        <h2>{home.aboutTitle}</h2>
-        <p>{home.aboutLead}</p>
-        <div class="about-actions">
-          <Button href="/contacto" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="home-final">{home.aboutCta}</Button>
-        </div>
-      </div>
-      <div class="values" id="ayuda" data-reveal="right">
-        {values.map((value) => (
-          <article><span><Icon name={value.icon} size={21} /></span><div><h3>{value.title}</h3><p>{value.text}</p></div></article>
-        ))}
-        <div class="availability"><span class="availability__help"><Icon name="help" size={19} /></span><div><strong>Ayuda rápida</strong><small>Elige el servicio adecuado y cuéntanos tu objetivo; te orientamos antes de cotizar.</small></div></div>
-      </div>
-    </div>
-  </section>
+  <CompanyPanel content={home} />
 </BaseLayout>
 
 <style>
@@ -270,79 +244,12 @@ const values: { title: string; text: string; icon: IconName }[] = [
   .panel-heading h2 { max-width: 15ch; margin: 0; }
   .panel-heading > p { max-width: 28ch; margin: 0; color: var(--text-muted); font-size: var(--fs-sm); text-align: right; }
 
-  .about-panel {
-    background: radial-gradient(circle at 14% 18%, rgb(0 170 231 / 0.2), transparent 26%), linear-gradient(135deg, #031329, #07345f);
-    color: var(--dark-text);
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
-    align-items: center;
-    gap: clamp(3rem, 9vw, 8rem);
-  }
-
-  .about-copy .eyebrow { color: var(--dark-accent); }
-  .about-copy h2 { max-width: 13ch; color: #fff; font-size: clamp(2.5rem, 5vw, 4.5rem); }
-  .about-copy > p { max-width: 54ch; color: var(--dark-muted); font-size: var(--fs-md); }
-  .about-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
-
-  .values {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--space-5);
-    border: 1px solid var(--dark-border);
-    border-radius: 24px;
-    background: rgb(5 27 52 / 0.72);
-    box-shadow: 0 38px 80px -42px #000;
-    backdrop-filter: blur(16px);
-  }
-
-  .values article,
-  .availability {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    background: rgb(255 255 255 / 0.035);
-  }
-
-  .values article > span {
-    display: grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    flex: 0 0 auto;
-    border-radius: 13px;
-    background: rgb(0 170 231 / 0.13);
-    color: var(--dark-accent);
-  }
-
-  .values h3 { margin: 0 0 2px; color: #fff; font-size: var(--fs-sm); }
-  .values p { margin: 0; color: #8fa9c0; font-size: var(--fs-xs); }
-
-  .availability {
-    margin-top: var(--space-2);
-    border: 1px solid rgb(81 211 157 / 0.2);
-    background: rgb(29 168 105 / 0.08);
-  }
-
-  .availability__help { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 auto; border-radius: 12px; background: rgb(69 223 154 / 0.12); color: #63e8a9; }
-  .availability strong, .availability small { display: block; }
-  .availability strong { color: #fff; font-size: var(--fs-sm); }
-  .availability small { color: #8fa9c0; font-size: var(--fs-xs); }
-
   @media (max-width: 860px) {
     .home-panel { min-height: auto; }
-    .about-grid { grid-template-columns: 1fr; }
-    .about-grid { gap: var(--space-10); }
   }
 
   @media (max-width: 560px) {
     .panel-heading { align-items: flex-start; flex-direction: column; }
     .panel-heading > p { text-align: left; }
-    .about-actions { display: grid; }
-    .about-actions :global(.btn) { width: 100%; }
   }
 </style>
