@@ -9,6 +9,7 @@ import ResetEpsonProduct from '../../components/licenses/ResetEpsonProduct.astro
 import CommercialPlans from '../../components/sections/CommercialPlans.astro';
 import ServiceHeroVisual from '../../components/sections/ServiceHeroVisual.astro';
 import DroneServiceOverview from '../../components/sections/DroneServiceOverview.astro';
+import DroneServiceSheets from '../../components/sections/DroneServiceSheets.astro';
 import { site } from '../../config/site';
 import { getServices, getLicenses } from '../../lib/content';
 import { whatsappUrl } from '../../lib/links';
@@ -34,7 +35,7 @@ const breadcrumbs = [
 ];
 
 const isLicenses = service.slug === 'licencias-software';
-const commercialPlanService = service.slug === 'drones' || service.slug === 'desarrollo-web' ? service.slug : null;
+const commercialPlanService = service.slug === 'desarrollo-web' ? service.slug : null;
 const hasCommercialPlans = commercialPlanService !== null;
 const contentAnchor = isLicenses ? 'catalogo' : hasCommercialPlans ? 'planes' : 'trabajos';
 const contentLabel = isLicenses ? 'Ver productos' : hasCommercialPlans ? 'Ver planes' : 'Ver soluciones';
@@ -64,13 +65,16 @@ const products = isLicenses ? getLicenses() : [];
     </PageHero>
   )}
 
+  {service.slug === 'drones' ? (
+    <DroneServiceSheets />
+  ) : (
   <section class="service-sheet" data-service={service.slug} id={contentAnchor}>
     <div class="container service-sheet__inner">
       <header class="work-heading">
         <div>
-          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : service.slug === 'drones' ? 'Detalles y tarifas' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
-          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Planes, precios y condiciones' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
-          <p>{service.slug === 'drones' ? 'Revisa las opciones de producción aérea, los servicios adicionales, el armado FPV y las condiciones antes de solicitar tu cotización.' : service.description[0]}</p>
+          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
+          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? 'Tres niveles para crecer' : service.offeringsTitle}</h2>
+          <p>{service.description[0]}</p>
         </div>
         <div class="audience-pills" aria-label="A quién está dirigido">
           {service.audiences.map((audience) => <span><Icon name={audience.icon} size={15} />{audience.title}</span>)}
@@ -125,6 +129,7 @@ const products = isLicenses ? getLicenses() : [];
       </aside>
     </div>
   </section>
+  )}
 </BaseLayout>
 
 <style>

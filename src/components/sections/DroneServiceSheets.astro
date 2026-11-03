@@ -1,0 +1,341 @@
+---
+import Icon from '../ui/Icon.astro';
+import droneQuote from '../../data/drone-quote.json';
+
+const [photoVideo, photogrammetry] = droneQuote.overview.items;
+const customBuild = droneQuote.customBuild;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
+
+const mappingSteps = [
+  { title: 'Planificamos', text: 'Definimos el área, el objetivo, la resolución y las condiciones del vuelo.' },
+  { title: 'Capturamos', text: 'Realizamos una secuencia aérea ordenada y con el solape necesario.' },
+  { title: 'Procesamos', text: 'Organizamos la información para mapas, modelos o seguimiento visual.' },
+  { title: 'Entregamos', text: 'Preparamos los archivos y formatos acordados para el proyecto.' },
+];
+---
+
+<div class="drone-sheets" aria-label="Detalle de servicios con drones">
+  <section class="drone-sheet drone-sheet--photo" id="foto-video" aria-labelledby="photo-video-title">
+    <div class="container drone-sheet__inner">
+      <header class="sheet-heading" data-reveal>
+        <div class="sheet-heading__number">01</div>
+        <div>
+          <span class="sheet-heading__eyebrow">{photoVideo.eyebrow}</span>
+          <h2 id="photo-video-title">{photoVideo.title}</h2>
+          <p>{photoVideo.description}</p>
+        </div>
+      </header>
+
+      <div class="photo-layout">
+        <figure class="sheet-visual sheet-visual--photo" data-reveal="left">
+          <img src={imageUrl(photoVideo.image)} alt={photoVideo.imageAlt} loading="lazy" decoding="async" />
+          <figcaption><Icon name="camera" size={18} />{photoVideo.imageCaption}</figcaption>
+        </figure>
+
+        <div class="photo-plans" aria-label="Opciones de fotografía y video" data-reveal="right">
+          {droneQuote.packages.map((plan) => (
+            <article class:list={['photo-plan', { 'photo-plan--featured': plan.featured }]}>
+              <div class="photo-plan__main">
+                <span>{plan.eyebrow}</span>
+                <h3>{plan.name}</h3>
+                <p>{plan.description}</p>
+              </div>
+              <div class="photo-plan__meta">
+                {plan.featured && <small>Recomendado</small>}
+                <strong>{plan.priceLabel}</strong>
+                <span><Icon name="clock" size={14} />{plan.timing}</span>
+                <span><Icon name="shield" size={14} />{plan.support}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div class="sheet-footnote">
+        <Icon name="info" size={16} />
+        <span>{droneQuote.note}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="drone-sheet drone-sheet--mapping" id="fotogrametria" aria-labelledby="photogrammetry-title">
+    <div class="mapping-radar" aria-hidden="true"></div>
+    <div class="container drone-sheet__inner">
+      <header class="sheet-heading sheet-heading--dark" data-reveal>
+        <div class="sheet-heading__number">02</div>
+        <div>
+          <span class="sheet-heading__eyebrow">{photogrammetry.eyebrow}</span>
+          <h2 id="photogrammetry-title">{photogrammetry.title}</h2>
+          <p>{photogrammetry.description}</p>
+        </div>
+      </header>
+
+      <div class="mapping-layout">
+        <figure class="sheet-visual sheet-visual--mapping" data-reveal="left">
+          <img src={imageUrl(photogrammetry.image)} alt={photogrammetry.imageAlt} loading="lazy" decoding="async" />
+          <span class="mapping-grid" aria-hidden="true"></span>
+          <figcaption><Icon name="photogrammetry" size={18} />{photogrammetry.imageCaption}</figcaption>
+        </figure>
+
+        <div class="mapping-copy" data-reveal="right">
+          <div class="mapping-copy__intro">
+            <span>Flujo técnico</span>
+            <h3>Del terreno a información visual útil.</h3>
+            <div class="service-tags" aria-label="Aplicaciones de fotogrametría">
+              {photogrammetry.tags.map((tag) => <span>{tag}</span>)}
+            </div>
+          </div>
+
+          <div class="mapping-steps">
+            {mappingSteps.map((step, index) => (
+              <article>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div><h4>{step.title}</h4><p>{step.text}</p></div>
+              </article>
+            ))}
+          </div>
+
+          <p class="mapping-note"><Icon name="target" size={17} />El alcance, la precisión y el formato final se definen según el área y el uso del proyecto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="drone-sheet drone-sheet--build" id="armado-personalizado" aria-labelledby="custom-build-title">
+    <div class="container drone-sheet__inner">
+      <header class="sheet-heading sheet-heading--dark" data-reveal>
+        <div class="sheet-heading__number">03</div>
+        <div>
+          <span class="sheet-heading__eyebrow">{customBuild.eyebrow}</span>
+          <h2 id="custom-build-title">{customBuild.name}</h2>
+          <p>{customBuild.description}</p>
+        </div>
+      </header>
+
+      <div class="build-layout">
+        <figure class="sheet-visual sheet-visual--build" data-reveal="left">
+          <span class="build-signal" aria-hidden="true"></span>
+          <img src={imageUrl(customBuild.image)} alt={customBuild.imageAlt} loading="lazy" decoding="async" />
+          <figcaption>
+            {customBuild.tags.map((tag) => <span>{tag}</span>)}
+          </figcaption>
+        </figure>
+
+        <div class="build-copy" data-reveal="right">
+          <div class="build-commercial">
+            <div><small>Inversión</small><strong>{customBuild.priceLabel}</strong></div>
+            <div><small>Inicio del pedido</small><strong>{customBuild.paymentLabel}</strong></div>
+          </div>
+
+          <ul class="build-includes">
+            {customBuild.includes.map((item) => <li><Icon name="check" size={16} />{item}</li>)}
+          </ul>
+
+          <div class="build-process" aria-label="Proceso de armado por encargo">
+            {customBuild.process.map((step, index) => (
+              <article>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div><strong>{step.title}</strong><p>{step.text}</p></div>
+              </article>
+            ))}
+          </div>
+
+          <details class="build-terms">
+            <summary>Condiciones del armado por encargo</summary>
+            <ul>{customBuild.terms.map((term) => <li>{term}</li>)}</ul>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .drone-sheet {
+    position: relative;
+    min-height: calc(100svh - var(--header-h) - 1rem);
+    scroll-snap-align: start;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .drone-sheet__inner {
+    display: grid;
+    align-content: center;
+    min-height: calc(100svh - var(--header-h) - 1rem);
+    padding-block: clamp(1.5rem, 4vh, 3rem);
+    gap: clamp(1.1rem, 2.5vh, 2rem);
+  }
+
+  .sheet-heading {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1rem, 2.5vw, 2rem);
+    align-items: start;
+    max-width: 980px;
+  }
+
+  .sheet-heading__number {
+    color: rgb(7 83 107 / 0.23);
+    font: 900 clamp(2.6rem, 6vw, 5rem)/0.88 ui-monospace, SFMono-Regular, Consolas, monospace;
+    letter-spacing: -0.08em;
+  }
+
+  .sheet-heading__eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: #087f99;
+    font-size: var(--fs-xs);
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sheet-heading h2 { margin: 0; color: #061a34; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.98; }
+  .sheet-heading p { max-width: 72ch; margin: 10px 0 0; color: #50677b; font-size: var(--fs-sm); line-height: 1.55; }
+
+  .sheet-heading--dark .sheet-heading__number { color: rgb(117 216 236 / 0.19); }
+  .sheet-heading--dark .sheet-heading__eyebrow { color: #64dff2; }
+  .sheet-heading--dark h2 { color: #fff; }
+  .sheet-heading--dark p { color: #a9c6d1; }
+
+  .drone-sheet--photo {
+    background:
+      radial-gradient(circle at 88% 4%, rgb(72 204 228 / 0.17), transparent 28%),
+      linear-gradient(145deg, #f8fdff, #eaf7fb);
+  }
+
+  .photo-layout { display: grid; grid-template-columns: minmax(300px, 0.8fr) minmax(0, 1.2fr); gap: clamp(1rem, 2.6vw, 2rem); min-height: 0; }
+
+  .sheet-visual {
+    position: relative;
+    min-width: 0;
+    min-height: 300px;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  .sheet-visual > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .sheet-visual--photo { box-shadow: 0 26px 60px -40px #17394b; }
+  .sheet-visual--photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 52%, rgb(1 23 35 / 0.75)); pointer-events: none; }
+  .sheet-visual--photo figcaption,
+  .sheet-visual--mapping figcaption { position: absolute; left: 18px; bottom: 16px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid rgb(255 255 255 / 0.2); border-radius: var(--radius-full); background: rgb(2 26 39 / 0.78); color: #fff; font-size: var(--fs-xs); font-weight: 750; backdrop-filter: blur(10px); }
+
+  .photo-plans { display: grid; gap: 10px; }
+  .photo-plan { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 0.44fr); gap: var(--space-4); padding: clamp(0.9rem, 1.6vw, 1.25rem); border: 1px solid #cae4ec; border-radius: 18px; background: rgb(255 255 255 / 0.82); box-shadow: 0 14px 34px -30px #0b354b; }
+  .photo-plan--featured { border-color: #5ac9df; background: linear-gradient(145deg, #fff, #e6f9fc); }
+  .photo-plan__main > span { color: #0791ad; font-size: 0.66rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+  .photo-plan h3 { margin: 3px 0 5px; color: #081c35; font-size: clamp(1rem, 1.6vw, 1.28rem); }
+  .photo-plan p { display: -webkit-box; margin: 0; overflow: hidden; color: #607487; font-size: 0.73rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .photo-plan__meta { display: grid; align-content: center; gap: 5px; padding-left: var(--space-4); border-left: 1px solid #d7e9ee; }
+  .photo-plan__meta small { width: fit-content; padding: 3px 7px; border-radius: var(--radius-full); background: #079fbd; color: #fff; font-size: 0.6rem; font-weight: 850; text-transform: uppercase; }
+  .photo-plan__meta strong { color: #071b34; font-size: clamp(0.9rem, 1.4vw, 1.1rem); }
+  .photo-plan__meta > span { display: flex; align-items: center; gap: 6px; color: #587083; font-size: 0.68rem; }
+  .photo-plan__meta :global(svg) { color: #079fbd; }
+  .sheet-footnote { display: flex; align-items: flex-start; gap: 8px; color: #607487; font-size: 0.7rem; }
+  .sheet-footnote :global(svg) { flex: 0 0 auto; margin-top: 1px; color: #079fbd; }
+
+  .drone-sheet--mapping {
+    color: #fff;
+    background:
+      linear-gradient(rgb(117 184 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(117 184 255 / 0.06) 1px, transparent 1px),
+      radial-gradient(circle at 13% 82%, rgb(35 132 196 / 0.28), transparent 28%),
+      linear-gradient(135deg, #03192d, #06344f 58%, #085a70);
+    background-size: 48px 48px, 48px 48px, auto, auto;
+  }
+
+  .mapping-radar { position: absolute; right: -10rem; top: 2rem; z-index: -1; width: 34rem; aspect-ratio: 1; border: 1px solid rgb(117 184 255 / 0.14); border-radius: 50%; box-shadow: 0 0 0 70px rgb(117 184 255 / 0.025), 0 0 0 140px rgb(117 184 255 / 0.018); }
+  .mapping-layout { display: grid; grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: stretch; min-height: 360px; }
+  .sheet-visual--mapping { border: 1px solid rgb(117 184 255 / 0.22); background: #06283d; }
+  .sheet-visual--mapping > img { filter: saturate(0.72) hue-rotate(8deg); }
+  .mapping-grid { position: absolute; inset: 0; z-index: 1; background-image: linear-gradient(rgb(117 184 255 / 0.38) 1px, transparent 1px), linear-gradient(90deg, rgb(117 184 255 / 0.38) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(135deg, transparent 5%, black 45%, black); pointer-events: none; }
+  .mapping-copy { display: grid; align-content: center; gap: var(--space-5); }
+  .mapping-copy__intro > span { color: #75b8ff; font-size: 0.68rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
+  .mapping-copy h3 { max-width: 18ch; margin: 6px 0 var(--space-3); color: #fff; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.05; }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .service-tags span { padding: 6px 10px; border: 1px solid rgb(117 184 255 / 0.24); border-radius: var(--radius-full); background: rgb(117 184 255 / 0.07); color: #b9d9f8; font-size: 0.7rem; font-weight: 700; }
+  .mapping-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .mapping-steps article { display: flex; gap: 11px; padding: 13px; border: 1px solid rgb(128 202 255 / 0.13); border-radius: 14px; background: rgb(2 25 41 / 0.55); }
+  .mapping-steps article > span { color: #75b8ff; font: 850 0.7rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .mapping-steps h4 { margin: 0 0 3px; color: #fff; font-size: var(--fs-xs); }
+  .mapping-steps p { margin: 0; color: #90adba; font-size: 0.68rem; line-height: 1.45; }
+  .mapping-note { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: #a9c6d1; font-size: 0.72rem; }
+  .mapping-note :global(svg) { flex: 0 0 auto; color: #75b8ff; }
+
+  .drone-sheet--build {
+    color: #fff;
+    background:
+      radial-gradient(circle at 16% 10%, rgb(66 215 157 / 0.13), transparent 25%),
+      radial-gradient(circle at 86% 80%, rgb(35 172 204 / 0.22), transparent 32%),
+      linear-gradient(140deg, #021b25, #063b48 55%, #075666);
+  }
+
+  .build-layout { display: grid; grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.22fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+  .sheet-visual--build { display: grid; align-content: center; min-height: 360px; padding: clamp(1rem, 2.5vw, 2rem); border: 1px solid rgb(115 229 174 / 0.24); background: linear-gradient(145deg, #fff, #e9f5f4); box-shadow: 0 28px 60px -42px #000; }
+  .sheet-visual--build > img { height: auto; max-height: 310px; object-fit: contain; }
+  .sheet-visual--build figcaption { display: flex; flex-wrap: wrap; gap: 7px; margin-top: var(--space-4); }
+  .sheet-visual--build figcaption span { padding: 5px 9px; border: 1px solid #c5e4df; border-radius: var(--radius-full); color: #285b61; font-size: 0.68rem; font-weight: 750; }
+  .build-signal { position: absolute; top: 15px; right: 16px; width: 8px; height: 8px; border-radius: 50%; background: #73e5ae; box-shadow: 0 0 0 5px rgb(115 229 174 / 0.15), 0 0 16px #73e5ae; }
+  .build-copy { display: grid; gap: var(--space-4); }
+  .build-commercial { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 1px; overflow: hidden; border: 1px solid rgb(115 229 174 / 0.2); border-radius: 14px; background: rgb(115 229 174 / 0.2); }
+  .build-commercial div { padding: 11px 13px; background: rgb(2 26 35 / 0.78); }
+  .build-commercial small, .build-commercial strong { display: block; }
+  .build-commercial small { margin-bottom: 3px; color: #79d8b1; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+  .build-commercial strong { color: #fff; font-size: var(--fs-sm); }
+  .build-includes { display: grid; grid-template-columns: 1fr 1fr; gap: 9px var(--space-4); margin: 0; padding: 0; list-style: none; }
+  .build-includes li { display: flex; align-items: flex-start; gap: 7px; color: #c9e2e4; font-size: 0.72rem; }
+  .build-includes :global(svg) { flex: 0 0 auto; color: #73e5ae; }
+  .build-process { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .build-process article { display: flex; gap: 9px; padding: 11px; border: 1px solid rgb(115 229 174 / 0.12); border-radius: 12px; background: rgb(2 24 32 / 0.52); }
+  .build-process article > span { color: #73e5ae; font: 850 0.68rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .build-process strong { display: block; color: #fff; font-size: 0.7rem; }
+  .build-process p { margin: 3px 0 0; color: #8fb0b5; font-size: 0.64rem; line-height: 1.4; }
+  .build-terms { color: #9dbbc0; font-size: 0.7rem; }
+  .build-terms summary { width: fit-content; color: #d9ebeb; font-weight: 750; cursor: pointer; }
+  .build-terms ul { display: grid; gap: 6px; margin: var(--space-3) 0 0; padding-left: 1.1rem; }
+  .build-terms li::marker { color: #73e5ae; }
+
+  @media (max-height: 760px) and (min-width: 1001px) {
+    .drone-sheet__inner { padding-block: 1rem; gap: 0.85rem; }
+    .sheet-heading h2 { font-size: clamp(1.8rem, 3.3vw, 2.8rem); }
+    .sheet-heading p { margin-top: 6px; }
+    .sheet-visual { min-height: 280px; }
+    .photo-plan { padding: 0.75rem 0.9rem; }
+    .sheet-footnote { font-size: 0.64rem; }
+    .build-layout, .mapping-layout { min-height: 320px; }
+  }
+
+  @media (max-width: 1000px) {
+    .drone-sheet, .drone-sheet__inner { min-height: auto; }
+    .drone-sheet__inner { padding-block: clamp(3rem, 8vw, 5rem); }
+    .photo-layout, .mapping-layout, .build-layout { grid-template-columns: 1fr; }
+    .sheet-visual { min-height: 380px; }
+    .photo-plan { grid-template-columns: minmax(0, 1fr) minmax(190px, 0.45fr); }
+    .sheet-visual--build { max-width: 700px; }
+  }
+
+  @media (max-width: 620px) {
+    .sheet-heading { grid-template-columns: 1fr; gap: 0.65rem; }
+    .sheet-heading__number { font-size: 2.4rem; }
+    .sheet-heading h2 { font-size: clamp(1.8rem, 10vw, 2.6rem); }
+    .sheet-visual { min-height: 270px; border-radius: 20px; }
+    .photo-plan, .mapping-steps, .build-commercial, .build-includes, .build-process { grid-template-columns: 1fr; }
+    .photo-plan__meta { padding: var(--space-3) 0 0; border-top: 1px solid #d7e9ee; border-left: 0; }
+    .sheet-visual--build { min-height: 300px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drone-sheet { scroll-snap-align: none; }
+  }
+</style>
+
+<style is:global>
+  html:has(.drone-sheets) { scroll-snap-type: y proximity; }
+
+  @media (max-width: 1000px), (prefers-reduced-motion: reduce) {
+    html:has(.drone-sheets) { scroll-snap-type: none; }
+  }
+</style>
