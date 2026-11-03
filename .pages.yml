@@ -106,6 +106,48 @@ content:
           - { name: depositPercent, label: Adelanto (%), type: number, required: true }
           - { name: minimumNoticeDays, label: Anticipación mínima (días), type: number, required: true }
           - { name: validityDays, label: Vigencia de la cotización (días), type: number, required: true }
+      - name: overview
+        label: Primera pantalla de Drones
+        type: object
+        fields:
+          - { name: eyebrow, label: Etiqueta superior, type: string, required: true }
+          - { name: title, label: Título principal, type: string, required: true }
+          - { name: lead, label: Introducción, type: text, required: true }
+          - { name: ctaLabel, label: Texto del enlace inferior, type: string, required: true }
+          - name: items
+            label: Tres servicios destacados
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{number} · {title}"
+            fields:
+              - { name: id, label: Identificador, type: string, required: true }
+              - { name: number, label: Número, type: string, required: true }
+              - { name: eyebrow, label: Categoría, type: string, required: true }
+              - { name: title, label: Nombre del servicio, type: string, required: true }
+              - { name: description, label: Descripción, type: text, required: true }
+              - name: icon
+                label: Ícono
+                type: select
+                required: true
+                options:
+                  values:
+                    - { label: Cámara, value: camera }
+                    - { label: Fotogrametría, value: photogrammetry }
+                    - { label: Dron, value: drone }
+              - { name: image, label: Imagen inferior, type: image, required: true }
+              - { name: imageAlt, label: Descripción accesible de la imagen, type: string, required: true }
+              - name: imageFit
+                label: Ajuste de la imagen
+                type: select
+                required: true
+                options:
+                  values:
+                    - { label: Cubrir el área, value: cover }
+                    - { label: Mostrar completa, value: contain }
+              - { name: imageCaption, label: Etiqueta sobre la imagen, type: string, required: true }
+              - { name: tags, label: Características cortas, type: string, list: true, required: true }
       - name: customBuild
         label: Armado de drones FPV por encargo
         type: object

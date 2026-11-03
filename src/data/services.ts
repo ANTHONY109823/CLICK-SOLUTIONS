@@ -68,7 +68,7 @@ export const services: Service[] = [
     name: 'Servicios con drones',
     icon: 'drone',
     tagline: 'Servicios aéreos y drones FPV armados por encargo.',
-    highlights: ['Fotografía y video aéreo', 'Armado de drones FPV', 'Drones de carrera por encargo'],
+    highlights: ['Fotografía y video aéreo', 'Fotogrametría y modelado', 'Armado de drones personalizados'],
     hero: {
       eyebrow: 'Drones',
       title: 'Una perspectiva aérea para tus proyectos',
@@ -89,6 +89,7 @@ export const services: Service[] = [
     offerings: [
       { id: 'foto-aerea', title: 'Fotografía aérea', summary: 'Imágenes en alta resolución de lugares, inmuebles, terrenos y paisajes.', icon: 'camera', enabled: true },
       { id: 'video-aereo', title: 'Filmación y video aéreo', summary: 'Tomas de video aéreas para piezas promocionales, recuerdos o documentación.', icon: 'video', enabled: true },
+      { id: 'fotogrametria', title: 'Fotogrametría y modelado 3D', summary: 'Captura aérea planificada para mapas, modelos y documentación visual; el alcance y la precisión se evalúan por proyecto.', icon: 'photogrammetry', enabled: true },
       { id: 'inspecciones', title: 'Inspecciones visuales', summary: 'Registro visual de techos, fachadas, estructuras o terrenos de difícil acceso. Es un apoyo visual, no reemplaza una inspección técnica profesional.', icon: 'eye', enabled: true },
       { id: 'eventos', title: 'Registro de eventos', summary: 'Cobertura aérea de eventos sociales, deportivos o corporativos, según lo permita el lugar.', icon: 'calendar', enabled: true },
       { id: 'empresas', title: 'Material audiovisual para empresas', summary: 'Contenido aéreo para presentar instalaciones, proyectos o la marca de tu empresa.', icon: 'building', enabled: true },
@@ -117,8 +118,8 @@ export const services: Service[] = [
       'Cada operación se evalúa según la normativa de la DGAC (MTC) y las restricciones del lugar. Si un vuelo no es viable o requiere autorizaciones adicionales, te lo indicaremos antes de cotizar.',
     ],
     seo: {
-      title: 'Servicios con drones: fotografía y video aéreo',
-      description: 'Servicios de fotografía y video aéreo, además de armado por encargo de drones FPV y de carrera con componentes importados en Perú.',
+      title: 'Drones: fotografía, video, fotogrametría y armado FPV',
+      description: 'Fotografía y video aéreo, fotogrametría y armado por encargo de drones FPV y de carrera con componentes importados en Perú.',
     },
   },
   {

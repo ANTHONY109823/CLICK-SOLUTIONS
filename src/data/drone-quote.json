@@ -8,6 +8,53 @@
     "minimumNoticeDays": 3,
     "validityDays": 15
   },
+  "overview": {
+    "eyebrow": "Servicios con drones",
+    "title": "Tres soluciones. Una nueva perspectiva.",
+    "lead": "Producción visual, captura técnica y equipos FPV personalizados. Elige el servicio que mejor responde a tu objetivo.",
+    "ctaLabel": "Ver detalles y tarifas",
+    "items": [
+      {
+        "id": "foto-video",
+        "number": "01",
+        "eyebrow": "Producción aérea",
+        "title": "Fotografía y video",
+        "description": "Tomas aéreas para eventos, inmuebles, obras, empresas y contenido de marca, con entrega según el formato acordado.",
+        "icon": "camera",
+        "image": "/images/hero/drones.jpg",
+        "imageAlt": "Dron realizando una captura aérea sobre un paisaje natural",
+        "imageFit": "cover",
+        "imageCaption": "Foto y video aéreo",
+        "tags": ["Fotografía", "Video 4K", "Edición opcional"]
+      },
+      {
+        "id": "fotogrametria",
+        "number": "02",
+        "eyebrow": "Captura técnica",
+        "title": "Fotogrametría",
+        "description": "Captura aérea planificada para modelos, mapas y documentación visual de terrenos u obras. El alcance y la precisión se evalúan por proyecto.",
+        "icon": "photogrammetry",
+        "image": "/images/hero/drones.jpg",
+        "imageAlt": "Dron en vuelo para una captura planificada de fotogrametría",
+        "imageFit": "cover",
+        "imageCaption": "Mapeo y modelado",
+        "tags": ["Modelado 3D", "Mapeo", "Seguimiento"]
+      },
+      {
+        "id": "armado-personalizado",
+        "number": "03",
+        "eyebrow": "Construcción FPV",
+        "title": "Drones personalizados",
+        "description": "Definimos la configuración, importamos los componentes confirmados y armamos localmente drones FPV y de carrera.",
+        "icon": "drone",
+        "image": "/images/drones/fpv-racing-build.png",
+        "imageAlt": "Componentes y chasis para el armado personalizado de un dron FPV",
+        "imageFit": "contain",
+        "imageCaption": "Armado por encargo",
+        "tags": ["FPV", "Carrera", "A tu medida"]
+      }
+    ]
+  },
   "customBuild": {
     "eyebrow": "Armado personalizado por encargo",
     "name": "Drones FPV y de carrera armados a tu medida",

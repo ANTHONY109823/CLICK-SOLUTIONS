@@ -6,13 +6,15 @@ import { whatsappUrl } from '../../lib/links';
 
 const product = droneQuote.customBuild;
 const whatsapp = whatsappUrl(product.whatsappMessage);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const productImage = product.image.startsWith('/') ? `${base}${product.image}` : product.image;
 ---
 
-<section class="fpv-product" aria-labelledby="fpv-product-title">
+<section class="fpv-product" id="armado-fpv" aria-labelledby="fpv-product-title">
   <div class="fpv-product__main">
     <div class="fpv-product__visual">
       <span class="fpv-product__signal" aria-hidden="true"></span>
-      <img src={product.image} alt={product.imageAlt} width="486" height="190" loading="lazy" decoding="async" />
+      <img src={productImage} alt={product.imageAlt} width="486" height="190" loading="lazy" decoding="async" />
       <div class="fpv-product__tags" aria-label="Tipos de proyecto">
         {product.tags.map((tag) => <span>{tag}</span>)}
       </div>

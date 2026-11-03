@@ -8,6 +8,7 @@ import LicenseCatalog from '../../components/licenses/LicenseCatalog.astro';
 import ResetEpsonProduct from '../../components/licenses/ResetEpsonProduct.astro';
 import CommercialPlans from '../../components/sections/CommercialPlans.astro';
 import ServiceHeroVisual from '../../components/sections/ServiceHeroVisual.astro';
+import DroneServiceOverview from '../../components/sections/DroneServiceOverview.astro';
 import { site } from '../../config/site';
 import { getServices, getLicenses } from '../../lib/content';
 import { whatsappUrl } from '../../lib/links';
@@ -50,22 +51,26 @@ const products = isLicenses ? getLicenses() : [];
     breadcrumbSchema(siteUrl, breadcrumbs),
   ]}
 >
-  <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead}>
-    <Fragment slot="actions">
-      <Button href={`#${contentAnchor}`} variant="on-dark" size="lg" iconRight="arrow-right">
-        {contentLabel}
-      </Button>
-    </Fragment>
-    <div slot="aside" class="hero-visual"><ServiceHeroVisual service={service.slug} /></div>
-  </PageHero>
+  {service.slug === 'drones' ? (
+    <DroneServiceOverview />
+  ) : (
+    <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead}>
+      <Fragment slot="actions">
+        <Button href={`#${contentAnchor}`} variant="on-dark" size="lg" iconRight="arrow-right">
+          {contentLabel}
+        </Button>
+      </Fragment>
+      <div slot="aside" class="hero-visual"><ServiceHeroVisual service={service.slug} /></div>
+    </PageHero>
+  )}
 
   <section class="service-sheet" data-service={service.slug} id={contentAnchor}>
     <div class="container service-sheet__inner">
       <header class="work-heading">
         <div>
-          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
-          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Servicios aéreos y armado FPV' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
-          <p>{service.description[0]}</p>
+          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : service.slug === 'drones' ? 'Detalles y tarifas' : hasCommercialPlans ? 'Opciones claras' : 'Qué ofrecemos'}</span>
+          <h2>{isLicenses ? 'Software para trabajar mejor' : hasCommercialPlans ? (service.slug === 'drones' ? 'Planes, precios y condiciones' : 'Tres niveles para crecer') : service.offeringsTitle}</h2>
+          <p>{service.slug === 'drones' ? 'Revisa las opciones de producción aérea, los servicios adicionales, el armado FPV y las condiciones antes de solicitar tu cotización.' : service.description[0]}</p>
         </div>
         <div class="audience-pills" aria-label="A quién está dirigido">
           {service.audiences.map((audience) => <span><Icon name={audience.icon} size={15} />{audience.title}</span>)}
