@@ -111,9 +111,6 @@ content:
         type: object
         fields:
           - { name: eyebrow, label: Etiqueta superior, type: string, required: true }
-          - { name: title, label: Título principal, type: string, required: true }
-          - { name: lead, label: Introducción, type: text, required: true }
-          - { name: ctaLabel, label: Texto del enlace inferior, type: string, required: true }
           - name: items
             label: Tres servicios destacados
             type: object

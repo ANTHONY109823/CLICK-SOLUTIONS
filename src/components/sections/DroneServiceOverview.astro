@@ -12,14 +12,7 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
   <div class="drone-overview__radar" aria-hidden="true"></div>
   <div class="container drone-overview__inner">
     <header class="drone-overview__header" data-reveal>
-      <div>
-        <span class="eyebrow">{overview.eyebrow}</span>
-        <h1 id="drone-overview-title">{overview.title}</h1>
-      </div>
-      <div class="drone-overview__intro">
-        <p>{overview.lead}</p>
-        <a href="#planes">{overview.ctaLabel}<Icon name="arrow-right" size={17} /></a>
-      </div>
+      <h1 id="drone-overview-title">{overview.eyebrow}</h1>
     </header>
 
     <div class="drone-overview__cards" aria-label="Servicios principales con drones">
@@ -86,26 +79,15 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
     box-shadow: 0 0 0 72px rgb(58 211 229 / 0.035), 0 0 0 144px rgb(58 211 229 / 0.022);
   }
 
-  .drone-overview__inner { display: grid; gap: clamp(1rem, 2.4vh, 1.8rem); }
+  .drone-overview__inner { display: grid; width: min(calc(100% - 2rem), 1560px); max-width: none; gap: clamp(1rem, 2.4vh, 1.8rem); }
 
-  .drone-overview__header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(310px, 0.72fr);
-    align-items: end;
-    gap: clamp(2rem, 7vw, 7rem);
-  }
-
-  .drone-overview__header .eyebrow { margin: 0; color: #57def2; }
-  .drone-overview h1 { max-width: 15ch; margin: 7px 0 0; color: #fff; font-size: clamp(2.15rem, 4vw, 3.85rem); line-height: 0.98; letter-spacing: -0.05em; text-wrap: balance; }
-  .drone-overview__intro { display: grid; justify-items: start; gap: var(--space-3); }
-  .drone-overview__intro p { max-width: 52ch; margin: 0; color: #a9c8d3; font-size: var(--fs-sm); line-height: 1.6; }
-  .drone-overview__intro a { display: inline-flex; align-items: center; gap: 8px; color: #68e5f4; font-size: var(--fs-xs); font-weight: 800; text-decoration: none; }
-  .drone-overview__intro a:hover { color: #fff; }
+  .drone-overview__header h1 { display: inline-flex; align-items: center; gap: 10px; margin: 0; color: #57def2; font-size: var(--fs-xs); font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
+  .drone-overview__header h1::before { content: ''; width: 24px; height: 2px; border-radius: 4px; background: currentColor; }
 
   .drone-overview__cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    min-height: clamp(430px, 57svh, 565px);
+    min-height: clamp(560px, 76svh, 720px);
     overflow: hidden;
     border: 1px solid rgb(109 217 232 / 0.2);
     border-radius: 24px;
@@ -151,15 +133,13 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
 
   @media (max-height: 760px) and (min-width: 901px) {
     .drone-overview { padding-block: 1.15rem; }
-    .drone-overview h1 { font-size: clamp(2rem, 3.3vw, 3.2rem); }
-    .drone-overview__cards { min-height: 450px; }
+    .drone-overview__cards { min-height: 560px; }
     .drone-service__copy { padding-block: 1rem; }
     .drone-service__top { margin-bottom: var(--space-3); }
   }
 
   @media (max-width: 900px) {
     .drone-overview { min-height: auto; }
-    .drone-overview__header { grid-template-columns: 1fr; gap: var(--space-4); }
     .drone-overview__cards { grid-template-columns: 1fr; }
     .drone-service { grid-template-columns: minmax(0, 1fr) minmax(220px, 0.85fr); grid-template-rows: 1fr; border-right: 0; border-bottom: 1px solid rgb(109 217 232 / 0.17); }
     .drone-service:last-child { border-bottom: 0; }
