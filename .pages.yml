@@ -87,6 +87,94 @@ content:
       - { name: aboutLead, label: Texto de empresa, type: text, required: true }
       - { name: aboutCta, label: Texto del botón final, type: string, required: true }
 
+  - name: webDevelopment
+    label: Página de desarrollo web
+    type: file
+    path: src/data/web-development.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - name: hero
+        label: Primera pantalla
+        type: object
+        fields:
+          - { name: eyebrow, label: Etiqueta superior, type: string, required: true }
+          - { name: title, label: Título principal, type: string, required: true }
+          - { name: lead, label: Introducción, type: text, required: true }
+          - { name: ctaLabel, label: Texto del botón, type: string, required: true }
+          - { name: signals, label: Beneficios cortos, type: string, list: true, required: true }
+      - name: showcase
+        label: Vistas del producto digital
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label} · {title}"
+        fields:
+          - { name: id, label: Identificador, type: string, required: true }
+          - { name: label, label: Pestaña, type: string, required: true }
+          - { name: eyebrow, label: Categoría, type: string, required: true }
+          - { name: title, label: Título, type: string, required: true }
+          - { name: metric, label: Capacidades, type: string, required: true }
+      - name: solutions
+        label: Tres soluciones comerciales
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{number} · {title} · {price}"
+        fields:
+          - { name: id, label: Identificador, type: string, required: true }
+          - { name: number, label: Número, type: string, required: true }
+          - { name: eyebrow, label: Categoría, type: string, required: true }
+          - { name: title, label: Nombre, type: string, required: true }
+          - { name: description, label: Descripción, type: text, required: true }
+          - { name: price, label: Precio visible, type: string, required: true }
+          - { name: timing, label: Tiempo estimado, type: string, required: true }
+          - name: icon
+            label: Ícono
+            type: select
+            required: true
+            options:
+              values:
+                - { label: Diseño web, value: layout }
+                - { label: Flujo de trabajo, value: workflow }
+                - { label: Sistema, value: cpu }
+          - { name: includes, label: Incluye, type: string, list: true, required: true }
+      - name: demos
+        label: Demostraciones conceptuales
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label} · {title}"
+        fields:
+          - { name: id, label: Identificador, type: string, required: true }
+          - { name: label, label: Sector, type: string, required: true }
+          - { name: title, label: Nombre de la demostración, type: string, required: true }
+          - { name: description, label: Descripción, type: text, required: true }
+          - { name: features, label: Funciones destacadas, type: string, list: true, required: true }
+      - name: process
+        label: Proceso de trabajo
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - { name: title, label: Paso, type: string, required: true }
+          - { name: text, label: Explicación, type: text, required: true }
+      - name: cta
+        label: Llamada final
+        type: object
+        fields:
+          - { name: eyebrow, label: Etiqueta, type: string, required: true }
+          - { name: title, label: Título, type: string, required: true }
+          - { name: text, label: Explicación, type: text, required: true }
+          - { name: label, label: Texto del botón, type: string, required: true }
+      - { name: priceNote, label: Nota sobre precios, type: text, required: true }
+
   - name: droneQuote
     label: Tarifas y cotizaciones de drones
     type: file
