@@ -27,15 +27,7 @@ const products = [
 ];
 ---
 
-<section class="antivirus" aria-labelledby="antivirus-title">
-  <header class="antivirus__heading">
-    <div>
-      <span class="eyebrow">ANTIVIRUS CON LICENCIA ORIGINAL</span>
-      <h2 id="antivirus-title">Protección que sí puedes verificar.</h2>
-    </div>
-    <p>Primero confirmamos sistema, dispositivos y duración. Después recibes la cotización y recién entonces se gestiona la licencia.</p>
-  </header>
-
+<section class="antivirus" aria-label="Planes de antivirus originales">
   <div class="antivirus__grid">
     {products.map((product, index) => (
       <article class="antivirus-card" data-tone={product.tone}>
@@ -101,13 +93,26 @@ const products = [
   .antivirus__process small { color: #9eb2bd; font-size: .7rem; }
   .antivirus__process > :global(svg) { color: rgb(184 236 76 / .4); }
 
-  @media (max-width: 1000px) {
-    .antivirus__grid { grid-template-columns: 1fr; }
-    .antivirus-card__text { min-height: 0; }
+  @media (min-width: 821px) {
+    .antivirus { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; padding: 1rem; }
+    .antivirus__grid { min-height: 0; }
+    .antivirus-card { height: 100%; min-height: 0; padding: 1rem; }
+    .antivirus-card__top { margin-bottom: 10px; }
+    .antivirus-card__number { font-size: 1.25rem; }
+    .antivirus-card__shield { width: 48px; height: 48px; border-radius: 14px; }
+    .antivirus-card h3 { font-size: clamp(1.15rem, 1.8vw, 1.55rem); }
+    .antivirus-card__plans { margin: 11px 0 7px; }
+    .antivirus-card__text { display: -webkit-box; min-height: 0; margin: 0; overflow: hidden; font-size: var(--fs-xs); line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .antivirus-card__platforms { gap: 5px; margin-top: 10px; }
+    .antivirus-card__platforms span { padding: 4px 7px; font-size: .62rem; }
+    .antivirus-card__actions { gap: 9px; margin-top: 12px; }
+    .antivirus-card__actions :global(.btn) { min-height: 36px; padding-inline: 11px; font-size: var(--fs-xs); }
+    .antivirus__process { gap: 8px; margin-top: 10px; padding: 9px 12px; }
   }
 
   @media (max-width: 820px) {
-    .antivirus__heading { grid-template-columns: 1fr; }
+    .antivirus__grid { grid-template-columns: 1fr; }
+    .antivirus-card__text { min-height: 0; }
     .antivirus__process { grid-template-columns: repeat(4, 1fr); }
     .antivirus__process > :global(svg) { display: none; }
     .antivirus__process > span { align-items: flex-start; flex-direction: column; }

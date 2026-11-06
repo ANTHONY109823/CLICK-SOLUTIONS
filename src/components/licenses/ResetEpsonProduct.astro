@@ -92,6 +92,21 @@ import Icon from '../ui/Icon.astro';
   .reset-product__footer p { display: flex; gap: 7px; margin: 0; color: #7a4a08; font-size: 0.7rem; }
   .reset-product__footer p :global(svg) { flex: 0 0 auto; margin-top: 1px; }
 
+  @media (min-width: 841px) {
+    .reset-product { height: 100%; min-height: 0; gap: 1.4rem; padding: 1.1rem; }
+    .reset-product__visual { min-height: 0; height: 100%; padding: 1rem; }
+    .reset-window__body { padding: 1.15rem; }
+    .reset-product__copy { align-self: center; }
+    .reset-product__heading { margin-bottom: 6px; }
+    .reset-product__copy h2 { font-size: clamp(1.7rem, 2.7vw, 2.6rem); }
+    .reset-product__lead { margin-bottom: 0; font-size: var(--fs-sm); line-height: 1.5; }
+    .reset-flow { margin-block: 12px; }
+    .reset-flow span { padding: 8px; }
+    .reset-facts { gap: 6px; }
+    .reset-product__footer { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; margin-top: 14px; }
+    .reset-product__footer p { margin: 0; }
+  }
+
   @media (max-width: 840px) { .reset-product { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 520px) {
     .reset-product__visual { min-height: 240px; padding: var(--space-3); }
