@@ -1,0 +1,69 @@
+---
+import ResetEpsonProduct from './ResetEpsonProduct.astro';
+import LicenseCatalog from './LicenseCatalog.astro';
+import AntivirusSpotlight from './AntivirusSpotlight.astro';
+import Button from '../ui/Button.astro';
+import type { LicenseProduct } from '../../data/licenses';
+import { site } from '../../config/site';
+import { whatsappUrl } from '../../lib/links';
+
+interface Props { products: LicenseProduct[]; }
+
+const { products } = Astro.props;
+const catalogProducts = products.filter((product) => product.category !== 'Seguridad');
+const whatsapp = whatsappUrl(`Hola ${site.name}, quisiera orientación sobre software o una licencia.`);
+---
+
+<div class="software-sheets">
+  <section class="software-sheet software-sheet--own" id="software-propio" aria-labelledby="own-title">
+    <div class="container software-sheet__inner">
+      <header class="software-sheet__heading">
+        <div><span>01 · SOFTWARE PROPIO</span><h2 id="own-title">Herramientas creadas por ClickSolutions</h2></div>
+        <p>Soluciones que administramos directamente, con compatibilidad revisada y activación privada para cada cliente.</p>
+      </header>
+      <ResetEpsonProduct />
+    </div>
+  </section>
+
+  <section class="software-sheet software-sheet--catalog" id="licencias" aria-labelledby="catalog-title">
+    <div class="container software-sheet__inner">
+      <header class="software-sheet__heading">
+        <div><span>02 · LICENCIAS Y DESCARGAS</span><h2 id="catalog-title">Originales cuando se requiere. Gratuitas cuando existe una alternativa.</h2></div>
+        <p>Compara software comercial y herramientas de código abierto. La modalidad, la edición y el costo se muestran antes de continuar.</p>
+      </header>
+      <LicenseCatalog products={catalogProducts} />
+    </div>
+  </section>
+
+  <section class="software-sheet software-sheet--security" id="proteccion" aria-labelledby="security-title">
+    <div class="container software-sheet__inner">
+      <header class="software-sheet__heading software-sheet__heading--dark">
+        <div><span>03 · PROTECCIÓN PARA TU PC</span><h2 id="security-title">Antivirus originales, elegidos según tus dispositivos</h2></div>
+        <p>Revisamos sistema, cantidad de equipos y duración antes de cotizar para evitar planes incompatibles o claves dudosas.</p>
+      </header>
+      <AntivirusSpotlight />
+      <aside class="software-contact" id="cotizar">
+        <div><span>¿NO SABES CUÁL ELEGIR?</span><h2>Cuéntanos qué equipo usas y te orientamos.</h2><p>Primero definimos la opción correcta; después confirmamos precio, alcance y forma de entrega.</p></div>
+        <div class="software-contact__actions">
+          <Button href="/contacto?servicio=licencias-software" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="software-sections">Solicitar orientación</Button>
+          {whatsapp && <Button href={whatsapp} variant="secondary" size="lg" icon="message" external track="whatsapp_click" data-track-label="software-sections">WhatsApp</Button>}
+        </div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<style>
+  .software-sheets{min-width:0;background:#f7fbfa}
+  .software-sheet{min-height:calc(100svh - var(--header-h));padding-block:clamp(2.5rem,6vh,5rem);scroll-margin-top:var(--header-h);overflow:clip}
+  .software-sheet--own{background:radial-gradient(circle at 92% 10%,rgb(60 205 166/.1),transparent 26%),#f7fbfa}
+  .software-sheet--catalog{background:radial-gradient(circle at 8% 15%,rgb(58 174 231/.08),transparent 26%),linear-gradient(180deg,#fff,#f5faff)}
+  .software-sheet--security{background:radial-gradient(circle at 92% 5%,rgb(190 236 87/.1),transparent 24%),linear-gradient(145deg,#06172a,#073b40);color:#dbeaf0}
+  .software-sheet__inner{display:grid;min-width:0;gap:clamp(1.5rem,3.5vh,2.8rem)}
+  .software-sheet__heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.65fr);align-items:end;gap:var(--space-8)}
+  .software-sheet__heading span{color:#148c79;font-size:var(--fs-xs);font-weight:850;letter-spacing:.1em}.software-sheet__heading h2{max-width:18ch;margin:7px 0 0;color:var(--brand-ink);font-size:clamp(2rem,4vw,3.7rem);line-height:1;letter-spacing:-.045em}.software-sheet__heading>p{margin:0;color:var(--text-muted);font-size:var(--fs-sm);line-height:1.65}
+  .software-sheet__heading--dark span{color:#c4ec69}.software-sheet__heading--dark h2{color:#fff}.software-sheet__heading--dark>p{color:#9eb5bd}
+  .software-contact{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--space-8);padding:clamp(1.4rem,3vw,2.2rem);border:1px solid rgb(190 236 87/.17);border-radius:22px;background:rgb(1 18 31/.46);box-shadow:0 28px 55px -38px #001020}.software-contact>div>span{color:#c4ec69;font-size:var(--fs-xs);font-weight:800;letter-spacing:.09em}.software-contact h2{margin:4px 0 6px;color:#fff;font-size:var(--fs-xl)}.software-contact p{max-width:65ch;margin:0;color:#9db5bd;font-size:var(--fs-sm)}.software-contact__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--space-3)}
+  @media(max-width:820px){.software-sheet{min-height:auto}.software-sheet__heading,.software-contact{grid-template-columns:1fr}.software-contact__actions{justify-content:flex-start}}
+  @media(max-width:520px){.software-sheet{padding-block:2.2rem}.software-contact__actions{display:grid}.software-contact__actions :global(.btn){width:100%}}
+</style>
