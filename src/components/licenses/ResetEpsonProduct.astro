@@ -92,7 +92,7 @@ import Icon from '../ui/Icon.astro';
   .reset-product__footer p { display: flex; gap: 7px; margin: 0; color: #7a4a08; font-size: 0.7rem; }
   .reset-product__footer p :global(svg) { flex: 0 0 auto; margin-top: 1px; }
 
-  @media (min-width: 841px) {
+  @media (min-width: 601px) {
     .reset-product { height: 100%; min-height: 0; gap: 1.4rem; padding: 1.1rem; }
     .reset-product__visual { min-height: 0; height: 100%; padding: 1rem; }
     .reset-window__body { padding: 1.15rem; }
@@ -107,11 +107,21 @@ import Icon from '../ui/Icon.astro';
     .reset-product__footer p { margin: 0; }
   }
 
-  @media (max-width: 840px) { .reset-product { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 600px) {
+    .reset-product { grid-template-columns: minmax(0, 1fr); height: 100%; min-height: 0; padding: 1rem; overflow: hidden; }
+    .reset-product__visual { display: none; }
+    .reset-product__copy { align-self: center; }
+    .reset-product__heading { margin-bottom: 5px; }
+    .reset-product__copy h2 { margin-bottom: 5px; font-size: clamp(1.5rem, 8vw, 2rem); }
+    .reset-product__lead { margin: 0; font-size: var(--fs-xs); line-height: 1.45; }
+    .reset-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-block: 9px; }
+    .reset-flow span { align-items: flex-start; flex-direction: column; gap: 4px; padding: 6px; font-size: .64rem; }
+    .reset-facts { gap: 5px; }
+    .reset-product__footer { gap: 7px; margin-top: 9px; }
+    .reset-product__footer p { font-size: .62rem; }
+  }
   @media (max-width: 520px) {
-    .reset-product__visual { min-height: 240px; padding: var(--space-3); }
     .reset-window__body { padding: var(--space-4); }
-    .reset-flow { grid-template-columns: 1fr; }
     .reset-product__footer :global(.btn) { width: 100%; }
   }
 </style>
