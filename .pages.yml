@@ -18,6 +18,23 @@ settings:
       rename: "Contenido: renombrar {oldPath} a {newPath}"
 
 content:
+  - name: serviceVisibility
+    label: Activar o desactivar servicios
+    type: file
+    path: src/data/service-visibility.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - { name: drones, label: Mostrar Drones, type: boolean, required: true }
+      - { name: desarrolloWeb, label: Mostrar Desarrollo web, type: boolean, required: true }
+      - name: soporteTecnico
+        label: Mostrar Soporte técnico
+        type: boolean
+        required: true
+        description: Al apagarlo se oculta del menú, inicio, formularios y deja de publicarse su página.
+      - { name: licenciasSoftware, label: Mostrar Software y licencias, type: boolean, required: true }
+
   - name: business
     label: Datos de la empresa
     type: file

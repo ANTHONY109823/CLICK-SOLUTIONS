@@ -9,14 +9,24 @@ import { projects, type Project } from '../data/projects';
 import { licenses, type LicenseProduct } from '../data/licenses';
 import { generalFaqs } from '../data/faqs';
 import home from '../data/home.json';
+import serviceVisibility from '../data/service-visibility.json';
 
 const isShown = (item: { demo?: boolean }) => !item.demo || site.showDemoContent;
 
 export function getServices(): Service[] {
-  return services.map((service) => ({
-    ...service,
-    offerings: service.offerings.filter((offering) => offering.enabled),
-  }));
+  const visibility: Record<ServiceSlug, boolean> = {
+    drones: serviceVisibility.drones,
+    'desarrollo-web': serviceVisibility.desarrolloWeb,
+    'soporte-tecnico': serviceVisibility.soporteTecnico,
+    'licencias-software': serviceVisibility.licenciasSoftware,
+  };
+
+  return services
+    .filter((service) => visibility[service.slug])
+    .map((service) => ({
+      ...service,
+      offerings: service.offerings.filter((offering) => offering.enabled),
+    }));
 }
 
 export function getService(slug: string): Service | undefined {

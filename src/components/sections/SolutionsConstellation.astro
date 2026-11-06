@@ -7,12 +7,12 @@ const specialties: Specialty[] = [
   { name: 'Desarrollo web', detail: 'Ideas que conectan', icon: 'code', q: 0, r: -1, tone: 'cyan' },
   { name: 'Drones', detail: 'Una nueva perspectiva', icon: 'drone', q: -1, r: 0, tone: 'navy' },
   { name: 'Software', detail: 'Herramientas originales', icon: 'key', q: 1, r: 0, tone: 'navy' },
-  { name: 'Mantenimiento', detail: 'Tecnología a punto', icon: 'cpu', q: -1, r: 1, tone: 'blue' },
+  { name: 'Antivirus', detail: 'ESET y Panda originales', icon: 'shield', q: -1, r: 1, tone: 'blue' },
   { name: 'Fotografía y video', detail: 'Producción audiovisual aérea', icon: 'camera', q: 1, r: -1, tone: 'blue' },
-  { name: 'Impresoras', detail: 'Configuración y soporte', icon: 'printer', q: 2, r: -2, tone: 'cyan' },
+  { name: 'Reset Epson', detail: 'Herramienta especializada', icon: 'printer', q: 2, r: -2, tone: 'cyan' },
   { name: 'Fotogrametría', detail: 'Modelado y medición 3D', icon: 'photogrammetry', q: 0, r: 1, tone: 'cyan' },
   { name: 'Automatización', detail: 'Procesos más simples', icon: 'workflow', q: -2, r: 0, tone: 'blue' },
-  { name: 'Diagnóstico', detail: 'Identificamos las fallas', icon: 'search', q: -2, r: 2, tone: 'cyan' },
+  { name: 'Activación', detail: 'Entrega privada y segura', icon: 'lock', q: -2, r: 2, tone: 'cyan' },
   { name: 'Licencias originales', detail: 'Software para tu equipo', icon: 'shield', q: 2, r: 0, tone: 'blue' },
 ];
 const emptyTones = ['pale', 'cyan', 'blue', 'pale', 'aqua', 'cyan', 'pale', 'blue', 'aqua', 'pale', 'cyan', 'mist', 'navy'];
@@ -20,12 +20,12 @@ const emptyTones = ['pale', 'cyan', 'blue', 'pale', 'aqua', 'cyan', 'pale', 'blu
 const mobilePositions: Record<string, { q: number; r: number }> = {
   'Automatización': { q: 0, r: -2 },
   'Desarrollo web': { q: 1, r: -2 },
-  'Impresoras': { q: 2, r: -2 },
+  'Reset Epson': { q: 2, r: -2 },
   'Drones': { q: 0, r: -1 },
   'Fotografía y video': { q: 1, r: -1 },
-  'Mantenimiento': { q: -1, r: 1 },
+  'Antivirus': { q: -1, r: 1 },
   'Software': { q: 0, r: 1 },
-  'Diagnóstico': { q: -2, r: 2 },
+  'Activación': { q: -2, r: 2 },
   'Fotogrametría': { q: -1, r: 2 },
   'Licencias originales': { q: 0, r: 2 },
 };

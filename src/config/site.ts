@@ -17,7 +17,7 @@ export const site = {
   locale: 'es-PE',
   country: 'Perú',
   description:
-    'Servicios con drones, desarrollo web, soporte técnico, software y licencias para personas y empresas en Perú.',
+    'Servicios con drones, desarrollo web, software y licencias originales para personas y empresas en Perú.',
 
   contact: {
     /** Correo público de contacto. PENDIENTE */

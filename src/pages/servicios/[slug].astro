@@ -6,6 +6,8 @@ import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import LicenseCatalog from '../../components/licenses/LicenseCatalog.astro';
 import ResetEpsonProduct from '../../components/licenses/ResetEpsonProduct.astro';
+import SoftwareHero from '../../components/licenses/SoftwareHero.astro';
+import AntivirusSpotlight from '../../components/licenses/AntivirusSpotlight.astro';
 import ServiceHeroVisual from '../../components/sections/ServiceHeroVisual.astro';
 import DroneServiceOverview from '../../components/sections/DroneServiceOverview.astro';
 import DroneServiceSheets from '../../components/sections/DroneServiceSheets.astro';
@@ -54,6 +56,8 @@ const products = isLicenses ? getLicenses() : [];
     <DroneServiceOverview />
   ) : service.slug === 'desarrollo-web' ? (
     <WebDevelopmentExperience />
+  ) : isLicenses ? (
+    <SoftwareHero />
   ) : (
     <PageHero compact theme={service.slug} eyebrow={service.hero.eyebrow} title={service.hero.title} lead={service.hero.lead}>
       <Fragment slot="actions">
@@ -72,8 +76,8 @@ const products = isLicenses ? getLicenses() : [];
     <div class="container service-sheet__inner">
       <header class="work-heading">
         <div>
-          <span class="eyebrow">{isLicenses ? 'Producto destacado y catálogo' : 'Qué ofrecemos'}</span>
-          <h2>{isLicenses ? 'Software para trabajar mejor' : service.offeringsTitle}</h2>
+          <span class="eyebrow">{isLicenses ? 'Software que puedes verificar' : 'Qué ofrecemos'}</span>
+          <h2>{isLicenses ? 'Protección, productividad y herramientas útiles' : service.offeringsTitle}</h2>
           <p>{service.description[0]}</p>
         </div>
         <div class="audience-pills" aria-label="A quién está dirigido">
@@ -83,6 +87,7 @@ const products = isLicenses ? getLicenses() : [];
 
       {isLicenses ? (
         <div class="license-stack">
+          <AntivirusSpotlight />
           <ResetEpsonProduct />
           <div class="catalog-heading">
             <div><span>Más opciones</span><h2>Licencias y descargas gratuitas</h2></div>

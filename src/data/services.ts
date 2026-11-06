@@ -289,7 +289,7 @@ export const services: Service[] = [
     cta: { label: 'Consultar software', formHeading: 'Cuéntanos qué software necesitas' },
     description: [
       'Elegir software no debería significar decidir a ciegas entre ediciones, planes y requisitos. Primero entendemos qué necesitas y revisamos la compatibilidad con tus equipos.',
-      'Las licencias comerciales se cotizan antes del pago. Las herramientas ArtCraft se presentan como descargas gratuitas opcionales desde su fuente oficial; instalación y soporte son servicios separados.',
+      'Las licencias comerciales se cotizan antes del pago. Las herramientas ArtCraft se presentan como descargas gratuitas opcionales desde su fuente oficial; cualquier configuración adicional se acuerda por separado.',
     ],
     audiences: [
       { title: 'Uso personal', text: 'Licencias o herramientas gratuitas para tu equipo.', icon: 'users' },
@@ -302,7 +302,7 @@ export const services: Service[] = [
       { title: 'Elige o consulta', text: 'Busca el producto en el catálogo o cuéntanos qué necesitas.' },
       { title: 'Revisa la modalidad', text: 'Identifica si es una licencia comercial o una descarga gratuita opcional.' },
       { title: 'Confirma compatibilidad', text: 'Validamos requisitos, versión y estado del producto.' },
-      { title: 'Descarga o solicita ayuda', text: 'Ve a la fuente oficial o pide instalación y soporte si lo necesitas.' },
+      { title: 'Descarga o solicita configuración', text: 'Ve a la fuente oficial o consulta una configuración adicional si la necesitas.' },
     ],
     requirements: [
       'Sistema operativo y número de equipos donde usarás el software.',
@@ -311,7 +311,7 @@ export const services: Service[] = [
     ],
     faqs: [
       { question: '¿Las licencias son originales?', answer: 'Solo comercializamos licencias legítimas, obtenidas por canales autorizados. Las condiciones de cada producto son las del fabricante.' },
-      { question: '¿Las aplicaciones ArtCraft tienen costo?', answer: 'No. Se muestran como descargas gratuitas opcionales y de código abierto. ClickSolutions solo podría cobrar un servicio adicional de instalación, configuración, capacitación o soporte si lo solicitas.' },
+      { question: '¿Las aplicaciones ArtCraft tienen costo?', answer: 'No. Se muestran como descargas gratuitas opcionales y de código abierto. Cualquier instalación, configuración o capacitación adicional se cotiza por separado.' },
       { question: '¿Cómo recibo mi licencia?', answer: 'De forma privada, después de confirmar el pedido. Nunca publicamos claves en el sitio web.' },
       { question: '¿Puedo pagar en línea?', answer: 'Por ahora los pedidos se coordinan directamente con nosotros. El pago en línea se habilitará más adelante.' },
       { question: '¿Aceptan devoluciones?', answer: 'Depende del producto y de las condiciones del fabricante. La política aplicable se indica en cada ficha y antes de confirmar el pedido.' },

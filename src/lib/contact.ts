@@ -3,11 +3,24 @@
  * y en el servidor (/api/contacto), que es la validación que realmente cuenta.
  */
 
-export const serviceOptions = [
+import serviceVisibility from '../data/service-visibility.json';
+
+const allServiceOptions = [
   { value: 'drones', label: 'Servicios con drones' },
   { value: 'desarrollo-web', label: 'Desarrollo web' },
   { value: 'soporte-tecnico', label: 'Soporte técnico' },
   { value: 'licencias-software', label: 'Software y licencias' },
+] as const;
+
+const serviceVisibilityBySlug: Record<(typeof allServiceOptions)[number]['value'], boolean> = {
+  drones: serviceVisibility.drones,
+  'desarrollo-web': serviceVisibility.desarrolloWeb,
+  'soporte-tecnico': serviceVisibility.soporteTecnico,
+  'licencias-software': serviceVisibility.licenciasSoftware,
+};
+
+export const serviceOptions = [
+  ...allServiceOptions.filter((option) => serviceVisibilityBySlug[option.value]),
   { value: 'otro', label: 'Otro / no estoy seguro' },
 ] as const;
 

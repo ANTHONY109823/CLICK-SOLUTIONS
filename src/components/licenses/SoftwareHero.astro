@@ -1,0 +1,148 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="software-hero">
+  <div class="software-hero__grid" aria-hidden="true"></div>
+  <div class="container software-hero__inner">
+    <div class="software-hero__copy" data-reveal="left">
+      <span class="software-hero__eyebrow"><span></span> SOFTWARE ORIGINAL · POR PEDIDO</span>
+      <h1>Licencias claras.<br /><strong>Equipos protegidos.</strong></h1>
+      <p>
+        Antivirus, productividad y herramientas especializadas con modalidad verificada antes del pago.
+        Te ayudamos a elegir la edición correcta, sin claves dudosas ni compras a ciegas.
+      </p>
+      <div class="software-hero__actions">
+        <Button href="#antivirus" variant="on-dark" size="lg" iconRight="arrow-right">Ver antivirus</Button>
+        <Button href="#catalogo" variant="secondary" size="lg">Explorar catálogo</Button>
+      </div>
+      <div class="software-hero__assurance" aria-label="Condiciones de compra">
+        <span><Icon name="check" size={16} /> Licencia original</span>
+        <span><Icon name="check" size={16} /> Compatibilidad revisada</span>
+        <span><Icon name="check" size={16} /> Precio antes de activar</span>
+      </div>
+    </div>
+
+    <div class="software-console" data-reveal="right" aria-label="Líneas de software disponibles">
+      <div class="software-console__bar">
+        <span><i></i><i></i><i></i></span>
+        <small>clicksolutions / software</small>
+        <strong><span></span> CATÁLOGO ACTIVO</strong>
+      </div>
+      <div class="software-console__body">
+        <div class="software-console__heading">
+          <div>
+            <span>SELECCIÓN GUIADA</span>
+            <h2>Elige por necesidad,<br />no por confusión.</h2>
+          </div>
+          <b>01—03</b>
+        </div>
+        <div class="software-lines">
+          <a href="#antivirus" class="software-line software-line--security">
+            <span class="software-line__icon"><Icon name="shield" size={22} /></span>
+            <span><small>SEGURIDAD</small><strong>ESET y Panda</strong><em>Protección por dispositivo</em></span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+          <a href="#catalogo" class="software-line">
+            <span class="software-line__icon"><Icon name="layout" size={22} /></span>
+            <span><small>PRODUCTIVIDAD</small><strong>Microsoft y herramientas pro</strong><em>Planes según tu uso</em></span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+          <a href="#reset-epson" class="software-line">
+            <span class="software-line__icon"><Icon name="printer" size={22} /></span>
+            <span><small>HERRAMIENTA PROPIA</small><strong>ResetEpson ClickSolutions</strong><em>Licencia vinculada a tu PC</em></span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+        </div>
+      </div>
+      <div class="software-console__footer"><Icon name="lock" size={16} /> La clave se entrega de forma privada después de confirmar el pedido</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .software-hero {
+    position: relative;
+    min-height: calc(100svh - var(--header-h));
+    display: grid;
+    align-items: center;
+    overflow: clip;
+    padding-block: clamp(2.6rem, 6vh, 5rem);
+    background:
+      radial-gradient(circle at 88% 18%, rgb(183 236 75 / .16), transparent 24%),
+      radial-gradient(circle at 64% 84%, rgb(15 171 150 / .18), transparent 30%),
+      linear-gradient(128deg, #061226 0%, #08263b 54%, #0b433e 100%);
+    color: #d7e7ef;
+    isolation: isolate;
+  }
+
+  .software-hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(rgb(255 255 255 / .035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .035) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: linear-gradient(90deg, #000, #0008 72%, transparent);
+  }
+
+  .software-hero__inner { display: grid; grid-template-columns: minmax(0, .88fr) minmax(500px, 1.12fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); }
+  .software-hero__eyebrow { display: inline-flex; align-items: center; gap: 9px; margin-bottom: var(--space-5); color: #cbed78; font-size: var(--fs-xs); font-weight: 800; letter-spacing: .09em; }
+  .software-hero__eyebrow > span { width: 8px; height: 8px; border-radius: 50%; background: #b7ec4b; box-shadow: 0 0 18px #b7ec4b; }
+  .software-hero h1 { max-width: 11ch; margin-bottom: var(--space-6); color: #fff; font-size: clamp(3rem, 5.4vw, 5.7rem); line-height: .96; letter-spacing: -.06em; }
+  .software-hero h1 strong { color: #b7ec4b; }
+  .software-hero__copy > p { max-width: 57ch; margin: 0; color: #aac0cf; font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.65; }
+  .software-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+  .software-hero__actions :global(.btn--on-dark) { background: linear-gradient(135deg, #c8f35a, #67dd8c); color: #071a25; box-shadow: 0 18px 38px -20px #b7ec4b; }
+  .software-hero__actions :global(.btn--secondary) { border-color: rgb(202 239 115 / .28); background: rgb(255 255 255 / .055); color: #e9f4f7; }
+  .software-hero__assurance { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); margin-top: var(--space-7); color: #8fa9ba; font-size: var(--fs-xs); }
+  .software-hero__assurance span { display: inline-flex; align-items: center; gap: 6px; }
+  .software-hero__assurance :global(svg) { color: #79e0a0; }
+
+  .software-console { overflow: hidden; border: 1px solid rgb(126 225 172 / .23); border-radius: 26px; background: rgb(3 22 40 / .84); box-shadow: 0 35px 80px -45px #000, inset 0 0 70px rgb(55 201 145 / .035); }
+  .software-console__bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 48px; padding: 0 var(--space-5); border-bottom: 1px solid rgb(126 225 172 / .17); color: #6f8ca1; font-family: var(--font-mono); font-size: .7rem; }
+  .software-console__bar > span { display: flex; gap: 6px; }
+  .software-console__bar i { width: 7px; height: 7px; border-radius: 50%; background: #ff6e74; }
+  .software-console__bar i:nth-child(2) { background: #ffd25b; }
+  .software-console__bar i:nth-child(3) { background: #64de96; }
+  .software-console__bar > strong { justify-self: end; display: flex; align-items: center; gap: 6px; color: #65dda0; font-size: .65rem; }
+  .software-console__bar > strong span { width: 6px; height: 6px; border-radius: 50%; background: #61e2a0; box-shadow: 0 0 10px #61e2a0; }
+  .software-console__body { padding: clamp(1.4rem, 3vw, 2.3rem); }
+  .software-console__heading { display: flex; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .software-console__heading span { color: #57d8a2; font-family: var(--font-mono); font-size: .67rem; font-weight: 800; letter-spacing: .12em; }
+  .software-console__heading h2 { max-width: 14ch; margin: 6px 0 0; color: #fff; font-size: clamp(1.75rem, 3vw, 2.7rem); line-height: 1.03; }
+  .software-console__heading b { color: rgb(108 215 167 / .18); font-family: var(--font-mono); font-size: clamp(2rem, 5vw, 4rem); letter-spacing: -.08em; }
+  .software-lines { display: grid; gap: 10px; }
+  .software-line { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-4); min-height: 84px; padding: var(--space-3) var(--space-4); border: 1px solid rgb(123 174 198 / .16); border-radius: 16px; background: rgb(255 255 255 / .025); color: #d7e8ef; text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast); }
+  .software-line:hover { transform: translateX(5px); border-color: rgb(183 236 75 / .38); background: rgb(183 236 75 / .055); color: #fff; }
+  .software-line--security { border-color: rgb(183 236 75 / .24); background: linear-gradient(90deg, rgb(183 236 75 / .08), rgb(255 255 255 / .02)); }
+  .software-line__icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: rgb(73 203 150 / .13); color: #78e1a2; }
+  .software-line small, .software-line strong, .software-line em { display: block; }
+  .software-line small { color: #8badbc; font-size: .62rem; font-weight: 800; letter-spacing: .09em; }
+  .software-line strong { margin: 2px 0; color: #fff; font-size: .94rem; }
+  .software-line em { overflow: hidden; color: #7f9aad; font-size: .72rem; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }
+  .software-line > :global(svg) { color: #b7ec4b; }
+  .software-console__footer { display: flex; align-items: center; gap: 8px; padding: var(--space-4) clamp(1.4rem, 3vw, 2.3rem); border-top: 1px solid rgb(126 225 172 / .14); color: #819bad; font-size: .7rem; }
+  .software-console__footer :global(svg) { color: #65dda0; }
+
+  @media (max-width: 960px) {
+    .software-hero { min-height: auto; }
+    .software-hero__inner { grid-template-columns: 1fr; }
+    .software-hero__copy { max-width: 700px; }
+    .software-hero h1 { max-width: 12ch; }
+    .software-console { max-width: 760px; width: 100%; }
+  }
+
+  @media (max-width: 560px) {
+    .software-hero { padding-block: 2.4rem; }
+    .software-hero h1 { font-size: clamp(2.65rem, 13vw, 4rem); }
+    .software-hero__actions { display: grid; }
+    .software-hero__actions :global(.btn) { width: 100%; }
+    .software-console__bar { grid-template-columns: 1fr auto; }
+    .software-console__bar small { display: none; }
+    .software-console__heading b { display: none; }
+    .software-line { gap: var(--space-3); padding-inline: var(--space-3); }
+    .software-line__icon { width: 42px; height: 42px; }
+    .software-line em { max-width: 52vw; }
+  }
+</style>
