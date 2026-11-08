@@ -413,7 +413,15 @@ import web from '../../data/web-development.json';
     .web-hero__copy h1 { font-size: clamp(2.5rem, 4.6vw, 4.35rem); }
     .browser-window__viewport, .product-view { min-height: 330px; }
     .product-view__ui { min-height: 225px; }
-    .solution-card { min-height: 430px; padding-block: 1.2rem; }
+    .solution-card { min-height: 0; padding-block: .95rem; }
+    .solution-card__top { margin-bottom: 11px; }
+    .solution-card__description { margin-bottom: 10px; }
+    .solution-card__fit { margin-bottom: 9px; padding-block: 8px; }
+    .solution-card__list-label { margin-bottom: 5px; }
+    .solution-card ul { gap: 6px; }
+    .solution-card__meta { padding-top: 9px; }
+    .solution-card > :global(.btn) { margin-top: 9px; }
+    .price-note { display: none; }
     .web-heading__row { margin-top: 6px; }
     .demo-console__viewport, .demo-view { min-height: 240px; }
   }
