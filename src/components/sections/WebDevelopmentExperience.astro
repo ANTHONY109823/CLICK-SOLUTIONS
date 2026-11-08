@@ -398,11 +398,11 @@ const projectImage = (src: string) => src.startsWith('/') ? `${base}${src}` : sr
   .price-note { display: flex; align-items: flex-start; justify-self: center; gap: 8px; margin: 0; color: #657b86; font-size: 0.64rem; }
   .price-note :global(svg) { flex: 0 0 auto; color: #0e9990; }
 
-  .web-proof { color: #fff; background: radial-gradient(circle at 18% 82%, rgb(40 183 239 / 0.2), transparent 28%), linear-gradient(135deg, #031426, #052d46 55%, #064b4b); }
+  .web-proof { min-height: calc(100svh - var(--header-h) - 5.75rem); color: #fff; background: radial-gradient(circle at 18% 82%, rgb(40 183 239 / 0.2), transparent 28%), linear-gradient(135deg, #031426, #052d46 55%, #064b4b); }
   .proof-grid { position: absolute; inset: 0; z-index: -1; opacity: 0.56; background-image: radial-gradient(rgb(92 228 169 / 0.18) 1px, transparent 1.5px); background-size: 24px 24px; mask-image: linear-gradient(90deg, black, transparent 73%); }
   .web-heading--dark h2 { color: #fff; }
   .web-heading--dark p { color: #9cb8c4; }
-  .web-proof__inner { grid-template-rows: auto minmax(0, 1fr); }
+  .web-proof__inner { grid-template-rows: auto minmax(0, 1fr); min-height: calc(100svh - var(--header-h) - 5.75rem); }
   .web-proof .web-heading__row { grid-template-columns: minmax(0, 1fr) minmax(260px, 0.5fr); }
   .web-proof .web-heading h2 { max-width: 18ch; }
   .project-carousel { position: relative; min-width: 0; height: 100%; min-height: 0; }
