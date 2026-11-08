@@ -33,35 +33,24 @@
     {
       "id": "presencia-ventas",
       "number": "01",
-      "eyebrow": "Presencia y ventas",
+      "eyebrow": "Para empezar con fuerza",
       "title": "Web comercial",
-      "description": "Para presentar tu empresa, lanzar un servicio o recibir consultas con una imagen profesional.",
+      "description": "Una presencia profesional para presentar, vender y recibir consultas.",
       "price": "Desde USD 750",
       "timing": "2–3 semanas",
       "icon": "layout",
-      "includes": ["Web corporativa o landing page", "Diseño adaptable a celular", "Formulario y WhatsApp", "SEO y publicación inicial"]
+      "includes": ["Web corporativa o landing page", "Diseño adaptable a celular", "Contacto directo y publicación"]
     },
     {
       "id": "gestion-interna",
       "number": "02",
-      "eyebrow": "Gestión organizada",
+      "eyebrow": "Para vender y administrar",
       "title": "Web con panel",
-      "description": "Para centralizar clientes, solicitudes, productos o tareas en una herramienta privada y fácil de usar.",
+      "description": "Tu web pública conectada a un panel privado para gestionar el negocio.",
       "price": "Desde USD 1,600",
       "timing": "5–6 semanas",
       "icon": "workflow",
-      "includes": ["Panel administrativo", "Usuarios y permisos", "Registros y estados", "Informes esenciales"]
-    },
-    {
-      "id": "plataforma-medida",
-      "number": "03",
-      "eyebrow": "Escala y automatización",
-      "title": "Plataforma a medida",
-      "description": "Para procesos propios, integraciones, automatizaciones o productos digitales con mayor alcance.",
-      "price": "Desde USD 2,600",
-      "timing": "7–8 semanas",
-      "icon": "cpu",
-      "includes": ["Flujos personalizados", "Automatizaciones", "Pagos o integraciones", "Paneles y capacitación"]
+      "includes": ["Panel administrativo", "Usuarios y permisos", "Clientes, productos y estados"]
     }
   ],
   "demos": [
