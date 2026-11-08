@@ -88,6 +88,8 @@ import web from '../../data/web-development.json';
             <p class="solution-card__eyebrow">{solution.eyebrow}</p>
             <h3>{solution.title}</h3>
             <p class="solution-card__description">{solution.description}</p>
+            <div class="solution-card__fit"><span>Ideal para</span><strong>{solution.idealFor}</strong></div>
+            <p class="solution-card__list-label">Incluye</p>
             <ul>
               {solution.includes.map((item) => <li><Icon name="check" size={15} />{item}</li>)}
             </ul>
@@ -174,14 +176,6 @@ import web from '../../data/web-development.json';
         </div>
       </div>
 
-      <aside class="web-cta" data-reveal>
-        <div>
-          <span>{web.cta.eyebrow}</span>
-          <h2>{web.cta.title}</h2>
-          <p>{web.cta.text}</p>
-        </div>
-        <Button href="/contacto?servicio=desarrollo-web" size="lg" iconRight="arrow-right" track="quote_cta" data-track-label="web-experience-final">{web.cta.label}</Button>
-      </aside>
     </div>
   </section>
 </div>
@@ -320,15 +314,15 @@ import web from '../../data/web-development.json';
   .web-heading__row { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(320px, 0.55fr); align-items: end; justify-content: space-between; gap: var(--space-8); margin-top: var(--space-3); }
   .web-heading h2 { max-width: 17ch; margin: 0; color: var(--web-ink); font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.98; }
   .web-heading p { max-width: 56ch; margin: 0; color: #5d7281; font-size: var(--fs-sm); line-height: 1.6; }
-  .solution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 14px; width: 100%; margin-inline: auto; }
+  .solution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: clamp(1rem, 1.7vw, 1.4rem); width: 100%; margin-inline: auto; }
   .solution-card {
     --solution-accent: #169b78;
     position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 385px;
-    padding: clamp(1.2rem, 2vw, 1.65rem);
+    min-height: 430px;
+    padding: clamp(1.45rem, 2.2vw, 1.9rem);
     overflow: hidden;
     border: 1px solid #cfe4e1;
     border-radius: 22px;
@@ -357,14 +351,18 @@ import web from '../../data/web-development.json';
   .solution-card__badge { position: absolute; top: 18px; right: 18px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #a6dce8; border-radius: 999px; background: #fff; color: #087ea5; font-size: .6rem; font-weight: 850; letter-spacing: .04em; text-transform: uppercase; box-shadow: 0 9px 24px -18px #0c6580; }
   .solution-card__badge i { width: 7px; height: 7px; border-radius: 50%; background: #21bb91; box-shadow: 0 0 10px #21bb91; animation: status-pulse 2s ease-in-out infinite; }
   .solution-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
-  .solution-card__icon { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid color-mix(in srgb, var(--solution-accent) 25%, #fff); border-radius: 15px; background: color-mix(in srgb, var(--solution-accent) 11%, #fff); color: var(--solution-accent); box-shadow: 0 12px 28px -22px var(--solution-accent); }
+  .solution-card__icon { display: grid; place-items: center; width: 54px; height: 54px; border: 1px solid color-mix(in srgb, var(--solution-accent) 25%, #fff); border-radius: 17px; background: color-mix(in srgb, var(--solution-accent) 11%, #fff); color: var(--solution-accent); box-shadow: 0 12px 28px -22px var(--solution-accent); }
   .solution-card__eyebrow { margin: 0 0 5px; color: var(--solution-accent); font-size: 0.66rem; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
-  .solution-card h3 { margin: 0 0 var(--space-3); color: var(--web-ink); font-size: clamp(1.45rem, 2vw, 1.9rem); }
-  .solution-card__description { max-width: 47ch; margin: 0 0 var(--space-4); color: #607481; font-size: 0.76rem; line-height: 1.48; }
-  .solution-card ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-  .solution-card li { display: flex; align-items: flex-start; gap: 8px; color: #425867; font-size: 0.72rem; }
+  .solution-card h3 { margin: 0 0 var(--space-3); color: var(--web-ink); font-size: clamp(1.65rem, 2.15vw, 2.05rem); }
+  .solution-card__description { max-width: 47ch; margin: 0 0 var(--space-4); color: #607481; font-size: 0.79rem; line-height: 1.48; }
+  .solution-card__fit { display: grid; gap: 2px; margin-bottom: 13px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--solution-accent) 15%, #dbe9e8); border-radius: 12px; background: color-mix(in srgb, var(--solution-accent) 5%, #fff); }
+  .solution-card__fit span, .solution-card__list-label { color: var(--solution-accent); font-size: .58rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+  .solution-card__fit strong { color: #34505e; font-size: .69rem; font-weight: 650; line-height: 1.35; }
+  .solution-card__list-label { margin: 0 0 7px; }
+  .solution-card ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .solution-card li { display: flex; align-items: flex-start; gap: 8px; color: #425867; font-size: 0.7rem; }
   .solution-card li :global(svg) { flex: 0 0 auto; color: var(--solution-accent); }
-  .solution-card__meta { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid #dcebea; }
+  .solution-card__meta { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); margin-top: auto; padding-top: 13px; border-top: 1px solid #dcebea; }
   .solution-card__meta strong { color: var(--web-ink); font-size: clamp(.92rem, 1.35vw, 1.08rem); }
   .solution-card__meta span { display: flex; align-items: center; gap: 5px; color: #6a7f8b; font-size: 0.66rem; }
   .solution-card__meta :global(svg) { color: var(--solution-accent); }
@@ -405,11 +403,6 @@ import web from '../../data/web-development.json';
   .delivery-route__steps article > span { color: #65dcae; font: 850 0.68rem ui-monospace, SFMono-Regular, Consolas, monospace; }
   .delivery-route__steps strong { display: block; color: #fff; font-size: 0.72rem; }
   .delivery-route__steps p { margin: 2px 0 0; color: #8da8b3; font-size: 0.65rem; line-height: 1.4; }
-  .web-cta { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-8); padding: clamp(1rem, 2.3vw, 1.5rem); border: 1px solid rgb(92 228 169 / 0.17); border-radius: 18px; background: linear-gradient(110deg, rgb(10 67 65 / 0.72), rgb(5 34 51 / 0.82)); }
-  .web-cta > div > span { color: #65dcae; font-size: 0.64rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
-  .web-cta h2 { margin: 4px 0 3px; color: #fff; font-size: clamp(1.3rem, 2.4vw, 1.9rem); }
-  .web-cta p { margin: 0; color: #96b1bc; font-size: 0.7rem; }
-
   @keyframes view-enter { from { opacity: 0; transform: translateY(9px); } }
   @keyframes plan-line { to { background-position: -210% 0; } }
   @keyframes solution-scan { to { left: 112%; } }
@@ -420,7 +413,7 @@ import web from '../../data/web-development.json';
     .web-hero__copy h1 { font-size: clamp(2.5rem, 4.6vw, 4.35rem); }
     .browser-window__viewport, .product-view { min-height: 330px; }
     .product-view__ui { min-height: 225px; }
-    .solution-card { min-height: 350px; padding-block: 1rem; }
+    .solution-card { min-height: 430px; padding-block: 1.2rem; }
     .web-heading__row { margin-top: 6px; }
     .demo-console__viewport, .demo-view { min-height: 240px; }
   }
@@ -454,8 +447,6 @@ import web from '../../data/web-development.json';
     .browser-window__viewport, .product-view { min-height: 560px; }
     .product-view__ui { min-height: 240px; }
     .solution-card__meta { align-items: flex-start; flex-direction: column; }
-    .web-cta { grid-template-columns: 1fr; }
-    .web-cta :global(.btn) { width: 100%; }
   }
 
   @media (prefers-reduced-motion: reduce) {

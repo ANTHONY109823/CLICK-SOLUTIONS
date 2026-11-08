@@ -36,10 +36,11 @@
       "eyebrow": "Para empezar con fuerza",
       "title": "Web comercial",
       "description": "Una presencia profesional para presentar, vender y recibir consultas.",
+      "idealFor": "Profesionales, marcas y negocios que necesitan presencia digital.",
       "price": "Desde USD 750",
       "timing": "2–3 semanas",
       "icon": "layout",
-      "includes": ["Web corporativa o landing page", "Diseño adaptable a celular", "Contacto directo y publicación"]
+      "includes": ["Web corporativa o landing page", "Diseño adaptable a celular", "Formulario, WhatsApp y mapa", "SEO técnico y publicación"]
     },
     {
       "id": "gestion-interna",
@@ -47,10 +48,11 @@
       "eyebrow": "Para vender y administrar",
       "title": "Web con panel",
       "description": "Tu web pública conectada a un panel privado para gestionar el negocio.",
+      "idealFor": "Empresas que reciben pedidos, clientes o información frecuente.",
       "price": "Desde USD 1,600",
       "timing": "5–6 semanas",
       "icon": "workflow",
-      "includes": ["Panel administrativo", "Usuarios y permisos", "Clientes, productos y estados"]
+      "includes": ["Panel administrativo", "Usuarios y permisos", "Clientes, productos y estados", "Reportes esenciales"]
     },
     {
       "id": "plataforma-medida",
@@ -58,10 +60,11 @@
       "eyebrow": "Para procesos especiales",
       "title": "Plataforma a medida",
       "description": "Una solución personalizada para automatizar operaciones y conectar servicios.",
+      "idealFor": "Operaciones propias que no encajan en una solución estándar.",
       "price": "Desde USD 2,600",
       "timing": "7–8 semanas",
       "icon": "cpu",
-      "includes": ["Flujos personalizados", "Automatizaciones e integraciones", "Paneles y capacitación"]
+      "includes": ["Flujos personalizados", "Automatizaciones e integraciones", "Roles y paneles especializados", "Pruebas y capacitación"]
     }
   ],
   "demos": [
