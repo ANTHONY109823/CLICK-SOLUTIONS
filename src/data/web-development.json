@@ -51,6 +51,17 @@
       "timing": "5–6 semanas",
       "icon": "workflow",
       "includes": ["Panel administrativo", "Usuarios y permisos", "Clientes, productos y estados"]
+    },
+    {
+      "id": "plataforma-medida",
+      "number": "03",
+      "eyebrow": "Para procesos especiales",
+      "title": "Plataforma a medida",
+      "description": "Una solución personalizada para automatizar operaciones y conectar servicios.",
+      "price": "Desde USD 2,600",
+      "timing": "7–8 semanas",
+      "icon": "cpu",
+      "includes": ["Flujos personalizados", "Automatizaciones e integraciones", "Paneles y capacitación"]
     }
   ],
   "demos": [
