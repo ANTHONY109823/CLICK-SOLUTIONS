@@ -4,6 +4,8 @@ const addonPicker = document.querySelector('[data-addon-picker]');
 const hoursField = document.querySelector('[data-hours-field]');
 const toast = document.querySelector('[data-toast]');
 const draftState = document.querySelector('[data-draft-state]');
+const projectForm = document.querySelector('[data-project-form]');
+const projectList = document.querySelector('[data-project-list]');
 
 const money = (value) => `S/ ${Number(value || 0).toFixed(2)}`;
 const localDate = (date = new Date()) => {
@@ -21,6 +23,101 @@ const config = await fetch('/api/config').then((response) => {
   if (!response.ok) throw new Error('No se pudo cargar la configuración.');
   return response.json();
 });
+
+const fileAsDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+  reader.readAsDataURL(file);
+});
+
+function renderProjects() {
+  const projects = config.portfolio.projects.filter((project) => project.visible);
+  document.querySelector('[data-project-count]').textContent = projects.length;
+  projectList.replaceChildren();
+
+  projects.forEach((project) => {
+    const article = document.createElement('article');
+    article.className = 'project-row';
+    const image = document.createElement('img');
+    image.src = project.image;
+    image.alt = project.alt;
+    const copy = document.createElement('div');
+    const category = document.createElement('small');
+    category.textContent = project.category;
+    const title = document.createElement('strong');
+    title.textContent = project.title;
+    copy.append(category, title);
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'project-row__remove';
+    remove.textContent = 'Quitar';
+    remove.addEventListener('click', async () => {
+      if (!window.confirm(`¿Quitar “${project.title}” del carrusel?`)) return;
+      remove.disabled = true;
+      const response = await fetch(`/api/web-projects/${encodeURIComponent(project.id)}`, { method: 'DELETE' });
+      const result = await response.json();
+      if (!response.ok) {
+        showToast(result.error || 'No se pudo quitar el proyecto.');
+        remove.disabled = false;
+        return;
+      }
+      config.portfolio = result.portfolio;
+      renderProjects();
+      showToast('Proyecto retirado del carrusel local.');
+    });
+    article.append(image, copy, remove);
+    projectList.append(article);
+  });
+
+  if (!projects.length) {
+    const empty = document.createElement('p');
+    empty.className = 'project-list__empty';
+    empty.textContent = 'Aún no hay fotografías. Agrega la primera para activar el carrusel.';
+    projectList.append(empty);
+  }
+}
+
+projectForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!projectForm.reportValidity()) return;
+  const button = projectForm.querySelector('button[type="submit"]');
+  const data = new FormData(projectForm);
+  const file = data.get('image');
+  if (!(file instanceof File) || !file.size) return;
+  if (file.size > 8_000_000) {
+    showToast('La imagen supera el límite de 8 MB.');
+    return;
+  }
+  button.disabled = true;
+  button.textContent = 'Guardando imagen…';
+  try {
+    const response = await fetch('/api/web-projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: data.get('title'),
+        category: data.get('category'),
+        alt: data.get('alt'),
+        image: await fileAsDataUrl(file),
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'No se pudo guardar el proyecto.');
+    config.portfolio = result.portfolio;
+    projectForm.reset();
+    projectForm.elements.category.value = 'Desarrollo web';
+    renderProjects();
+    showToast('Proyecto agregado. Ya forma parte del carrusel local.');
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : 'No se pudo guardar el proyecto.');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Agregar al carrusel';
+  }
+});
+
+renderProjects();
 
 document.querySelector('[data-package-count]').textContent = config.quote.packages.length;
 document.querySelector('[data-addon-count]').textContent = config.quote.addons.length;

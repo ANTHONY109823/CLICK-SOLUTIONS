@@ -1,6 +1,7 @@
 /** Íconos de trazo (24×24). Dibujados para este sitio; sin dependencias externas. */
 export const icons = {
   'arrow-right': '<path d="M5 12h14M13 5l7 7-7 7"/>',
+  'arrow-left': '<path d="M19 12H5M11 5l-7 7 7 7"/>',
   check: '<path d="M20 6 9 17l-5-5"/>',
   'chevron-down': '<path d="m6 9 6 6 6-6"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',

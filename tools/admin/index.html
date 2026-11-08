@@ -12,6 +12,7 @@
       <a class="brand" href="#resumen"><img src="/brand/clicksolutions-isotipo.png" alt="" /><span><strong>Click</strong><small>solutions</small></span></a>
       <nav aria-label="Portal privado">
         <a href="#resumen">Resumen</a>
+        <a href="#portafolio">Proyectos web</a>
         <a href="#cotizador">Cotizador</a>
         <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">Contenido ↗</a>
       </nav>
@@ -34,6 +35,27 @@
             <li><b>PDF</b> generado en esta PC</li>
           </ul>
         </aside>
+      </section>
+
+      <section class="portfolio-manager" id="portafolio">
+        <header class="section-heading">
+          <div><span class="kicker">Desarrollo web</span><h2>Fotos del carrusel</h2></div>
+          <span class="draft-state"><b data-project-count>0</b> proyectos visibles</span>
+        </header>
+        <div class="portfolio-manager__grid">
+          <form class="project-form" data-project-form>
+            <label>Nombre del proyecto<input name="title" maxlength="70" placeholder="Ej. Tienda online para marca local" required /></label>
+            <label>Categoría o tipo<input name="category" maxlength="70" value="Desarrollo web" required /></label>
+            <label>Texto alternativo<input name="alt" maxlength="140" placeholder="Describe brevemente lo que aparece en la foto" /></label>
+            <label class="project-upload">Fotografía destacada
+              <input name="image" type="file" accept="image/jpeg,image/png,image/webp" required />
+              <span>JPG, PNG o WebP · máximo 8 MB · formato horizontal recomendado</span>
+            </label>
+            <button type="submit" class="button button--primary">Agregar al carrusel</button>
+            <p class="privacy-note">La imagen se guarda en el proyecto local. Para verla en Railway debes subir los cambios a GitHub.</p>
+          </form>
+          <div class="project-list" data-project-list aria-live="polite"></div>
+        </div>
       </section>
 
       <section class="workspace" id="cotizador">

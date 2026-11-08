@@ -1,0 +1,15 @@
+{
+  "eyebrow": "Proyectos destacados",
+  "title": "Diseño que se entiende al verlo.",
+  "lead": "Una selección de proyectos creados para convertir ideas en experiencias digitales claras.",
+  "projects": [
+    {
+      "id": "clicksolutions-web",
+      "title": "ClickSolutions",
+      "category": "Sitio web y panel administrativo",
+      "image": "/images/hero/desarrollo-web.jpg",
+      "alt": "Código y una interfaz web durante el desarrollo de ClickSolutions",
+      "visible": true
+    }
+  ]
+}

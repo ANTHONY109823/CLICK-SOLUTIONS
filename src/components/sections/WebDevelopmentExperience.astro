@@ -3,6 +3,11 @@ import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import type { IconName } from '../ui/icons';
 import web from '../../data/web-development.json';
+import portfolio from '../../data/web-projects.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const featuredProjects = portfolio.projects.filter((project) => project.visible);
+const projectImage = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
 ---
 
 <div class="web-experience">
@@ -117,63 +122,41 @@ import web from '../../data/web-development.json';
     <div class="proof-grid" aria-hidden="true"></div>
     <div class="container web-screen__inner web-proof__inner">
       <header class="web-heading web-heading--dark" data-reveal>
-        <span class="web-eyebrow"><i></i>Así puede verse tu solución</span>
+        <span class="web-eyebrow"><i></i>{portfolio.eyebrow}</span>
         <div class="web-heading__row">
-          <h2 id="proof-title">Ideas concretas, antes de hablar de funciones.</h2>
-          <p>Estas interfaces son demostraciones conceptuales. Sirven para visualizar cómo una web puede resolver necesidades reales sin inventar proyectos de clientes.</p>
+          <h2 id="proof-title">{portfolio.title}</h2>
+          <p>{portfolio.lead}</p>
         </div>
       </header>
 
-      <div class="proof-layout">
-        <div class="demo-console" data-tabs data-reveal="left">
-          <div class="demo-console__tabs" role="tablist" aria-label="Demostraciones conceptuales">
-            {web.demos.map((demo, index) => (
-              <button
-                type="button"
-                role="tab"
-                id={`demo-tab-${demo.id}`}
-                aria-controls={`demo-panel-${demo.id}`}
-                aria-selected={index === 0 ? 'true' : 'false'}
-                tabindex={index === 0 ? 0 : -1}
-                data-tab={demo.id}
-              >{demo.label}</button>
-            ))}
-          </div>
-          <div class="demo-console__viewport">
-            {web.demos.map((demo, index) => (
-              <section
-                class="demo-view"
-                data-kind={demo.id}
-                data-tab-panel={demo.id}
-                id={`demo-panel-${demo.id}`}
-                role="tabpanel"
-                aria-labelledby={`demo-tab-${demo.id}`}
-                hidden={index !== 0}
-              >
-                <div class="demo-view__copy">
-                  <span>DEMO CONCEPTUAL</span>
-                  <h3>{demo.title}</h3>
-                  <p>{demo.description}</p>
-                  <div>{demo.features.map((feature) => <small>{feature}</small>)}</div>
-                </div>
-                <div class="demo-view__screen" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-              </section>
-            ))}
-          </div>
+      <div class="project-carousel" data-project-carousel data-autoplay="5200" data-reveal>
+        <div class="project-carousel__viewport" aria-live="polite">
+          {featuredProjects.map((project, index) => (
+            <article class:list={["project-slide", { "is-active": index === 0 }]} data-project-slide aria-hidden={index === 0 ? 'false' : 'true'}>
+              <img src={projectImage(project.image)} alt={project.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+              <div class="project-slide__shade" aria-hidden="true"></div>
+              <div class="project-slide__copy">
+                <span>{project.category}</span>
+                <h3>{project.title}</h3>
+              </div>
+              <span class="project-slide__number">{String(index + 1).padStart(2, '0')} / {String(featuredProjects.length).padStart(2, '0')}</span>
+            </article>
+          ))}
         </div>
 
-        <div class="delivery-route" data-reveal="right">
-          <span class="delivery-route__eyebrow">Proceso ClickSolutions</span>
-          <h3>Del objetivo a un producto listo para trabajar.</h3>
-          <div class="delivery-route__steps">
-            {web.process.map((step, index) => (
-              <article>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <div><strong>{step.title}</strong><p>{step.text}</p></div>
-              </article>
-            ))}
+        {featuredProjects.length > 1 && (
+          <div class="project-carousel__controls">
+            <div class="project-carousel__dots" role="tablist" aria-label="Seleccionar proyecto">
+              {featuredProjects.map((project, index) => (
+                <button type="button" class:list={{ "is-active": index === 0 }} data-project-dot aria-label={`Ver ${project.title}`} aria-selected={index === 0 ? 'true' : 'false'} role="tab"><i></i></button>
+              ))}
+            </div>
+            <div class="project-carousel__arrows">
+              <button type="button" data-project-prev aria-label="Proyecto anterior"><Icon name="arrow-left" size={18} /></button>
+              <button type="button" data-project-next aria-label="Proyecto siguiente"><Icon name="arrow-right" size={18} /></button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
     </div>
@@ -222,6 +205,50 @@ import web from '../../data/web-development.json';
   };
 
   document.querySelectorAll<HTMLElement>('[data-tabs]').forEach(initTabs);
+
+  const initProjectCarousel = (carousel: HTMLElement) => {
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-project-slide]'));
+    const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-project-dot]'));
+    const previous = carousel.querySelector<HTMLButtonElement>('[data-project-prev]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-project-next]');
+    if (slides.length < 2) return;
+
+    let activeIndex = 0;
+    let timer: number | undefined;
+    const delay = Number(carousel.dataset.autoplay) || 5200;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const activate = (index: number) => {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const active = slideIndex === activeIndex;
+        slide.classList.toggle('is-active', active);
+        slide.setAttribute('aria-hidden', String(!active));
+      });
+      dots.forEach((dot, dotIndex) => {
+        const active = dotIndex === activeIndex;
+        dot.classList.toggle('is-active', active);
+        dot.setAttribute('aria-selected', String(active));
+      });
+    };
+    const stop = () => { if (timer) window.clearInterval(timer); };
+    const start = () => {
+      stop();
+      if (reduceMotion.matches) return;
+      timer = window.setInterval(() => activate(activeIndex + 1), delay);
+    };
+
+    previous?.addEventListener('click', () => { activate(activeIndex - 1); start(); });
+    next?.addEventListener('click', () => { activate(activeIndex + 1); start(); });
+    dots.forEach((dot, index) => dot.addEventListener('click', () => { activate(index); start(); }));
+    carousel.addEventListener('pointerenter', stop);
+    carousel.addEventListener('pointerleave', start);
+    carousel.addEventListener('focusin', stop);
+    carousel.addEventListener('focusout', start);
+    start();
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-project-carousel]').forEach(initProjectCarousel);
 </script>
 
 <style>
@@ -255,12 +282,12 @@ import web from '../../data/web-development.json';
   .browser-dots i:nth-child(2) { background: #ffc05e; }
   .browser-dots i:nth-child(3) { background: #54df9b; }
   .browser-window__tabs { display: flex; gap: 4px; padding: 9px; border-bottom: 1px solid rgb(255 255 255 / 0.07); }
-  .browser-window__tabs button, .demo-console__tabs button { padding: 7px 11px; border: 0; border-radius: 9px; background: transparent; color: #7894a5; font: inherit; font-size: 0.7rem; font-weight: 750; cursor: pointer; }
+  .browser-window__tabs button { padding: 7px 11px; border: 0; border-radius: 9px; background: transparent; color: #7894a5; font: inherit; font-size: 0.7rem; font-weight: 750; cursor: pointer; }
   .browser-window__tabs button[aria-selected='true'] { background: rgb(92 228 169 / 0.12); color: var(--web-green); }
-  .browser-window__tabs button:focus-visible, .demo-console__tabs button:focus-visible { outline: 2px solid var(--web-green); outline-offset: 2px; }
+  .browser-window__tabs button:focus-visible { outline: 2px solid var(--web-green); outline-offset: 2px; }
   .browser-window__viewport { min-height: 390px; }
   .product-view { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(200px, 1.05fr); align-items: center; min-height: 390px; padding: clamp(1.5rem, 4vw, 2.8rem); gap: clamp(1rem, 3vw, 2.5rem); animation: view-enter 500ms var(--ease-out) both; }
-  .product-view[hidden], .demo-view[hidden] { display: none; }
+  .product-view[hidden] { display: none; }
   .product-view__copy > span { color: var(--web-green); font-size: 0.64rem; font-weight: 850; letter-spacing: 0.11em; text-transform: uppercase; }
   .product-view h2 { max-width: 16ch; margin: 8px 0 var(--space-5); color: #fff; font-size: clamp(1.45rem, 2.45vw, 2.15rem); line-height: 1.05; overflow-wrap: normal; word-break: normal; }
   .product-view small { color: #7e9aaa; font-size: 0.67rem; }
@@ -375,34 +402,28 @@ import web from '../../data/web-development.json';
   .proof-grid { position: absolute; inset: 0; z-index: -1; opacity: 0.56; background-image: radial-gradient(rgb(92 228 169 / 0.18) 1px, transparent 1.5px); background-size: 24px 24px; mask-image: linear-gradient(90deg, black, transparent 73%); }
   .web-heading--dark h2 { color: #fff; }
   .web-heading--dark p { color: #9cb8c4; }
-  .proof-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: stretch; }
-  .demo-console { min-width: 0; overflow: hidden; border: 1px solid rgb(91 216 196 / 0.19); border-radius: 20px; background: rgb(2 18 31 / 0.58); }
-  .demo-console__tabs { display: flex; gap: 3px; padding: 9px; border-bottom: 1px solid rgb(255 255 255 / 0.08); }
-  .demo-console__tabs button[aria-selected='true'] { background: rgb(40 183 239 / 0.14); color: #72d7f5; }
-  .demo-console__viewport { min-height: 275px; }
-  .demo-view { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(180px, 1.15fr); align-items: center; min-height: 275px; padding: clamp(1.2rem, 3vw, 2rem); gap: var(--space-6); animation: view-enter 420ms var(--ease-out) both; }
-  .demo-view__copy > span { color: #65dcae; font-size: 0.62rem; font-weight: 850; letter-spacing: 0.1em; }
-  .demo-view h3 { margin: 6px 0 9px; color: #fff; font-size: clamp(1.35rem, 2.4vw, 2rem); }
-  .demo-view p { margin: 0; color: #8faab6; font-size: 0.72rem; line-height: 1.5; }
-  .demo-view__copy > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-4); }
-  .demo-view small { padding: 5px 8px; border: 1px solid rgb(92 228 169 / 0.16); border-radius: var(--radius-full); color: #b8d5d5; font-size: 0.62rem; }
-  .demo-view__screen { position: relative; min-height: 195px; overflow: hidden; border: 1px solid rgb(40 183 239 / 0.2); border-radius: 15px; background: linear-gradient(150deg, #0b5273, #07324e); }
-  .demo-view__screen::before { content: ''; position: absolute; inset: 13px 13px auto; height: 25px; border-radius: 8px; background: rgb(255 255 255 / 0.12); }
-  .demo-view__screen i { position: absolute; display: block; border-radius: 7px; background: rgb(255 255 255 / 0.13); }
-  .demo-view__screen i:nth-child(1) { left: 13px; top: 52px; width: 56%; height: 16px; background: rgb(255 255 255 / 0.75); }
-  .demo-view__screen i:nth-child(2) { left: 13px; top: 77px; width: 42%; height: 7px; }
-  .demo-view__screen i:nth-child(3) { left: 13px; bottom: 15px; width: 30%; height: 32px; background: #32cfa0; }
-  .demo-view__screen i:nth-child(4) { right: 13px; top: 52px; width: 34%; height: 55px; }
-  .demo-view__screen i:nth-child(5) { right: 13px; bottom: 15px; width: 34%; height: 55px; }
-  .demo-view[data-kind='operaciones'] .demo-view__screen { background-image: linear-gradient(rgb(92 228 169 / 0.06) 1px, transparent 1px), linear-gradient(90deg, rgb(92 228 169 / 0.06) 1px, transparent 1px); background-size: 24px 24px; }
-  .delivery-route { display: grid; align-content: center; }
-  .delivery-route__eyebrow { color: #65dcae; font-size: 0.64rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
-  .delivery-route > h3 { max-width: 17ch; margin: 7px 0 var(--space-5); color: #fff; font-size: clamp(1.5rem, 2.6vw, 2.25rem); line-height: 1.08; }
-  .delivery-route__steps { display: grid; gap: 1px; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.09); border-radius: 14px; background: rgb(255 255 255 / 0.09); }
-  .delivery-route__steps article { display: flex; gap: 11px; padding: 10px 12px; background: rgb(2 22 34 / 0.7); }
-  .delivery-route__steps article > span { color: #65dcae; font: 850 0.68rem ui-monospace, SFMono-Regular, Consolas, monospace; }
-  .delivery-route__steps strong { display: block; color: #fff; font-size: 0.72rem; }
-  .delivery-route__steps p { margin: 2px 0 0; color: #8da8b3; font-size: 0.65rem; line-height: 1.4; }
+  .web-proof__inner { grid-template-rows: auto minmax(0, 1fr); }
+  .web-proof .web-heading__row { grid-template-columns: minmax(0, 1fr) minmax(260px, 0.5fr); }
+  .web-proof .web-heading h2 { max-width: 18ch; }
+  .project-carousel { position: relative; min-width: 0; }
+  .project-carousel__viewport { position: relative; height: clamp(360px, 58vh, 590px); overflow: hidden; border: 1px solid rgb(110 226 202 / 0.24); border-radius: 26px; background: #03192b; box-shadow: 0 34px 90px -44px #000; }
+  .project-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: scale(1.035); transition: opacity 760ms ease, visibility 760ms ease, transform 6.8s ease-out; }
+  .project-slide.is-active { opacity: 1; visibility: visible; transform: scale(1); z-index: 1; }
+  .project-slide img { width: 100%; height: 100%; object-fit: cover; }
+  .project-slide__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(2 16 29 / 0.05) 35%, rgb(2 16 29 / 0.88) 100%), linear-gradient(90deg, rgb(2 16 29 / 0.5), transparent 55%); }
+  .project-slide__copy { position: absolute; left: clamp(1.35rem, 4vw, 3.2rem); bottom: clamp(1.5rem, 4vw, 3rem); z-index: 2; max-width: min(70%, 760px); }
+  .project-slide__copy span { color: #74e8bb; font-size: clamp(.65rem, 1vw, .78rem); font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+  .project-slide__copy h3 { margin: 7px 0 0; color: #fff; font-size: clamp(2rem, 4.2vw, 4.2rem); line-height: .98; letter-spacing: -.045em; text-wrap: balance; }
+  .project-slide__number { position: absolute; top: 20px; right: 22px; z-index: 2; padding: 7px 10px; border: 1px solid rgb(255 255 255 / .18); border-radius: 999px; background: rgb(2 18 31 / .62); color: #d7eef2; font: 750 .67rem ui-monospace, SFMono-Regular, Consolas, monospace; backdrop-filter: blur(12px); }
+  .project-carousel__controls { position: absolute; right: clamp(1.2rem, 3vw, 2rem); bottom: clamp(1.2rem, 3vw, 2rem); z-index: 4; display: flex; align-items: center; gap: 14px; }
+  .project-carousel__dots { display: flex; align-items: center; gap: 7px; }
+  .project-carousel__dots button { width: 32px; height: 18px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+  .project-carousel__dots i { display: block; width: 100%; height: 3px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / .28); }
+  .project-carousel__dots button.is-active i { background: linear-gradient(90deg, var(--web-green), var(--web-blue)); box-shadow: 0 0 10px rgb(92 228 169 / .45); }
+  .project-carousel__arrows { display: flex; gap: 7px; }
+  .project-carousel__arrows button { display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid rgb(255 255 255 / .18); border-radius: 50%; background: rgb(2 18 31 / .72); color: #fff; cursor: pointer; backdrop-filter: blur(12px); transition: border-color .2s ease, background-color .2s ease, transform .2s ease; }
+  .project-carousel__arrows button:hover { transform: translateY(-2px); border-color: var(--web-green); background: rgb(4 42 53 / .88); }
+  .project-carousel__arrows button:focus-visible, .project-carousel__dots button:focus-visible { outline: 2px solid var(--web-green); outline-offset: 3px; }
   @keyframes view-enter { from { opacity: 0; transform: translateY(9px); } }
   @keyframes plan-line { to { background-position: -210% 0; } }
   @keyframes solution-scan { to { left: 112%; } }
@@ -423,19 +444,20 @@ import web from '../../data/web-development.json';
     .solution-card > :global(.btn) { margin-top: 9px; }
     .price-note { display: none; }
     .web-heading__row { margin-top: 6px; }
-    .demo-console__viewport, .demo-view { min-height: 240px; }
+    .project-carousel__viewport { height: clamp(320px, 53vh, 480px); }
   }
 
   @media (max-width: 1000px) {
     .web-screen, .web-screen__inner, .web-hero__inner { min-height: auto; }
-    .web-hero__inner, .proof-layout { grid-template-columns: 1fr; }
+    .web-hero__inner { grid-template-columns: 1fr; }
     .web-hero__inner, .web-screen__inner { padding-block: clamp(3rem, 7vw, 5rem); }
     .product-lab { width: min(100%, 760px); }
     .web-heading__row { grid-template-columns: 1fr; align-items: start; gap: var(--space-3); }
     .web-heading h2 { max-width: 20ch; }
     .solution-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .solution-card { min-height: 360px; }
-    .proof-layout { gap: var(--space-8); }
+    .web-proof .web-heading__row { grid-template-columns: 1fr; }
+    .project-carousel__viewport { height: min(62vw, 540px); min-height: 390px; }
   }
 
   @media (max-width: 760px) {
@@ -450,15 +472,16 @@ import web from '../../data/web-development.json';
     .product-lab { padding-top: 38px; }
     .product-lab__status { right: 0; }
     .browser-window__bar > span { display: none; }
-    .browser-window__tabs, .demo-console__tabs { overflow-x: auto; scrollbar-width: none; }
-    .product-view, .demo-view { grid-template-columns: 1fr; }
+    .browser-window__tabs { overflow-x: auto; scrollbar-width: none; }
+    .product-view { grid-template-columns: 1fr; }
     .browser-window__viewport, .product-view { min-height: 560px; }
     .product-view__ui { min-height: 240px; }
     .solution-card__meta { align-items: flex-start; flex-direction: column; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .product-view, .demo-view { animation: none; }
+    .product-view { animation: none; }
+    .project-slide { transition: none; }
     .web-solutions::after, .solution-card::before, .solution-card__badge i { animation: none; }
     .web-screen { scroll-snap-align: none; }
   }
