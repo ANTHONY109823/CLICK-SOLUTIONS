@@ -878,7 +878,11 @@ const productGroups = [
   /* Listas compactas: una consulta general y descargas individuales. */
   .catalog{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:0}
   .catalog-content{width:100%;height:100%}
-  .catalog-group{grid-template-rows:auto minmax(0,1fr) auto}
+  .catalog-group{grid-template-rows:auto minmax(0,1fr) auto;box-shadow:inset 0 0 35px rgb(27 165 220/.035),0 20px 55px -48px #07506d}
+  .catalog-group--free{box-shadow:inset 0 0 35px rgb(53 196 119/.045),0 20px 55px -48px #18734c}
+  .group-heading h3{position:relative;display:inline-flex;align-items:center;gap:9px}
+  .group-heading h3::after{content:'';width:34px;height:3px;border-radius:99px;background:linear-gradient(90deg,#05afe8,#69e9ff);box-shadow:0 0 12px #05afe8;animation:heading-glow 2.8s ease-in-out infinite}
+  .catalog-group--free .group-heading h3::after{background:linear-gradient(90deg,#27c774,#b3ef55);box-shadow:0 0 12px #27c774}
   .catalog-group .products--list{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -896,6 +900,11 @@ const productGroups = [
     scrollbar-width:thin;
   }
   .catalog-group .product--row{
+    --row-accent:#06aee8;
+    --row-accent-2:#74e7ff;
+    --row-bg:linear-gradient(145deg,#f8fdff,#eaf8ff);
+    position:relative;
+    isolation:isolate;
     display:grid;
     grid-template-columns:42px minmax(0,1fr) auto;
     align-items:center;
@@ -904,18 +913,26 @@ const productGroups = [
     height:100%;
     min-height:58px;
     padding:9px 10px;
-    border:1px solid #d9e8ee;
+    border:0;
     border-radius:12px;
-    background:#fff;
-    box-shadow:none;
+    background:transparent;
+    box-shadow:0 12px 25px -22px var(--row-accent);
+    transition:transform .24s ease,box-shadow .24s ease,filter .24s ease;
   }
-  .catalog-group .product--row::before{inset:0 auto 0 0;width:3px;height:auto;background:linear-gradient(180deg,var(--brand-cyan),var(--brand-blue))}
-  .catalog-group--free .product--row::before{background:linear-gradient(180deg,#35c477,#8ed66b)}
-  .catalog-group .product--row:hover{transform:none;border-color:#a9dceb;box-shadow:0 10px 24px -22px #064f6a}
+  .catalog-group .product--row::before{content:'';position:absolute;inset:-160%;z-index:0;width:auto;height:auto;background:conic-gradient(from 0deg,transparent 0 34%,var(--row-accent) 43%,var(--row-accent-2) 49%,var(--row-accent) 55%,transparent 64% 100%);animation:row-border-spin 6s linear infinite}
+  .catalog-group .product--row::after{content:'';position:absolute;inset:2px;z-index:0;border-radius:10px;background:var(--row-bg);box-shadow:inset 0 0 18px rgb(255 255 255/.65)}
+  .catalog-group .product--row>*{position:relative;z-index:1}
+  .catalog-group .product--row:hover{z-index:4;transform:translateY(-3px) scale(1.025);filter:saturate(1.12);box-shadow:0 20px 35px -20px var(--row-accent)}
+  .catalog-group .product--row[data-brand='microsoft']{--row-accent:#00a4ef;--row-accent-2:#77dcff;--row-bg:linear-gradient(145deg,#f7fcff,#e4f5ff)}
+  .catalog-group .product--row[data-brand='adobe']{--row-accent:#ef3b48;--row-accent-2:#ff9b9b;--row-bg:linear-gradient(145deg,#fffafa,#fff0f1)}
+  .catalog-group .product--row[data-brand='corel']{--row-accent:#53b83e;--row-accent-2:#b4ec6a;--row-bg:linear-gradient(145deg,#fbfff8,#edf9e7)}
+  .catalog-group .product--row[data-brand='autodesk']{--row-accent:#168bd2;--row-accent-2:#75d8ff;--row-bg:linear-gradient(145deg,#f8fcff,#e7f5ff)}
+  .catalog-group .product--row[data-brand='artcraft']{--row-accent:#74d839;--row-accent-2:#d4ff5f;--row-bg:linear-gradient(145deg,#fcfff8,#f0fae9)}
   .catalog-group .product--row .product__brand{width:46px;height:46px;border-radius:12px;font-size:.76rem}
   .catalog-group .product--row .product__img{width:46px;height:46px;border-radius:12px}
   .catalog-group .product--row .product__name{min-width:0;margin:0;font-size:.82rem;line-height:1.15}
-  .catalog-group .product--row :global(.btn){min-height:32px;padding-inline:9px;font-size:.63rem}
+  .catalog-group .product--row :global(.btn){min-height:32px;padding-inline:9px;font-size:.63rem;transition:transform .2s ease,box-shadow .2s ease}
+  .catalog-group .product--row :global(.btn:hover){transform:scale(1.06);box-shadow:0 0 18px rgb(5 139 181/.3)}
   .group-consult{display:flex;justify-content:flex-end;padding-top:9px;border-top:1px solid #d8e8ee}
   .group-consult :global(.btn){min-width:180px}
 
@@ -928,5 +945,11 @@ const productGroups = [
     .catalog-group .product--row{grid-template-columns:38px minmax(0,1fr) auto;min-height:50px;padding:6px}
     .catalog-group .product--row .product__brand,.catalog-group .product--row .product__img{width:38px;height:38px}
     .group-consult :global(.btn){width:100%;min-width:0}
+  }
+  @keyframes row-border-spin{to{transform:rotate(360deg)}}
+  @keyframes heading-glow{50%{opacity:.45;transform:scaleX(.72)}}
+  @media (prefers-reduced-motion:reduce){
+    .catalog-group .product--row::before,.group-heading h3::after{animation:none}
+    .catalog-group .product--row,.catalog-group .product--row :global(.btn){transition:none}
   }
 </style>
