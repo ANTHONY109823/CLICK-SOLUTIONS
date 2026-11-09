@@ -11,6 +11,7 @@ const portfolioPath = join(root, 'src', 'data', 'web-projects.json');
 const portfolioImages = join(root, 'public', 'images', 'proyectos-web');
 const softwarePath = join(root, 'src', 'data', 'click-software.json');
 const downloadsPath = join(root, 'public', 'downloads');
+const antivirusImages = join(root, 'public', 'images', 'software', 'antivirus');
 
 const json = (response, status, value) => {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -88,6 +89,26 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    if (url.pathname === '/api/software/antivirus-image' && request.method === 'POST') {
+      const body = await readBody(request);
+      const antivirusId = String(body.id || '').trim().toLowerCase();
+      if (!['eset', 'panda', 'bitdefender'].includes(antivirusId)) return json(response, 400, { error: 'Selecciona una marca válida.' });
+      const match = /^data:(image\/(?:jpeg|png|webp));base64,([a-zA-Z0-9+/=]+)$/.exec(String(body.image || ''));
+      if (!match) return json(response, 400, { error: 'Selecciona una imagen JPG, PNG o WebP.' });
+      const imageBytes = Buffer.from(match[2], 'base64');
+      if (imageBytes.length > 8_000_000) return json(response, 413, { error: 'La imagen supera el límite de 8 MB.' });
+      const extension = match[1] === 'image/jpeg' ? 'jpg' : match[1].split('/')[1];
+      const filename = `${antivirusId}.${extension}`;
+
+      await mkdir(antivirusImages, { recursive: true });
+      await writeFile(join(antivirusImages, filename), imageBytes);
+      const software = JSON.parse(await readFile(softwarePath, 'utf8'));
+      software.antivirus[antivirusId].image = `/images/software/antivirus/${filename}`;
+      await writeFile(softwarePath, `${JSON.stringify(software, null, 2)}\n`, 'utf8');
+      json(response, 201, { software });
+      return;
+    }
+
     if (url.pathname === '/api/web-projects' && request.method === 'POST') {
       const body = await readBody(request);
       const match = /^data:(image\/(?:jpeg|png|webp));base64,([a-zA-Z0-9+/=]+)$/.exec(String(body.image || ''));
@@ -130,7 +151,7 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === 'GET' && (url.pathname.startsWith('/images/proyectos-web/') || url.pathname.startsWith('/images/hero/'))) {
+    if (request.method === 'GET' && (url.pathname.startsWith('/images/proyectos-web/') || url.pathname.startsWith('/images/hero/') || url.pathname.startsWith('/images/software/'))) {
       const imagePath = join(root, 'public', ...url.pathname.split('/').filter(Boolean));
       const extension = imagePath.split('.').pop()?.toLowerCase();
       const contentType = extension === 'png' ? 'image/png' : extension === 'webp' ? 'image/webp' : 'image/jpeg';

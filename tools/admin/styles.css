@@ -75,6 +75,15 @@ h1 em { color: transparent; background: linear-gradient(100deg, #019ed4, #1679de
 .software-file strong { font-size: .8rem; }
 .software-file small { color: var(--muted); font-size: .68rem; }
 .draft-state.is-ready { background: #e9faf2; color: #187b59; }
+.antivirus-manager { display: grid; grid-template-columns: minmax(220px,.55fr) minmax(280px,.75fr) minmax(0,1.5fr); align-items: start; gap: 20px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #dbe8e4; }
+.antivirus-manager h3 { margin: 5px 0 7px; font-size: 1.25rem; }
+.antivirus-manager p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.antivirus-upload { gap: 12px; padding: 16px; border: 1px solid #dce7ed; border-radius: 16px; background: #f8fbfc; }
+.antivirus-upload input { padding: 8px; background: #fff; }
+.antivirus-preview { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+.antivirus-preview article { overflow: hidden; border: 1px solid #d6e5e1; border-radius: 13px; background: #fff; }
+.antivirus-preview img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #082638; }
+.antivirus-preview strong { display: block; padding: 9px; overflow: hidden; font-size: .69rem; text-overflow: ellipsis; white-space: nowrap; }
 
 .workspace { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(360px, .72fr); align-items: start; gap: 24px; }
 .form-panel, .preview-panel { min-width: 0; }
@@ -145,6 +154,7 @@ input:focus, textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px r
   .workspace { grid-template-columns: 1fr; }
   .portfolio-manager__grid { grid-template-columns: 1fr; }
   .software-manager__grid { grid-template-columns: 1fr; }
+  .antivirus-manager { grid-template-columns: 1fr; }
   .preview-panel { position: static; grid-row: 1; }
   .preview-paper { max-width: 620px; }
 }

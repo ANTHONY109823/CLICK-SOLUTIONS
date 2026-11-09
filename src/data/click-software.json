@@ -39,5 +39,22 @@
     "filename": "DrClickSolutions.exe",
     "available": false,
     "size": 0
+  },
+  "antivirus": {
+    "eset": {
+      "name": "ESET HOME Security",
+      "image": "/images/software/antivirus/eset.svg",
+      "alt": "Imagen de presentación de ESET HOME Security"
+    },
+    "panda": {
+      "name": "Panda Dome",
+      "image": "/images/software/antivirus/panda.svg",
+      "alt": "Imagen de presentación de Panda Dome"
+    },
+    "bitdefender": {
+      "name": "Bitdefender Total Security",
+      "image": "/images/software/antivirus/bitdefender.svg",
+      "alt": "Imagen de presentación de Bitdefender Total Security"
+    }
   }
 }

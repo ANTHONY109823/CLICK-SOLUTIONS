@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Bitdefender Total Security</title><desc id="desc">Presentación azul de Bitdefender con un escudo digital.</desc>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b31"/><stop offset="1" stop-color="#183f78"/></linearGradient><radialGradient id="r"><stop stop-color="#7da7ff" stop-opacity=".4"/><stop offset="1" stop-color="#7da7ff" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="700" rx="48" fill="url(#g)"/><circle cx="930" cy="190" r="320" fill="url(#r)"/><g fill="none" stroke="#7ca7ff" stroke-width="4" opacity=".36"><circle cx="930" cy="350" r="205"/><path d="M930 80v540M660 350h540"/></g>
+  <path d="M930 156l154 56v130c0 116-64 198-154 236-90-38-154-120-154-236V212z" fill="#112d56" stroke="#7ca7ff" stroke-width="10"/><path d="M860 350l48 50 101-114" fill="none" stroke="#7ca7ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="88" y="270" fill="#7ca7ff" font-family="Arial, sans-serif" font-size="48" font-weight="700">BITDEFENDER</text><text x="88" y="355" fill="#fff" font-family="Arial, sans-serif" font-size="68" font-weight="800">Total Security</text><text x="90" y="420" fill="#becbe5" font-family="Arial, sans-serif" font-size="28">Defensa multidispositivo</text>
+</svg>

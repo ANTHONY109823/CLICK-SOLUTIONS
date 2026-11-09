@@ -31,9 +31,8 @@ const catalogProducts = products.filter((product) => product.category !== 'Segur
 
   <section class="software-sheet software-sheet--security" id="proteccion" aria-labelledby="security-title">
     <div class="container software-sheet__inner">
-      <header class="software-sheet__heading software-sheet__heading--dark">
-        <div><span>03 · PROTECCIÓN PARA TU PC</span><h2 id="security-title">Antivirus originales, elegidos según tus dispositivos</h2></div>
-        <p>Revisamos sistema, cantidad de equipos y duración antes de cotizar para evitar planes incompatibles o claves dudosas.</p>
+      <header class="software-sheet__heading software-sheet__heading--dark software-sheet__heading--solo">
+        <div><h2 id="security-title">Protección original para tu PC</h2></div>
       </header>
       <AntivirusSpotlight />
     </div>
@@ -45,11 +44,11 @@ const catalogProducts = products.filter((product) => product.category !== 'Segur
   .software-sheet{height:calc(100svh - 64px);min-height:600px;padding-block:clamp(1rem,2.2vh,1.5rem);scroll-margin-top:-1.5rem;overflow:clip}
   .software-sheet--own{background:radial-gradient(circle at 92% 10%,rgb(60 205 166/.1),transparent 26%),#f7fbfa}
   .software-sheet--catalog{background:radial-gradient(circle at 8% 15%,rgb(58 174 231/.08),transparent 26%),linear-gradient(180deg,#fff,#f5faff)}
-  .software-sheet--security{background:radial-gradient(circle at 92% 5%,rgb(190 236 87/.1),transparent 24%),linear-gradient(145deg,#06172a,#073b40);color:#dbeaf0}
+  .software-sheet--security{padding-top:2.75cm;padding-bottom:1rem;background:radial-gradient(circle at 92% 5%,rgb(190 236 87/.1),transparent 24%),linear-gradient(145deg,#06172a,#073b40);color:#dbeaf0}
   .software-sheet__inner{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%;min-width:0;gap:clamp(.75rem,1.8vh,1.1rem)}
   .software-sheet__heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.58fr);align-items:end;gap:var(--space-6)}
   .software-sheet__heading--solo{grid-template-columns:1fr}
   .software-sheet__heading span{color:#148c79;font-size:.68rem;font-weight:850;letter-spacing:.1em}.software-sheet__heading h2{max-width:22ch;margin:4px 0 0;color:var(--brand-ink);font-size:clamp(1.8rem,3vw,2.75rem);line-height:1;letter-spacing:-.045em}.software-sheet__heading>p{margin:0;color:var(--text-muted);font-size:var(--fs-xs);line-height:1.5}
   .software-sheet__heading--dark span{color:#c4ec69}.software-sheet__heading--dark h2{color:#fff}.software-sheet__heading--dark>p{color:#9eb5bd}
-  @media(max-width:820px){.software-sheet{height:calc(100svh - 64px);min-height:650px;padding-block:1rem}.software-sheet__inner{height:100%;grid-template-rows:auto minmax(0,1fr);gap:.75rem}.software-sheet__heading{grid-template-columns:1fr;gap:5px}.software-sheet__heading h2{font-size:clamp(1.65rem,6vw,2.35rem)}.software-sheet__heading>p{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}}
+  @media(max-width:820px){.software-sheet{height:calc(100svh - 64px);min-height:650px;padding-block:1rem}.software-sheet--security{padding-top:1.2rem}.software-sheet__inner{height:100%;grid-template-rows:auto minmax(0,1fr);gap:.75rem}.software-sheet__heading{grid-template-columns:1fr;gap:5px}.software-sheet__heading h2{font-size:clamp(1.65rem,6vw,2.35rem)}.software-sheet__heading>p{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}}
 </style>

@@ -81,6 +81,25 @@
             <p class="privacy-note">El archivo queda en el proyecto local. Después debes subir los cambios a GitHub para publicarlo en Railway.</p>
           </form>
         </div>
+        <div class="antivirus-manager">
+          <div>
+            <span class="kicker">Protección para tu PC</span>
+            <h3>Imágenes de antivirus</h3>
+            <p>Reemplaza la imagen destacada de ESET, Panda o Bitdefender.</p>
+          </div>
+          <form class="antivirus-upload" data-antivirus-form>
+            <label>Marca
+              <select name="antivirusId" required>
+                <option value="eset">ESET HOME Security</option>
+                <option value="panda">Panda Dome</option>
+                <option value="bitdefender">Bitdefender Total Security</option>
+              </select>
+            </label>
+            <label>Imagen destacada<input name="image" type="file" accept="image/jpeg,image/png,image/webp" required /></label>
+            <button type="submit" class="button button--primary">Actualizar imagen</button>
+          </form>
+          <div class="antivirus-preview" data-antivirus-preview aria-live="polite"></div>
+        </div>
       </section>
 
       <section class="workspace" id="cotizador">

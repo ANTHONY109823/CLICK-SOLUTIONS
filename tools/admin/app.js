@@ -9,6 +9,8 @@ const projectList = document.querySelector('[data-project-list]');
 const softwareForm = document.querySelector('[data-software-form]');
 const softwareFile = document.querySelector('[data-software-file]');
 const softwareState = document.querySelector('[data-software-state]');
+const antivirusForm = document.querySelector('[data-antivirus-form]');
+const antivirusPreview = document.querySelector('[data-antivirus-preview]');
 
 const money = (value) => `S/ ${Number(value || 0).toFixed(2)}`;
 const localDate = (date = new Date()) => {
@@ -101,6 +103,56 @@ softwareForm.addEventListener('submit', async (event) => {
 });
 
 renderSoftware();
+
+function renderAntivirusImages() {
+  antivirusPreview.replaceChildren();
+  Object.entries(config.software.antivirus).forEach(([id, item]) => {
+    const card = document.createElement('article');
+    const image = document.createElement('img');
+    const title = document.createElement('strong');
+    image.src = `${item.image}?v=${Date.now()}`;
+    image.alt = item.alt;
+    title.textContent = item.name;
+    card.dataset.antivirusId = id;
+    card.append(image, title);
+    antivirusPreview.append(card);
+  });
+}
+
+antivirusForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!antivirusForm.reportValidity()) return;
+  const button = antivirusForm.querySelector('button[type="submit"]');
+  const data = new FormData(antivirusForm);
+  const file = data.get('image');
+  if (!(file instanceof File) || !file.size) return;
+  if (file.size > 8_000_000) {
+    showToast('La imagen supera el límite de 8 MB.');
+    return;
+  }
+  button.disabled = true;
+  button.textContent = 'Actualizando…';
+  try {
+    const response = await fetch('/api/software/antivirus-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: data.get('antivirusId'), image: await fileAsDataUrl(file) }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'No se pudo guardar la imagen.');
+    config.software = result.software;
+    antivirusForm.reset();
+    renderAntivirusImages();
+    showToast('Imagen de antivirus actualizada en la web local.');
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : 'No se pudo guardar la imagen.');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Actualizar imagen';
+  }
+});
+
+renderAntivirusImages();
 
 function renderProjects() {
   const projects = config.portfolio.projects.filter((project) => project.visible);

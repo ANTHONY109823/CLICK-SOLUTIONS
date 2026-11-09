@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Panda Dome</title><desc id="desc">Presentación cyan de Panda Dome con un escudo digital.</desc>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061d31"/><stop offset="1" stop-color="#086b79"/></linearGradient><radialGradient id="r"><stop stop-color="#52d9ef" stop-opacity=".38"/><stop offset="1" stop-color="#52d9ef" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="700" rx="48" fill="url(#g)"/><circle cx="920" cy="210" r="330" fill="url(#r)"/><g fill="none" stroke="#55d7ee" stroke-width="4" opacity=".38"><path d="M700 170h430M680 260h470M710 440h410M735 530h360"/><circle cx="920" cy="350" r="230"/></g>
+  <path d="M920 156l154 56v130c0 116-64 198-154 236-90-38-154-120-154-236V212z" fill="#0d3448" stroke="#55d7ee" stroke-width="10"/><path d="M850 350l48 50 101-114" fill="none" stroke="#55d7ee" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="88" y="270" fill="#55d7ee" font-family="Arial, sans-serif" font-size="48" font-weight="700">PANDA SECURITY</text><text x="88" y="365" fill="#fff" font-family="Arial, sans-serif" font-size="84" font-weight="800">Panda Dome</text><text x="90" y="430" fill="#b7d4dc" font-family="Arial, sans-serif" font-size="28">Seguridad clara para todos tus equipos</text>
+</svg>
