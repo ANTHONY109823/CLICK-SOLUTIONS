@@ -5,6 +5,7 @@ import software from '../../data/click-software.json';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const downloadUrl = software.drClick.download.startsWith('/') ? `${base}${software.drClick.download}` : software.drClick.download;
 const contactUrl = `${base}/contacto`;
+const storyImage = `${base}/images/software/reset-epson-flow.png`;
 ---
 
 <div class="click-suite" aria-label="Software propio de ClickSolutions">
@@ -23,11 +24,7 @@ const contactUrl = `${base}/contacto`;
     <div class="doctor-card__copy">
       <span class="product-label">DIAGNÓSTICO PARA WINDOWS</span>
       <h3 id="doctor-title">{software.drClick.name}</h3>
-      <p>{software.drClick.description}</p>
-    </div>
-
-    <div class="doctor-route" aria-label="Proceso de diagnóstico">
-      <span><b>1</b>Detecta</span><i></i><span><b>2</b>Diagnostica</span><i></i><span><b>3</b>Recomienda</span>
+      <p>Detecta el estado de la impresora y te indica si necesitas ResetEpson.</p>
     </div>
 
     {software.drClick.available ? (
@@ -37,7 +34,6 @@ const contactUrl = `${base}/contacto`;
     ) : (
       <span class="doctor-download doctor-download--pending"><Icon name="clock" size={18} />Descarga próximamente</span>
     )}
-    <small class="doctor-note">Primero diagnostica; usa ResetEpson solo cuando el programa lo recomiende.</small>
   </article>
 
   <article class="reset-card" id="reset-epson" aria-labelledby="reset-epson-title">
@@ -45,13 +41,19 @@ const contactUrl = `${base}/contacto`;
       <div>
         <span class="product-label">REINICIO DEL CONTADOR DE TINTA RESIDUAL</span>
         <h2 id="reset-epson-title">{software.resetEpson.name}</h2>
-        <p>Activación privada vinculada a una PC, con compatibilidad confirmada antes del pago.</p>
       </div>
     </header>
 
     <div class="compatibility" aria-label="Modelos compatibles">
       <Icon name="check" size={17} />
-      <p><strong>{software.resetEpson.compatibility}</strong> ({software.resetEpson.featuredModels.join(', ')} y muchos más).</p>
+      <p><strong>Más de 1450 modelos Epson EcoTank</strong> · {software.resetEpson.featuredModels.join(', ')} y muchos más.</p>
+    </div>
+
+    <div class="reset-story" style={`--story-image:url("${storyImage}")`} role="img" aria-label="Diagnóstico, impresora compatible y activación de ResetEpson">
+      <span class="reset-story__slide reset-story__slide--diagnosis"></span>
+      <span class="reset-story__slide reset-story__slide--printer"></span>
+      <span class="reset-story__slide reset-story__slide--success"></span>
+      <span class="reset-story__progress" aria-hidden="true"><i></i><i></i><i></i></span>
     </div>
 
     <div class="reset-plans" aria-label="Planes de ResetEpson">
@@ -61,24 +63,22 @@ const contactUrl = `${base}/contacto`;
           <span class="reset-plan__duration">{plan.duration}</span>
           <h3>{plan.name}</h3>
           <strong>{plan.price}</strong>
-          <p>{plan.description}</p>
           <span class="reset-plan__action">Elegir plan <Icon name="arrow-right" size={15} /></span>
         </a>
       ))}
     </div>
 
-    <footer class="reset-card__footer">
-      <span><Icon name="monitor" size={16} /><b>Requisitos:</b> Windows, USB e impresora encendida.</span>
-      <span><Icon name="lock" size={16} /><b>Activación:</b> licencia vinculada al equipo autorizado.</span>
-      <span class="reset-warning"><Icon name="alert" size={16} />El reset no reemplaza la revisión o limpieza física de las almohadillas.</span>
-    </footer>
+    <div class="reset-meta">
+      <span><Icon name="monitor" size={16} />Windows + USB</span>
+      <span><Icon name="lock" size={16} />Licencia vinculada a una PC</span>
+    </div>
   </article>
 </div>
 
 <style>
   .click-suite { display: grid; grid-template-columns: minmax(270px, .72fr) minmax(0, 1.45fr); height: 100%; min-height: 0; gap: clamp(.9rem, 1.7vw, 1.3rem); }
   .doctor-card, .reset-card { min-width: 0; overflow: hidden; border: 1px solid #b7e1f3; border-radius: 23px; box-shadow: 0 24px 60px -48px #0a4663; }
-  .doctor-card { position: relative; display: grid; grid-template-rows: auto minmax(125px, 1fr) auto auto auto auto; align-items:center; padding: clamp(1rem, 2vw, 1.35rem); background: radial-gradient(circle at 50% 28%, rgb(50 210 176 / .16), transparent 33%), linear-gradient(150deg, #041a31, #074f58); color: #fff; }
+  .doctor-card { position: relative; display: grid; grid-template-rows: auto minmax(150px, 1fr) auto auto; align-items:center; padding: clamp(1rem, 2vw, 1.35rem); background: radial-gradient(circle at 50% 28%, rgb(50 210 176 / .16), transparent 33%), linear-gradient(150deg, #041a31, #074f58); color: #fff; }
   .doctor-card::before { content: ''; position: absolute; inset: 0; opacity: .32; background-image: linear-gradient(rgb(100 228 207 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(100 228 207 / .06) 1px, transparent 1px); background-size: 30px 30px; pointer-events: none; }
   .doctor-card > * { position: relative; z-index: 1; }
   .doctor-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -93,44 +93,45 @@ const contactUrl = `${base}/contacto`;
   .product-label { color: #2faecb; font-size: .61rem; font-weight: 850; letter-spacing: .1em; }
   .doctor-card .product-label { color: #69e6cf; }
   .doctor-card h3 { margin: 5px 0 7px; color: #fff; font-size: clamp(1.35rem, 2vw, 1.8rem); }
-  .doctor-card__copy p { max-width: 38ch; margin: 0 auto; color: #9ab9c0; font-size: .72rem; line-height: 1.5; }
-  .doctor-route { display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center; gap: 6px; margin-block: 12px; color: #b7d1d3; font-size: .6rem; font-weight: 750; }
-  .doctor-route span { display: grid; justify-items: center; gap: 3px; }
-  .doctor-route b { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid rgb(103 230 206 / .23); border-radius: 8px; color: #69e6cf; }
-  .doctor-route i { height: 1px; background: linear-gradient(90deg, rgb(103 230 206 / .14), #69e6cf, rgb(103 230 206 / .14)); }
+  .doctor-card__copy p { max-width: 32ch; margin: 0 auto 14px; color: #b6cdd2; font-size: .78rem; line-height: 1.45; }
   .doctor-download { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; background: linear-gradient(135deg, #53dda7, #22bdda); color: #032036; font-size: .77rem; font-weight: 850; text-decoration: none; }
   .doctor-download--pending { border: 1px solid rgb(255 255 255 / .13); background: rgb(3 25 40 / .62); color: #9eb8c1; }
-  .doctor-note { margin-top: 8px; color: #7899a4; font-size: .58rem; line-height: 1.4; text-align: center; }
 
-  .reset-card { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; padding: clamp(1rem, 2vw, 1.45rem); background: linear-gradient(145deg, #fff, #f2fafc); }
+  .reset-card { display: grid; grid-template-rows: auto auto minmax(88px, .8fr) auto auto; padding: clamp(.9rem, 1.7vw, 1.25rem); background: linear-gradient(145deg, #fff, #f2fafc); }
   .reset-card__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-  .reset-card__header h2 { margin: 5px 0 6px; color: var(--brand-ink); font-size: clamp(1.75rem, 2.8vw, 2.6rem); line-height: 1; letter-spacing: -.045em; }
-  .reset-card__header p { max-width: 65ch; margin: 0; color: var(--text-muted); font-size: .75rem; line-height: 1.45; }
-  .compatibility { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 9px 11px; border: 1px solid #b7e6d1; border-radius: 11px; background: #edfff5; color: #346b58; }
+  .reset-card__header h2 { margin: 4px 0 5px; color: var(--brand-ink); font-size: clamp(1.65rem, 2.55vw, 2.35rem); line-height: 1; letter-spacing: -.045em; }
+  .compatibility { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 10px; border: 1px solid #b7e6d1; border-radius: 10px; background: #edfff5; color: #346b58; }
   .compatibility :global(svg) { flex: 0 0 auto; color: #21815d; }
-  .compatibility p { margin: 0; font-size: .64rem; line-height: 1.4; }
+  .compatibility p { margin: 0; font-size: .68rem; line-height: 1.35; }
   .compatibility strong { color: #176a4d; }
-  .reset-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 10px; margin-block: clamp(.8rem, 2vh, 1.2rem); }
-  .reset-plan { position: relative; display: flex; flex-direction: column; min-width: 0; padding: clamp(.85rem, 1.6vw, 1.15rem); overflow: hidden; border: 1px solid #d4e4eb; border-radius: 17px; background: #fff; color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .reset-story { position: relative; min-height: 88px; margin-top: 8px; overflow: hidden; border-radius: 14px; background: #06253a; box-shadow: inset 0 0 0 1px rgb(59 201 224 / .22); isolation: isolate; }
+  .reset-story::after { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, rgb(3 21 36 / .2), transparent 50%, rgb(3 21 36 / .15)); pointer-events: none; }
+  .reset-story__slide { position: absolute; inset: 0; opacity: 0; background-image: var(--story-image); background-size: 300% 100%; background-repeat: no-repeat; animation: story-fade 12s infinite; }
+  .reset-story__slide--diagnosis { background-position: left center; }
+  .reset-story__slide--printer { background-position: center center; animation-delay: 4s; }
+  .reset-story__slide--success { background-position: right center; animation-delay: 8s; }
+  .reset-story__progress { position: absolute; right: 12px; bottom: 9px; z-index: 3; display: flex; gap: 5px; }
+  .reset-story__progress i { width: 19px; height: 3px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / .42); }
+  .reset-story__progress i::after { content: ''; display: block; width: 100%; height: 100%; background: #6ce7cf; transform: scaleX(0); transform-origin: left; animation: story-progress 12s linear infinite; }
+  .reset-story__progress i:nth-child(2)::after { animation-delay: 4s; }.reset-story__progress i:nth-child(3)::after { animation-delay: 8s; }
+  .reset-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 9px; margin-block: 9px; }
+  .reset-plan { position: relative; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto auto; align-items:end; min-width: 0; padding: .75rem .82rem; overflow: hidden; border: 1px solid #d4e4eb; border-radius: 15px; background: #fff; color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
   .reset-plan::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, transparent, #21afd4, transparent); }
   .reset-plan:hover { transform: translateY(-4px); border-color: #62c7df; box-shadow: 0 22px 35px -29px #0d6f8a; }
   .reset-plan--recommended { border-color: #39afd0; background: linear-gradient(155deg, #edfaff, #ecfff7); box-shadow: 0 20px 42px -34px #087999; }
-  .reset-plan__badge { position: absolute; top: 10px; right: 10px; padding: 5px 7px; border-radius: 999px; background: #087d9b; color: #fff; font-size: .52rem; font-weight: 850; text-transform: uppercase; }
-  .reset-plan__duration { color: #138ca7; font-size: .61rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
-  .reset-plan h3 { margin: 7px 0 2px; color: var(--brand-ink); font-size: 1rem; }
-  .reset-plan > strong { color: #073d59; font-size: clamp(1.55rem, 2.5vw, 2.2rem); line-height: 1.05; }
-  .reset-plan > p { margin: 8px 0 12px; color: var(--text-muted); font-size: .67rem; line-height: 1.42; }
-  .reset-plan__action { display: flex; align-items: center; gap: 5px; margin-top: auto; color: #087d9b; font-size: .65rem; font-weight: 800; }
-  .reset-card__footer { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; padding-top: 10px; border-top: 1px solid #dce9ee; }
-  .reset-card__footer span { display: flex; align-items: flex-start; gap: 6px; color: #607581; font-size: .62rem; }
-  .reset-card__footer :global(svg) { flex: 0 0 auto; color: #179fc0; }
-  .reset-card__footer b { color: #17354a; }
-  .reset-card__footer .reset-warning { grid-column: 1 / -1; color: #81520d; }
-  .reset-card__footer .reset-warning :global(svg) { color: #b37417; }
+  .reset-plan__badge { position: absolute; top: 8px; right: 8px; padding: 4px 6px; border-radius: 999px; background: #087d9b; color: #fff; font-size: .48rem; font-weight: 850; text-transform: uppercase; }
+  .reset-plan__duration { grid-column: 1 / -1; color: #138ca7; font-size: .63rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+  .reset-plan h3 { grid-column: 1; margin: 5px 0 0; color: var(--brand-ink); font-size: .92rem; }
+  .reset-plan > strong { grid-column: 1; color: #073d59; font-size: clamp(1.45rem, 2.2vw, 1.95rem); line-height: 1; }
+  .reset-plan__action { grid-column: 2; grid-row: 2 / 4; display: grid; place-items:center; width: 34px; height: 34px; border-radius: 50%; background:#e9f8fb; color: #087d9b; font-size: 0; }
+  .reset-meta { display: flex; align-items:center; gap: 18px; padding-top: 7px; border-top: 1px solid #dce9ee; color:#526b78; font-size:.69rem; font-weight:700; }
+  .reset-meta span { display:flex; align-items:center; gap:6px; }.reset-meta :global(svg){color:#179fc0}
 
   @keyframes doctor-pulse { 50% { transform: scale(1.08); opacity: .55; } }
   @keyframes doctor-scan { 50% { transform: translate(5px, -8px) rotate(-8deg); } }
+  @keyframes story-fade { 0%,5%{opacity:0;transform:scale(1.04)} 9%,29%{opacity:1;transform:scale(1)} 34%,100%{opacity:0;transform:scale(1.02)} }
+  @keyframes story-progress { 0%,5%{transform:scaleX(0)} 8%,31%{transform:scaleX(1)} 34%,100%{transform:scaleX(0)} }
   @media (max-width: 900px) { .click-suite { grid-template-columns: 1fr; height: auto; } .doctor-card { min-height: 520px; } .reset-card { min-height: 540px; } }
-  @media (max-width: 620px) { .doctor-card { min-height: 490px; } .reset-card__header { display: grid; } .reset-plans { grid-template-columns: 1fr; } .reset-card { min-height: auto; } .reset-card__footer { grid-template-columns: 1fr; } .reset-card__footer .reset-warning { grid-column: auto; } }
-  @media (prefers-reduced-motion: reduce) { .doctor-visual__pulse, .doctor-visual__scan { animation: none; } .reset-plan { transition: none; } }
+  @media (max-width: 620px) { .doctor-card { min-height: 440px; } .reset-card__header { display: grid; } .reset-plans { grid-template-columns: 1fr; } .reset-card { min-height: auto; } .reset-plan{min-height:104px}.reset-meta{align-items:flex-start;flex-direction:column;gap:5px} }
+  @media (prefers-reduced-motion: reduce) { .doctor-visual__pulse, .doctor-visual__scan, .reset-story__slide, .reset-story__progress i::after { animation: none; } .reset-story__slide--printer{opacity:1}.reset-plan { transition: none; } }
 </style>
