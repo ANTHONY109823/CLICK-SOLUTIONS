@@ -36,6 +36,8 @@ export default defineConfig({
   output: isGithubPages ? 'static' : 'server',
   adapter: isGithubPages ? undefined : node({ mode: 'standalone' }),
   trailingSlash: 'never',
+  // HTML sin minificar: el resultado en dist/ queda legible (varias líneas, sin scroll horizontal).
+  compressHTML: false,
   build: { format: 'file' },
   integrations: [
     sitemap({ filter: (page) => !NOT_INDEXED.test(page) }),
