@@ -916,10 +916,10 @@ const productGroups = [
     grid-template-columns:repeat(2,minmax(0,1fr));
     grid-auto-flow:row;
     grid-auto-columns:initial;
-    grid-auto-rows:minmax(55px,auto);
-    align-content:start;
+    grid-auto-rows:minmax(58px,1fr);
+    align-content:stretch;
     gap:7px;
-    height:auto;
+    height:100%;
     max-height:100%;
     padding:1px 3px 1px 1px;
     overflow-x:hidden;
@@ -933,9 +933,9 @@ const productGroups = [
     align-items:center;
     gap:9px;
     width:100%;
-    height:auto;
-    min-height:55px;
-    padding:7px 8px;
+    height:100%;
+    min-height:58px;
+    padding:9px 10px;
     border:1px solid #d9e8ee;
     border-radius:12px;
     background:#fff;
@@ -944,9 +944,9 @@ const productGroups = [
   .catalog-group .product--row::before{inset:0 auto 0 0;width:3px;height:auto;background:linear-gradient(180deg,var(--brand-cyan),var(--brand-blue))}
   .catalog-group--free .product--row::before{background:linear-gradient(180deg,#35c477,#8ed66b)}
   .catalog-group .product--row:hover{transform:none;border-color:#a9dceb;box-shadow:0 10px 24px -22px #064f6a}
-  .catalog-group .product--row .product__brand{width:42px;height:42px;border-radius:11px;font-size:.72rem}
-  .catalog-group .product--row .product__img{width:42px;height:42px;border-radius:11px}
-  .catalog-group .product--row .product__name{min-width:0;margin:0;font-size:.78rem;line-height:1.15}
+  .catalog-group .product--row .product__brand{width:46px;height:46px;border-radius:12px;font-size:.76rem}
+  .catalog-group .product--row .product__img{width:46px;height:46px;border-radius:12px}
+  .catalog-group .product--row .product__name{min-width:0;margin:0;font-size:.82rem;line-height:1.15}
   .catalog-group .product--row :global(.btn){min-height:32px;padding-inline:9px;font-size:.63rem}
   .group-consult{display:flex;justify-content:flex-end;padding-top:9px;border-top:1px solid #d8e8ee}
   .group-consult :global(.btn){min-width:180px}
