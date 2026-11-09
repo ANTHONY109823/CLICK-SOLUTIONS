@@ -6,6 +6,9 @@ const toast = document.querySelector('[data-toast]');
 const draftState = document.querySelector('[data-draft-state]');
 const projectForm = document.querySelector('[data-project-form]');
 const projectList = document.querySelector('[data-project-list]');
+const softwareForm = document.querySelector('[data-software-form]');
+const softwareFile = document.querySelector('[data-software-file]');
+const softwareState = document.querySelector('[data-software-state]');
 
 const money = (value) => `S/ ${Number(value || 0).toFixed(2)}`;
 const localDate = (date = new Date()) => {
@@ -30,6 +33,74 @@ const fileAsDataUrl = (file) => new Promise((resolve, reject) => {
   reader.onerror = () => reject(new Error('No se pudo leer la imagen.'));
   reader.readAsDataURL(file);
 });
+
+const formatFileSize = (bytes) => {
+  const value = Number(bytes || 0);
+  if (!value) return 'Tamaño no disponible';
+  if (value < 1_000_000) return `${Math.ceil(value / 1_000)} KB`;
+  return `${(value / 1_000_000).toFixed(1)} MB`;
+};
+
+function renderSoftware() {
+  const drClick = config.software.drClick;
+  softwareState.textContent = drClick.available ? 'Archivo listo para publicar' : 'Sin archivo publicado';
+  softwareState.classList.toggle('is-ready', drClick.available);
+  softwareFile.replaceChildren();
+
+  const icon = document.createElement('span');
+  icon.textContent = drClick.available ? 'EXE' : '—';
+  const copy = document.createElement('div');
+  const title = document.createElement('strong');
+  const detail = document.createElement('small');
+  title.textContent = drClick.available ? drClick.filename : 'Aún no has subido el programa';
+  detail.textContent = drClick.available
+    ? `${formatFileSize(drClick.size)} · descarga gratuita activada en la web local`
+    : 'Cuando subas el .exe, el botón público se activará automáticamente.';
+  copy.append(title, detail);
+  softwareFile.append(icon, copy);
+}
+
+softwareForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!softwareForm.reportValidity()) return;
+  const button = softwareForm.querySelector('button[type="submit"]');
+  const file = new FormData(softwareForm).get('executable');
+  if (!(file instanceof File) || !file.size) return;
+  if (!file.name.toLowerCase().endsWith('.exe')) {
+    showToast('Selecciona el archivo .exe de Dr. ClickSolutions.');
+    return;
+  }
+  if (file.size > 60_000_000) {
+    showToast('El programa supera el límite de 60 MB.');
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Subiendo programa…';
+  try {
+    const response = await fetch('/api/software/dr-click', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'x-file-name': encodeURIComponent(file.name),
+      },
+      body: file,
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'No se pudo guardar el programa.');
+    config.software = result.software;
+    softwareForm.reset();
+    renderSoftware();
+    showToast('Dr. ClickSolutions quedó listo en la web local.');
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : 'No se pudo guardar el programa.');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Subir o reemplazar .exe';
+  }
+});
+
+renderSoftware();
 
 function renderProjects() {
   const projects = config.portfolio.projects.filter((project) => project.visible);

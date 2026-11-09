@@ -13,6 +13,7 @@
       <nav aria-label="Portal privado">
         <a href="#resumen">Resumen</a>
         <a href="#portafolio">Proyectos web</a>
+        <a href="#software">Software</a>
         <a href="#cotizador">Cotizador</a>
         <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">Contenido ↗</a>
       </nav>
@@ -55,6 +56,30 @@
             <p class="privacy-note">La imagen se guarda en el proyecto local. Para verla en Railway debes subir los cambios a GitHub.</p>
           </form>
           <div class="project-list" data-project-list aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="software-manager" id="software">
+        <header class="section-heading">
+          <div><span class="kicker">Descargas propias</span><h2>Dr. ClickSolutions</h2></div>
+          <span class="draft-state" data-software-state>Sin archivo publicado</span>
+        </header>
+        <div class="software-manager__grid">
+          <div class="software-manager__copy">
+            <strong>Diagnóstico gratuito de impresoras</strong>
+            <p>Sube aquí el ejecutable que podrán descargar los visitantes. El archivo reemplaza la versión anterior y actualiza automáticamente el botón de la web.</p>
+            <ul>
+              <li>Formato permitido: .exe</li>
+              <li>Tamaño máximo: 60 MB</li>
+              <li>La descarga pública se llamará DrClickSolutions.exe</li>
+            </ul>
+          </div>
+          <form class="software-upload" data-software-form>
+            <label>Archivo del programa<input name="executable" type="file" accept=".exe,application/vnd.microsoft.portable-executable,application/x-msdownload" required /></label>
+            <div class="software-file" data-software-file></div>
+            <button type="submit" class="button button--primary">Subir o reemplazar .exe</button>
+            <p class="privacy-note">El archivo queda en el proyecto local. Después debes subir los cambios a GitHub para publicarlo en Railway.</p>
+          </form>
         </div>
       </section>
 

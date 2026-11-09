@@ -1,127 +1,136 @@
 ---
-import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
+import software from '../../data/click-software.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const downloadUrl = software.drClick.download.startsWith('/') ? `${base}${software.drClick.download}` : software.drClick.download;
+const contactUrl = `${base}/contacto`;
 ---
 
-<article class="reset-product" id="reset-epson" aria-labelledby="reset-epson-title">
-  <div class="reset-product__visual" aria-hidden="true">
-    <div class="reset-window">
-      <div class="reset-window__top"><i></i><i></i><i></i><span>ResetEpson · ClickSolutions</span></div>
-      <div class="reset-window__body">
-        <span class="reset-icon"><Icon name="printer" size={32} /></span>
-        <div><small>UTILIDAD PARA WINDOWS</small><strong>Contador de tinta residual</strong></div>
-        <div class="reset-status"><i></i><span>Modelo verificado antes de activar</span></div>
+<div class="click-suite" aria-label="Software propio de ClickSolutions">
+  <article class="doctor-card" aria-labelledby="doctor-title">
+    <div class="doctor-card__top">
+      <span class="product-badge">Descarga gratuita</span>
+      <span class="product-version">v{software.drClick.version}</span>
+    </div>
+
+    <div class="doctor-visual" aria-hidden="true">
+      <span class="doctor-visual__pulse"></span>
+      <span class="doctor-visual__printer"><Icon name="printer" size={43} /></span>
+      <span class="doctor-visual__scan"><Icon name="search" size={22} /></span>
+    </div>
+
+    <div class="doctor-card__copy">
+      <span class="product-label">DIAGNÓSTICO PARA WINDOWS</span>
+      <h3 id="doctor-title">{software.drClick.name}</h3>
+      <p>{software.drClick.description}</p>
+    </div>
+
+    <div class="doctor-route" aria-label="Proceso de diagnóstico">
+      <span><b>1</b>Detecta</span><i></i><span><b>2</b>Diagnostica</span><i></i><span><b>3</b>Recomienda</span>
+    </div>
+
+    {software.drClick.available ? (
+      <a class="doctor-download" href={downloadUrl} download={software.drClick.filename} data-track="free_download" data-track-label="dr-clicksolutions">
+        <Icon name="download" size={18} />Descargar gratis
+      </a>
+    ) : (
+      <span class="doctor-download doctor-download--pending"><Icon name="clock" size={18} />Descarga próximamente</span>
+    )}
+    <small class="doctor-note">Primero diagnostica; usa ResetEpson solo cuando el programa lo recomiende.</small>
+  </article>
+
+  <article class="reset-card" id="reset-epson" aria-labelledby="reset-epson-title">
+    <header class="reset-card__header">
+      <div>
+        <span class="product-label">REINICIO DEL CONTADOR DE TINTA RESIDUAL</span>
+        <h2 id="reset-epson-title">{software.resetEpson.name}</h2>
+        <p>Activación privada vinculada a una PC, con compatibilidad confirmada antes del pago.</p>
       </div>
-    </div>
-  </div>
+    </header>
 
-  <div class="reset-product__copy">
-    <div class="reset-product__heading">
-      <span class="badge badge--success">Software propio</span>
-      <span class="badge">v1.0</span>
-    </div>
-    <h2 id="reset-epson-title">ResetEpson ClickSolutions</h2>
-    <p class="reset-product__lead">Herramienta para restablecer el contador de tinta residual en impresoras Epson EcoTank compatibles cuando aparece el aviso de servicio requerido.</p>
-
-    <div class="reset-flow" aria-label="Cómo funciona">
-      <span><b>1</b> Verificamos tu modelo</span>
-      <span><b>2</b> Recibes el programa</span>
-      <span><b>3</b> Activamos tu PC</span>
+    <div class="compatibility" aria-label="Modelos compatibles">
+      <Icon name="check" size={17} />
+      <p><strong>{software.resetEpson.compatibility}</strong> ({software.resetEpson.featuredModels.join(', ')} y muchos más).</p>
     </div>
 
-    <ul class="reset-facts">
-      <li><Icon name="monitor" size={17} /><span><strong>Requisitos</strong> Windows, conexión USB e impresora encendida.</span></li>
-      <li><Icon name="key" size={17} /><span><strong>Planes</strong> Desde 1 día hasta licencia permanente, según disponibilidad.</span></li>
-      <li><Icon name="lock" size={17} /><span><strong>Activación privada</strong> La licencia queda vinculada al equipo autorizado.</span></li>
-    </ul>
-
-    <div class="reset-product__footer">
-      <Button href="/contacto?servicio=licencias-software&producto=ResetEpson%20ClickSolutions" iconRight="arrow-right" track="license_interest" data-track-label="reset-epson">
-        Consultar compatibilidad y precio
-      </Button>
-      <p><Icon name="alert" size={16} />El reinicio del contador no reemplaza la revisión, limpieza o cambio físico de las almohadillas de tinta residual.</p>
+    <div class="reset-plans" aria-label="Planes de ResetEpson">
+      {software.resetEpson.plans.map((plan) => (
+        <a class:list={["reset-plan", { "reset-plan--recommended": plan.recommended }]} href={`${contactUrl}?servicio=licencias-software&producto=ResetEpson%20ClickSolutions&plan=${plan.id}`} data-track="license_interest" data-track-label={`reset-epson-${plan.id}`}>
+          {plan.recommended && <span class="reset-plan__badge">Más elegido</span>}
+          <span class="reset-plan__duration">{plan.duration}</span>
+          <h3>{plan.name}</h3>
+          <strong>{plan.price}</strong>
+          <p>{plan.description}</p>
+          <span class="reset-plan__action">Elegir plan <Icon name="arrow-right" size={15} /></span>
+        </a>
+      ))}
     </div>
-  </div>
-</article>
+
+    <footer class="reset-card__footer">
+      <span><Icon name="monitor" size={16} /><b>Requisitos:</b> Windows, USB e impresora encendida.</span>
+      <span><Icon name="lock" size={16} /><b>Activación:</b> licencia vinculada al equipo autorizado.</span>
+      <span class="reset-warning"><Icon name="alert" size={16} />El reset no reemplaza la revisión o limpieza física de las almohadillas.</span>
+    </footer>
+  </article>
+</div>
 
 <style>
-  .reset-product {
-    display: grid;
-    grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    padding: clamp(1.25rem, 3vw, 2.4rem);
-    border: 1px solid #b7e1f3;
-    border-radius: 24px;
-    background: linear-gradient(145deg, #f7fcff, #fff);
-    box-shadow: var(--shadow-md);
-  }
+  .click-suite { display: grid; grid-template-columns: minmax(270px, .72fr) minmax(0, 1.45fr); height: 100%; min-height: 0; gap: clamp(.9rem, 1.7vw, 1.3rem); }
+  .doctor-card, .reset-card { min-width: 0; overflow: hidden; border: 1px solid #b7e1f3; border-radius: 23px; box-shadow: 0 24px 60px -48px #0a4663; }
+  .doctor-card { position: relative; display: grid; grid-template-rows: auto minmax(125px, 1fr) auto auto auto auto; align-items:center; padding: clamp(1rem, 2vw, 1.35rem); background: radial-gradient(circle at 50% 28%, rgb(50 210 176 / .16), transparent 33%), linear-gradient(150deg, #041a31, #074f58); color: #fff; }
+  .doctor-card::before { content: ''; position: absolute; inset: 0; opacity: .32; background-image: linear-gradient(rgb(100 228 207 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(100 228 207 / .06) 1px, transparent 1px); background-size: 30px 30px; pointer-events: none; }
+  .doctor-card > * { position: relative; z-index: 1; }
+  .doctor-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .product-badge, .product-version { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; font-size: .62rem; font-weight: 800; }
+  .product-badge { padding: 6px 9px; border: 1px solid rgb(105 234 190 / .24); background: rgb(72 218 162 / .1); color: #81e9bd; }
+  .product-version { color: #7699aa; }
+  .doctor-visual { position: relative; display: grid; place-items: center; align-self: stretch; min-height: 125px; }
+  .doctor-visual__pulse { position: absolute; width: 112px; aspect-ratio: 1; border: 1px solid rgb(101 232 206 / .22); border-radius: 50%; box-shadow: 0 0 0 24px rgb(101 232 206 / .035), 0 0 0 48px rgb(101 232 206 / .02); animation: doctor-pulse 2.8s ease-in-out infinite; }
+  .doctor-visual__printer { display: grid; place-items: center; width: 78px; height: 78px; border: 1px solid rgb(101 232 206 / .25); border-radius: 24px; background: rgb(4 31 47 / .88); color: #67e6ce; box-shadow: 0 18px 40px -25px #000, 0 0 28px rgb(101 232 206 / .1); }
+  .doctor-visual__scan { position: absolute; right: calc(50% - 64px); bottom: 18%; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #16a9d0; color: #fff; box-shadow: 0 0 22px rgb(22 169 208 / .38); animation: doctor-scan 3s ease-in-out infinite; }
+  .doctor-card__copy { text-align: center; }
+  .product-label { color: #2faecb; font-size: .61rem; font-weight: 850; letter-spacing: .1em; }
+  .doctor-card .product-label { color: #69e6cf; }
+  .doctor-card h3 { margin: 5px 0 7px; color: #fff; font-size: clamp(1.35rem, 2vw, 1.8rem); }
+  .doctor-card__copy p { max-width: 38ch; margin: 0 auto; color: #9ab9c0; font-size: .72rem; line-height: 1.5; }
+  .doctor-route { display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center; gap: 6px; margin-block: 12px; color: #b7d1d3; font-size: .6rem; font-weight: 750; }
+  .doctor-route span { display: grid; justify-items: center; gap: 3px; }
+  .doctor-route b { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid rgb(103 230 206 / .23); border-radius: 8px; color: #69e6cf; }
+  .doctor-route i { height: 1px; background: linear-gradient(90deg, rgb(103 230 206 / .14), #69e6cf, rgb(103 230 206 / .14)); }
+  .doctor-download { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; background: linear-gradient(135deg, #53dda7, #22bdda); color: #032036; font-size: .77rem; font-weight: 850; text-decoration: none; }
+  .doctor-download--pending { border: 1px solid rgb(255 255 255 / .13); background: rgb(3 25 40 / .62); color: #9eb8c1; }
+  .doctor-note { margin-top: 8px; color: #7899a4; font-size: .58rem; line-height: 1.4; text-align: center; }
 
-  .reset-product > *,
-  .reset-window__body > * {
-    min-width: 0;
-  }
+  .reset-card { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; padding: clamp(1rem, 2vw, 1.45rem); background: linear-gradient(145deg, #fff, #f2fafc); }
+  .reset-card__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+  .reset-card__header h2 { margin: 5px 0 6px; color: var(--brand-ink); font-size: clamp(1.75rem, 2.8vw, 2.6rem); line-height: 1; letter-spacing: -.045em; }
+  .reset-card__header p { max-width: 65ch; margin: 0; color: var(--text-muted); font-size: .75rem; line-height: 1.45; }
+  .compatibility { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 9px 11px; border: 1px solid #b7e6d1; border-radius: 11px; background: #edfff5; color: #346b58; }
+  .compatibility :global(svg) { flex: 0 0 auto; color: #21815d; }
+  .compatibility p { margin: 0; font-size: .64rem; line-height: 1.4; }
+  .compatibility strong { color: #176a4d; }
+  .reset-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 10px; margin-block: clamp(.8rem, 2vh, 1.2rem); }
+  .reset-plan { position: relative; display: flex; flex-direction: column; min-width: 0; padding: clamp(.85rem, 1.6vw, 1.15rem); overflow: hidden; border: 1px solid #d4e4eb; border-radius: 17px; background: #fff; color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .reset-plan::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, transparent, #21afd4, transparent); }
+  .reset-plan:hover { transform: translateY(-4px); border-color: #62c7df; box-shadow: 0 22px 35px -29px #0d6f8a; }
+  .reset-plan--recommended { border-color: #39afd0; background: linear-gradient(155deg, #edfaff, #ecfff7); box-shadow: 0 20px 42px -34px #087999; }
+  .reset-plan__badge { position: absolute; top: 10px; right: 10px; padding: 5px 7px; border-radius: 999px; background: #087d9b; color: #fff; font-size: .52rem; font-weight: 850; text-transform: uppercase; }
+  .reset-plan__duration { color: #138ca7; font-size: .61rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+  .reset-plan h3 { margin: 7px 0 2px; color: var(--brand-ink); font-size: 1rem; }
+  .reset-plan > strong { color: #073d59; font-size: clamp(1.55rem, 2.5vw, 2.2rem); line-height: 1.05; }
+  .reset-plan > p { margin: 8px 0 12px; color: var(--text-muted); font-size: .67rem; line-height: 1.42; }
+  .reset-plan__action { display: flex; align-items: center; gap: 5px; margin-top: auto; color: #087d9b; font-size: .65rem; font-weight: 800; }
+  .reset-card__footer { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; padding-top: 10px; border-top: 1px solid #dce9ee; }
+  .reset-card__footer span { display: flex; align-items: flex-start; gap: 6px; color: #607581; font-size: .62rem; }
+  .reset-card__footer :global(svg) { flex: 0 0 auto; color: #179fc0; }
+  .reset-card__footer b { color: #17354a; }
+  .reset-card__footer .reset-warning { grid-column: 1 / -1; color: #81520d; }
+  .reset-card__footer .reset-warning :global(svg) { color: #b37417; }
 
-  .reset-product__visual { display: grid; place-items: center; min-height: 300px; padding: var(--space-5); overflow: hidden; border-radius: 19px; background: radial-gradient(circle at 80% 15%, rgb(0 170 231 / 0.26), transparent 35%), linear-gradient(145deg, #03152d, #075083); }
-  .reset-window { width: min(100%, 340px); border: 1px solid rgb(255 255 255 / 0.17); border-radius: 16px; background: rgb(2 15 32 / 0.77); box-shadow: 0 28px 50px rgb(0 0 0 / 0.3); transform: rotate(-1.5deg); }
-  .reset-window__top { display: flex; align-items: center; gap: 5px; min-height: 38px; padding-inline: 12px; border-bottom: 1px solid rgb(255 255 255 / 0.1); }
-  .reset-window__top i { width: 7px; height: 7px; border-radius: 50%; background: #3a6787; }
-  .reset-window__top i:first-child { background: #ff6b78; }
-  .reset-window__top i:nth-child(2) { background: #ffc45c; }
-  .reset-window__top i:nth-child(3) { background: #4bd59a; }
-  .reset-window__top span { margin-left: auto; color: #7898b3; font: 0.58rem ui-monospace, Consolas, monospace; }
-  .reset-window__body { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); padding: var(--space-6); }
-  .reset-icon { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 17px; background: rgb(0 197 244 / 0.13); color: #70e7ff; }
-  .reset-window__body small, .reset-window__body strong { display: block; }
-  .reset-window__body small { margin: 3px 0 5px; color: #6bdcff; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; }
-  .reset-window__body strong { color: #fff; font-size: var(--fs-sm); }
-  .reset-status { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: var(--space-4); padding: 10px 12px; border: 1px solid rgb(76 218 157 / 0.15); border-radius: 10px; background: rgb(76 218 157 / 0.07); color: #a8c6d9; font-size: var(--fs-xs); }
-  .reset-status i { width: 8px; height: 8px; border-radius: 50%; background: #4cda9d; box-shadow: 0 0 12px #4cda9d; }
-
-  .reset-product__heading { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
-  .reset-product__copy h2 { margin-bottom: var(--space-2); }
-  .reset-product__lead { color: var(--text-muted); }
-  .reset-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-block: var(--space-5); }
-  .reset-flow span { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 11px; background: var(--surface); color: var(--brand-ink); font-size: var(--fs-xs); font-weight: 650; }
-  .reset-flow b { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 auto; border-radius: 8px; background: var(--brand-navy); color: #fff; font-size: 0.68rem; }
-  .reset-facts { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
-  .reset-facts li { display: flex; gap: 9px; color: var(--text-muted); font-size: var(--fs-xs); }
-  .reset-facts :global(svg) { flex: 0 0 auto; margin-top: 1px; color: var(--brand-blue); }
-  .reset-facts strong { color: var(--brand-ink); }
-  .reset-product__footer { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
-  .reset-product__footer :global(.btn) { justify-self: start; }
-  .reset-product__footer p { display: flex; gap: 7px; margin: 0; color: #7a4a08; font-size: 0.7rem; }
-  .reset-product__footer p :global(svg) { flex: 0 0 auto; margin-top: 1px; }
-
-  @media (min-width: 601px) {
-    .reset-product { height: 100%; min-height: 0; gap: 1.4rem; padding: 1.1rem; }
-    .reset-product__visual { min-height: 0; height: 100%; padding: 1rem; }
-    .reset-window__body { padding: 1.15rem; }
-    .reset-product__copy { align-self: center; }
-    .reset-product__heading { margin-bottom: 6px; }
-    .reset-product__copy h2 { font-size: clamp(1.7rem, 2.7vw, 2.6rem); }
-    .reset-product__lead { margin-bottom: 0; font-size: var(--fs-sm); line-height: 1.5; }
-    .reset-flow { margin-block: 12px; }
-    .reset-flow span { padding: 8px; }
-    .reset-facts { gap: 6px; }
-    .reset-product__footer { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; margin-top: 14px; }
-    .reset-product__footer p { margin: 0; }
-  }
-
-  @media (max-width: 600px) {
-    .reset-product { grid-template-columns: minmax(0, 1fr); height: 100%; min-height: 0; padding: 1rem; overflow: hidden; }
-    .reset-product__visual { display: none; }
-    .reset-product__copy { align-self: center; }
-    .reset-product__heading { margin-bottom: 5px; }
-    .reset-product__copy h2 { margin-bottom: 5px; font-size: clamp(1.5rem, 8vw, 2rem); }
-    .reset-product__lead { margin: 0; font-size: var(--fs-xs); line-height: 1.45; }
-    .reset-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-block: 9px; }
-    .reset-flow span { align-items: flex-start; flex-direction: column; gap: 4px; padding: 6px; font-size: .64rem; }
-    .reset-facts { gap: 5px; }
-    .reset-product__footer { gap: 7px; margin-top: 9px; }
-    .reset-product__footer p { font-size: .62rem; }
-  }
-  @media (max-width: 520px) {
-    .reset-window__body { padding: var(--space-4); }
-    .reset-product__footer :global(.btn) { width: 100%; }
-  }
+  @keyframes doctor-pulse { 50% { transform: scale(1.08); opacity: .55; } }
+  @keyframes doctor-scan { 50% { transform: translate(5px, -8px) rotate(-8deg); } }
+  @media (max-width: 900px) { .click-suite { grid-template-columns: 1fr; height: auto; } .doctor-card { min-height: 520px; } .reset-card { min-height: 540px; } }
+  @media (max-width: 620px) { .doctor-card { min-height: 490px; } .reset-card__header { display: grid; } .reset-plans { grid-template-columns: 1fr; } .reset-card { min-height: auto; } .reset-card__footer { grid-template-columns: 1fr; } .reset-card__footer .reset-warning { grid-column: auto; } }
+  @media (prefers-reduced-motion: reduce) { .doctor-visual__pulse, .doctor-visual__scan { animation: none; } .reset-plan { transition: none; } }
 </style>

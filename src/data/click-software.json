@@ -1,0 +1,43 @@
+{
+  "resetEpson": {
+    "name": "ResetEpson ClickSolutions",
+    "version": "1.0",
+    "compatibility": "Compatible con más de 1450 modelos Epson EcoTank",
+    "featuredModels": ["L210", "L355", "L3110", "L3210", "L3250", "L5190", "L5290", "L5590"],
+    "plans": [
+      {
+        "id": "dia",
+        "name": "Plan 1 día",
+        "duration": "24 horas",
+        "price": "S/ 10",
+        "description": "Para resolver una necesidad puntual en una PC.",
+        "recommended": false
+      },
+      {
+        "id": "mensual",
+        "name": "Plan mensual",
+        "duration": "30 días",
+        "price": "S/ 15",
+        "description": "Para uso ocasional durante todo el mes.",
+        "recommended": true
+      },
+      {
+        "id": "permanente",
+        "name": "Para siempre",
+        "duration": "Licencia permanente",
+        "price": "S/ 120",
+        "description": "Para técnicos o negocios que trabajan desde una misma PC.",
+        "recommended": false
+      }
+    ]
+  },
+  "drClick": {
+    "name": "Dr. ClickSolutions",
+    "version": "1.0",
+    "description": "Diagnostica el estado de la impresora y te indica si necesitas utilizar ResetEpson.",
+    "download": "/downloads/DrClickSolutions.exe",
+    "filename": "DrClickSolutions.exe",
+    "available": false,
+    "size": 0
+  }
+}

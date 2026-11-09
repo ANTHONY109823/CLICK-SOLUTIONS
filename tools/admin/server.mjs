@@ -9,6 +9,8 @@ const host = '127.0.0.1';
 const port = Number(process.env.CLICKSOLUTIONS_ADMIN_PORT || 4323);
 const portfolioPath = join(root, 'src', 'data', 'web-projects.json');
 const portfolioImages = join(root, 'public', 'images', 'proyectos-web');
+const softwarePath = join(root, 'src', 'data', 'click-software.json');
+const downloadsPath = join(root, 'public', 'downloads');
 
 const json = (response, status, value) => {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -24,6 +26,17 @@ const readBody = async (request, maxBytes = 12_000_000) => {
     chunks.push(chunk);
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+};
+
+const readBinaryBody = async (request, maxBytes = 60_000_000) => {
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > maxBytes) throw new Error('El programa supera el límite permitido de 60 MB.');
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
 };
 
 const slugify = (value) => String(value || 'proyecto')
@@ -47,12 +60,31 @@ const server = createServer(async (request, response) => {
     response.setHeader('X-Frame-Options', 'DENY');
 
     if (url.pathname === '/api/config') {
-      const [business, quote, portfolio] = await Promise.all([
+      const [business, quote, portfolio, software] = await Promise.all([
         readFile(join(root, 'src', 'data', 'business.json'), 'utf8'),
         readFile(join(root, 'src', 'data', 'drone-quote.json'), 'utf8'),
         readFile(portfolioPath, 'utf8'),
+        readFile(softwarePath, 'utf8'),
       ]);
-      json(response, 200, { business: JSON.parse(business), quote: JSON.parse(quote), portfolio: JSON.parse(portfolio) });
+      json(response, 200, { business: JSON.parse(business), quote: JSON.parse(quote), portfolio: JSON.parse(portfolio), software: JSON.parse(software) });
+      return;
+    }
+
+    if (url.pathname === '/api/software/dr-click' && request.method === 'POST') {
+      const originalName = decodeURIComponent(String(request.headers['x-file-name'] || 'DrClickSolutions.exe'));
+      if (!originalName.toLowerCase().endsWith('.exe')) return json(response, 400, { error: 'Selecciona el archivo .exe de Dr. ClickSolutions.' });
+      const executable = await readBinaryBody(request);
+      if (!executable.length) return json(response, 400, { error: 'El archivo está vacío.' });
+
+      await mkdir(downloadsPath, { recursive: true });
+      await writeFile(join(downloadsPath, 'DrClickSolutions.exe'), executable);
+      const software = JSON.parse(await readFile(softwarePath, 'utf8'));
+      software.drClick.available = true;
+      software.drClick.filename = 'DrClickSolutions.exe';
+      software.drClick.download = '/downloads/DrClickSolutions.exe';
+      software.drClick.size = executable.length;
+      await writeFile(softwarePath, `${JSON.stringify(software, null, 2)}\n`, 'utf8');
+      json(response, 201, { software });
       return;
     }
 
