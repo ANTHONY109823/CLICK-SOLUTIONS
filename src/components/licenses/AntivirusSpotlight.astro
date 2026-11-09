@@ -49,10 +49,10 @@ const products = [
   .antivirus-card{--card-accent:#8fe45a;position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0;min-height:0;margin:0;padding:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--card-accent) 38%,transparent);border-radius:22px;background:#082638;box-shadow:0 20px 45px -34px var(--card-accent);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
   .antivirus-card[data-tone='cyan']{--card-accent:#55d7ee}.antivirus-card[data-tone='blue']{--card-accent:#7ca7ff}
   .antivirus-card:hover{z-index:2;transform:translateY(-5px) scale(1.015);border-color:var(--card-accent);box-shadow:0 28px 55px -30px var(--card-accent)}
-  .antivirus-card__media{position:relative;min-height:0;overflow:hidden;background:#071e30}
-  .antivirus-card__media img{width:100%;height:100%;min-height:0;object-fit:cover;transition:transform .65s cubic-bezier(.2,.8,.2,1),filter .35s ease}
-  .antivirus-card:hover .antivirus-card__media img{transform:scale(1.07);filter:saturate(1.12)}
-  .antivirus-card__media::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#071c2e 100%);pointer-events:none}
+  .antivirus-card__media{position:relative;display:grid;place-items:center;min-height:0;padding:clamp(.55rem,1.1vw,.85rem);overflow:hidden;background:radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--card-accent) 17%,transparent),transparent 58%),linear-gradient(180deg,#09283a,#071e30)}
+  .antivirus-card__media img{position:relative;z-index:1;display:block;width:100%;height:100%;min-height:0;object-fit:contain;filter:drop-shadow(0 18px 28px rgb(0 10 20/.3));transition:transform .65s cubic-bezier(.2,.8,.2,1),filter .35s ease}
+  .antivirus-card:hover .antivirus-card__media img{transform:scale(1.025);filter:saturate(1.08) drop-shadow(0 20px 34px rgb(0 10 20/.38))}
+  .antivirus-card__media::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 82%,rgb(7 28 46/.32));pointer-events:none}
   .antivirus-card__glow{position:absolute;right:-15%;bottom:-30%;width:58%;aspect-ratio:1;border:1px solid color-mix(in srgb,var(--card-accent) 50%,transparent);border-radius:50%;box-shadow:0 0 0 30px color-mix(in srgb,var(--card-accent) 7%,transparent),0 0 45px color-mix(in srgb,var(--card-accent) 18%,transparent);animation:security-orbit 8s linear infinite}
   .antivirus-card__footer{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;background:linear-gradient(135deg,#082337,#0b343e)}
   .antivirus-card h3{margin:0;color:#fff;font-size:clamp(1.05rem,1.7vw,1.45rem);line-height:1.05;letter-spacing:-.02em}
