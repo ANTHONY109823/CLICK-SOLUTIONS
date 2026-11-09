@@ -15,20 +15,15 @@ const { products } = Astro.props;
 
 const unique = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b, 'es'));
 const categories = unique(products.map((p) => p.category));
-const hasOpenSourceProducts = products.some((p) => p.productModel === 'open-source-service');
 const productGroups = [
   {
     id: 'commercial',
-    eyebrow: 'Licencias originales',
-    title: 'Software con costo',
-    description: 'Cotizamos la edición correcta antes de activar.',
+    title: 'Licencias originales',
     products: products.filter((product) => product.productModel !== 'open-source-service'),
   },
   {
     id: 'free',
-    eyebrow: 'Descargas oficiales',
     title: 'Software gratuito',
-    description: 'Código abierto para descargar desde su fuente oficial.',
     products: products.filter((product) => product.productModel === 'open-source-service'),
   },
 ];
@@ -68,7 +63,7 @@ const productHref = (p: LicenseProduct) =>
       <aside class="catalog-sidebar" aria-label="Buscar y filtrar software">
         <div class="filters" role="search">
           <div class="filter filter--search">
-            <label for="lc-search">Buscar software</label>
+            <label class="visually-hidden" for="lc-search">Buscar software</label>
             <div class="search-input">
               <Icon name="search" size={18} />
               <input id="lc-search" type="search" placeholder="Nombre o fabricante" autocomplete="off" data-filter-search />
@@ -77,40 +72,25 @@ const productHref = (p: LicenseProduct) =>
         </div>
 
         <div class="category-panel">
-          <p class="category-panel__label">Filtrar por uso</p>
           <div class="category-bar" aria-label="Filtrar por categoría">
-            <button type="button" class="category-chip is-active" data-category-button="" aria-pressed="true"><span>Todo el software</span><small>{products.length}</small></button>
+            <button type="button" class="category-chip is-active" data-category-button="" aria-pressed="true"><span>Todo el software</span></button>
             {categories.map((category) => (
-              <button type="button" class="category-chip" data-category-button={category} aria-pressed="false"><span>{category}</span><small>{products.filter((product) => product.category === category).length}</small></button>
+              <button type="button" class="category-chip" data-category-button={category} aria-pressed="false"><span>{category}</span></button>
             ))}
           </div>
         </div>
-
-        <div class="catalog-summary">
-          <strong data-results-count>{products.length} productos</strong>
-          <span>Resultados visibles</span>
-        </div>
+        <strong class="visually-hidden" data-results-count>{products.length} productos</strong>
       </aside>
 
       <div class="catalog-content">
-        <div class="catalog-note">
-          <Icon name="info" size={17} />
-          <p>{hasOpenSourceProducts
-            ? 'Licencias comerciales a la izquierda. Descargas gratuitas y oficiales a la derecha.'
-            : 'La disponibilidad comercial se valida antes de confirmar cada pedido.'}</p>
-        </div>
-
         <div class="catalog-groups">
           {productGroups.map((group) => (
             <section class={`catalog-group catalog-group--${group.id}`} data-catalog-group data-carousel>
               <header class="group-heading">
                 <div>
-                  <span>{group.eyebrow}</span>
                   <h3>{group.title}</h3>
-                  <p>{group.description}</p>
                 </div>
                 <div class="catalog-controls" aria-label={`Recorrer ${group.title.toLowerCase()}`}>
-                  <span aria-live="polite" data-carousel-status>1 de {group.products.length}</span>
                   <button type="button" aria-label="Producto anterior" data-carousel-prev><Icon name="arrow-right" size={16} /></button>
                   <button type="button" aria-label="Producto siguiente" data-carousel-next><Icon name="arrow-right" size={16} /></button>
                 </div>
@@ -134,16 +114,13 @@ const productHref = (p: LicenseProduct) =>
                         <span class="product__brand" aria-hidden="true">{p.manufacturer.slice(0, 2).toUpperCase()}</span>
                       )}
                       <div class="product__badges">
-                        {p.productModel === 'open-source-service' && <span class="badge badge--free">Gratis</span>}
-                        <span class={`badge ${availabilityClass[p.availability]}`}>{availabilityLabels[p.availability]}</span>
+                        {p.productModel === 'open-source-service'
+                          ? <span class="badge badge--free">Gratis</span>
+                          : <span class={`badge ${availabilityClass[p.availability]}`}>{availabilityLabels[p.availability]}</span>}
                       </div>
                     </div>
 
-                    <p class="product__maker">{p.category}</p>
                     <h4 class="product__name">{p.name}</h4>
-                    <p class="product__manufacturer">por {p.manufacturer}</p>
-                    {p.officialUrl && <a class="product__official" href={p.officialUrl} target="_blank" rel="noopener noreferrer">Fuente oficial <span aria-hidden="true">↗</span></a>}
-                    <p class="product__desc">{p.description}</p>
 
                     <div class="product__footer">
                       <p class="product__price">{p.priceLabel ?? formatPrice(p.price)}</p>
@@ -177,6 +154,7 @@ const productHref = (p: LicenseProduct) =>
 
 <style>
   .catalog { min-width: 0; width: 100%; max-width: 100%; overflow: clip; }
+  .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
   .catalog-note {
     display: flex;
@@ -685,6 +663,7 @@ const productHref = (p: LicenseProduct) =>
   .catalog {
     display: grid;
     grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: 14px;
     height: 100%;
     min-height: 0;
@@ -804,8 +783,8 @@ const productHref = (p: LicenseProduct) =>
   .catalog-content {
     position: relative;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: 8px;
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0;
     min-width: 0;
     min-height: 0;
   }
@@ -852,10 +831,7 @@ const productHref = (p: LicenseProduct) =>
   }
 
   .group-heading > div:first-child { min-width: 0; }
-  .group-heading span:not([data-carousel-status]) { color: #087fad; font-size: .61rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-  .catalog-group--free .group-heading span:not([data-carousel-status]) { color: #168052; }
-  .group-heading h3 { margin: 1px 0 2px; color: var(--brand-ink); font-size: 1.1rem; line-height: 1.05; }
-  .group-heading p { margin: 0; overflow: hidden; color: var(--text-muted); font-size: .65rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+  .group-heading h3 { margin: 0; color: var(--brand-ink); font-size: 1.25rem; line-height: 1.05; }
 
   .catalog-group .catalog-controls { flex: 0 0 auto; gap: 5px; }
   .catalog-group .catalog-controls > span { min-width: 42px; font-size: .61rem; }
@@ -891,11 +867,7 @@ const productHref = (p: LicenseProduct) =>
   .catalog-group .product__brand { width: 42px; height: 42px; border-radius: 12px; font-size: .76rem; }
   .catalog-group .product__badges { gap: 3px; }
   .catalog-group .product__badges .badge { padding: 3px 5px; font-size: .53rem; }
-  .catalog-group .product__maker { margin: 8px 0 2px; font-size: .57rem; }
-  .catalog-group .product__name { margin: 0; font-size: clamp(.95rem, 1.25vw, 1.13rem); line-height: 1.05; }
-  .catalog-group .product__manufacturer { margin: 3px 0 4px; font-size: .64rem; }
-  .catalog-group .product__official { margin: 0 0 4px; font-size: .62rem; }
-  .catalog-group .product__desc { margin: 4px 0 6px; font-size: .67rem; line-height: 1.38; -webkit-line-clamp: 2; }
+  .catalog-group .product__name { margin: 18px 0 0; font-size: clamp(1.05rem, 1.45vw, 1.3rem); line-height: 1.05; }
   .catalog-group .product__footer { gap: 5px; padding-top: 7px; }
   .catalog-group .product__price { max-width: 10ch; font-size: .64rem; }
   .catalog-group .product__footer :global(.btn) { min-height: 32px; padding-inline: 8px; font-size: .62rem; }
@@ -903,7 +875,7 @@ const productHref = (p: LicenseProduct) =>
 
   .catalog-content > .no-results {
     position: absolute;
-    inset: 42px 0 0;
+    inset: 0;
     z-index: 4;
     display: grid;
     place-items: center;

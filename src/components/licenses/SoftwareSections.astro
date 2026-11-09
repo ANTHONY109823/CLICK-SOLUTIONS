@@ -22,9 +22,8 @@ const catalogProducts = products.filter((product) => product.category !== 'Segur
 
   <section class="software-sheet software-sheet--catalog" id="licencias" aria-labelledby="catalog-title">
     <div class="container software-sheet__inner">
-      <header class="software-sheet__heading">
-        <div><span>02 · LICENCIAS Y DESCARGAS</span><h2 id="catalog-title">Originales cuando se requiere. Gratuitas cuando existe una alternativa.</h2></div>
-        <p>Compara software comercial y herramientas de código abierto. La modalidad, la edición y el costo se muestran antes de continuar.</p>
+      <header class="software-sheet__heading software-sheet__heading--solo">
+        <div><span>02 · LICENCIAS Y DESCARGAS</span><h2 id="catalog-title">Software original y gratuito</h2></div>
       </header>
       <LicenseCatalog products={catalogProducts} />
     </div>
