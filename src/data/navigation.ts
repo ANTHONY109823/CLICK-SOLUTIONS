@@ -20,7 +20,7 @@ export const companyNav: NavLink[] = [
 export const helpNav: NavLink[] = [
   { label: 'Centro de ayuda', href: '/ayuda' },
   { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
-  { label: 'Solicitar cotización', href: '/contacto' },
+  { label: 'Solicitar cotización', href: '/contacto?mensaje=Quiero%20solicitar%20una%20cotizaci%C3%B3n' },
 ];
 
 export const legalNav: NavLink[] = [

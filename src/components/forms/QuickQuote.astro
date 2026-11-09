@@ -24,7 +24,7 @@ const email = site.contact.email ?? '';
 
     <label class="quick-quote__message">
       <span>Cuéntanos tu idea</span>
-      <textarea name="message" rows="4" placeholder="Ejemplo: necesito una web para mostrar y vender mis productos." required minlength="10" maxlength="800"></textarea>
+      <textarea name="message" rows="4" placeholder="Ejemplo: necesito una web para mostrar y vender mis productos" required minlength="10" maxlength="800"></textarea>
     </label>
   </div>
 
@@ -41,33 +41,33 @@ const email = site.contact.email ?? '';
     </button>
   </div>
 
-  <p class="quick-quote__note">Sin pago ni compromiso. Revisamos tu solicitud y te respondemos directamente.</p>
 </form>
 
 <style>
-  .quick-quote{position:relative;padding:clamp(1.15rem,2.2vw,1.8rem);overflow:hidden;border:1px solid rgb(93 205 241/.28);border-radius:24px;background:linear-gradient(145deg,rgb(9 38 58/.96),rgb(5 27 45/.98));box-shadow:0 28px 70px -42px #000}
-  .quick-quote::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#54d9ef,#37a7ff,transparent);animation:quote-line 4s linear infinite}
+  .quick-quote{position:relative;padding:clamp(1.15rem,2.2vw,1.8rem);overflow:hidden;border:1px solid rgb(93 205 241/.28);border-radius:24px;background:linear-gradient(145deg,rgb(9 38 58/.96),rgb(5 27 45/.98));box-shadow:0 28px 70px -42px #000;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s ease,border-color .45s ease}
+  .quick-quote:hover{transform:translateY(-3px) scale(1.006);border-color:rgb(93 220 241/.5);box-shadow:0 34px 78px -40px #000,0 0 32px rgb(75 210 239/.08)}
+  .quick-quote::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent 0%,#54d9ef 30%,#fff 50%,#37a7ff 70%,transparent 100%);background-size:220% 100%;animation:quote-line 4.5s linear infinite}
   .quick-quote__fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.8rem,1.3vw,1.1rem)}
-  .quick-quote label{display:grid;gap:.45rem;color:#dceaf4;font-size:.78rem;font-weight:700;letter-spacing:.01em}
+  .quick-quote label{display:grid;gap:.45rem;color:#edf8fc;font-size:.88rem;font-weight:750;letter-spacing:.01em}
   .quick-quote__message{grid-column:1/-1}
-  .quick-quote input,.quick-quote select,.quick-quote textarea{width:100%;min-height:48px;padding:.8rem .95rem;border:1px solid rgb(157 202 226/.22);border-radius:12px;outline:0;background:rgb(255 255 255/.055);color:#fff;font:inherit;font-size:1rem;font-weight:500;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+  .quick-quote input,.quick-quote select,.quick-quote textarea{width:100%;min-height:48px;padding:.8rem .95rem;border:1px solid rgb(157 202 226/.22);border-radius:12px;outline:0;background:rgb(255 255 255/.055);color:#fff;font:inherit;font-size:1rem;font-weight:500;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease,transform .25s ease}
   .quick-quote select{color-scheme:dark}
   .quick-quote textarea{min-height:108px;resize:none;line-height:1.5}
   .quick-quote input::placeholder,.quick-quote textarea::placeholder{color:#86a2b6}
-  .quick-quote input:focus,.quick-quote select:focus,.quick-quote textarea:focus{border-color:#55d7ee;background:rgb(255 255 255/.08);box-shadow:0 0 0 3px rgb(85 215 238/.12)}
+  .quick-quote input:focus,.quick-quote select:focus,.quick-quote textarea:focus{transform:scale(1.008);border-color:#55d7ee;background:rgb(255 255 255/.08);box-shadow:0 0 0 3px rgb(85 215 238/.12),0 0 24px rgb(85 215 238/.08)}
   .quick-quote__actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:1rem}
   .quote-button{display:flex;align-items:center;justify-content:center;gap:.65rem;min-height:52px;padding:0 1rem;border:1px solid transparent;border-radius:13px;font:inherit;font-weight:800;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
   .quote-button span{min-width:0}
   .quote-button :global(svg:last-child){margin-left:auto;transition:transform .2s ease}
   .quote-button:hover{transform:translateY(-2px)}
   .quote-button:hover :global(svg:last-child){transform:translateX(3px)}
-  .quote-button--whatsapp{background:linear-gradient(135deg,#39e58c,#20c876);color:#032719;box-shadow:0 14px 30px -20px #2bdd85}
+  .quote-button--whatsapp{background:linear-gradient(135deg,#39e58c,#20c876);background-size:180% 100%;color:#032719;box-shadow:0 14px 30px -20px #2bdd85;animation:whatsapp-glow 3.8s ease-in-out infinite}
   .quote-button--email{border-color:rgb(83 204 240/.35);background:rgb(22 91 126/.32);color:#f3fbff}
   .quote-button--email:hover{border-color:#55d7ee;box-shadow:0 14px 30px -22px #55d7ee}
-  .quick-quote__note{margin:.8rem 0 0;color:#8ea9ba;font-size:.72rem;text-align:center}
-  @keyframes quote-line{50%{filter:brightness(1.55)}}
+  @keyframes quote-line{to{background-position:-220% 0}}
+  @keyframes whatsapp-glow{50%{background-position:100% 0;box-shadow:0 16px 36px -16px rgb(45 221 133/.65)}}
   @media(max-width:640px){.quick-quote__fields,.quick-quote__actions{grid-template-columns:1fr}.quick-quote__message{grid-column:auto}.quick-quote textarea{min-height:96px}}
-  @media(prefers-reduced-motion:reduce){.quick-quote::before{animation:none}}
+  @media(prefers-reduced-motion:reduce){.quick-quote,.quick-quote input,.quick-quote select,.quick-quote textarea{transition:none}.quick-quote::before,.quote-button--whatsapp{animation:none}}
 </style>
 
 <script>
@@ -78,17 +78,42 @@ const email = site.contact.email ?? '';
     const service = form.elements.namedItem('service') as HTMLSelectElement;
     const message = form.elements.namedItem('message') as HTMLTextAreaElement;
 
+    const serviceMessages: Record<string, string> = {
+      drones: 'Quiero cotizar un servicio de fotografía, video o trabajo con drones',
+      'desarrollo-web': 'Quiero cotizar un proyecto de desarrollo web',
+      'licencias-software': 'Quiero consultar por software o una licencia original',
+      otro: 'Quiero solicitar una cotización',
+    };
+    const productMessages: Record<string, string> = {
+      'armado-fpv': 'Quiero cotizar el armado de un dron FPV personalizado',
+      'ESET HOME Security': 'Quiero consultar por una licencia original de ESET HOME Security',
+      'Panda Dome': 'Quiero consultar por una licencia original de Panda Dome',
+      'Bitdefender Total Security': 'Quiero consultar por una licencia original de Bitdefender Total Security',
+    };
+    let autofilled = false;
+
+    const fillMessage = (value: string) => {
+      if (!value) return;
+      message.value = value;
+      autofilled = true;
+    };
+
     const hydrateFromUrl = () => {
       const params = new URLSearchParams(location.search);
       const requested = params.get('servicio');
       if (requested && [...service.options].some((option) => option.value === requested)) service.value = requested;
       const product = params.get('producto')?.slice(0, 120);
-      if (product && !message.value) message.value = `Quiero información sobre ${product}.`;
+      const plan = params.get('plan')?.slice(0, 80);
+      const preset = params.get('mensaje')?.slice(0, 300);
+      if (preset) fillMessage(preset);
+      else if (product) fillMessage(productMessages[product] ?? `Quiero información sobre ${product.replaceAll('-', ' ')}`);
+      else if (plan) fillMessage(`Quiero cotizar el plan ${plan.replaceAll('-', ' ')}`);
+      else if (requested) fillMessage(serviceMessages[requested] ?? 'Quiero solicitar una cotización');
     };
 
     const summary = () => {
       const label = service.selectedOptions[0]?.textContent?.trim() ?? service.value;
-      return `Hola ClickSolutions, soy ${name.value.trim()}.\n\nServicio: ${label}\nNecesito: ${message.value.trim()}`;
+      return `Hola ClickSolutions, soy ${name.value.trim()}\n\nServicio: ${label}\nNecesito: ${message.value.trim()}`;
     };
 
     form.querySelectorAll<HTMLButtonElement>('[data-send]').forEach((button) => {
@@ -106,5 +131,9 @@ const email = site.contact.email ?? '';
     });
 
     hydrateFromUrl();
+    service.addEventListener('change', () => {
+      if (!message.value.trim() || autofilled) fillMessage(serviceMessages[service.value] ?? 'Quiero solicitar una cotización');
+    });
+    message.addEventListener('input', () => { autofilled = false; });
   });
 </script>

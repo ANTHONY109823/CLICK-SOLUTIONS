@@ -12,9 +12,8 @@ import Icon from '../components/ui/Icon.astro';
     <div class="quote-page__glow" aria-hidden="true"></div>
     <div class="container quote-page__layout">
       <div class="quote-page__intro">
-        <p class="quote-page__eyebrow"><span></span>COTIZACIÓN DIRECTA</p>
-        <h1>Cuéntanos qué necesitas.</h1>
-        <p class="quote-page__lead">Elige un servicio, resume tu idea y envíala por el canal que prefieras.</p>
+        <h1>Cuéntanos qué necesitas</h1>
+        <p class="quote-page__lead">Elige un servicio, resume tu idea y envíala por el canal que prefieras</p>
 
         <div class="quote-page__services" aria-label="Servicios disponibles">
           <span><Icon name="drone" size={18} />Drones</span>
@@ -22,16 +21,11 @@ import Icon from '../components/ui/Icon.astro';
           <span><Icon name="key" size={18} />Software</span>
         </div>
 
-        <div class="quote-page__signal">
-          <span class="quote-page__signal-icon"><Icon name="check" size={20} /></span>
-          <p><strong>Respuesta personalizada</strong><small>Revisamos cada solicitud antes de confirmar alcance y precio.</small></p>
-        </div>
       </div>
 
       <div class="quote-page__form">
         <div class="quote-page__form-heading">
-          <span>01</span>
-          <div><p>EMPECEMOS</p><h2>Solicita tu cotización</h2></div>
+          <h2>Solicita tu cotización</h2>
         </div>
         <QuickQuote />
       </div>
@@ -41,25 +35,30 @@ import Icon from '../components/ui/Icon.astro';
 
 <style>
   .quote-page{position:relative;display:grid;align-items:center;min-height:calc(100svh - var(--header-h) - 88px);padding:clamp(1.25rem,3.5vw,3rem) 0;overflow:hidden;background:linear-gradient(115deg,#031b31 0%,#062d46 48%,#075253 100%);color:#fff}
-  .quote-page::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgb(89 188 230/.055) 1px,transparent 1px),linear-gradient(90deg,rgb(89 188 230/.055) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(90deg,#000,transparent 85%)}
-  .quote-page__glow{position:absolute;right:-12vw;bottom:-32vw;width:62vw;aspect-ratio:1;border:1px solid rgb(66 200 231/.18);border-radius:50%;box-shadow:0 0 0 8vw rgb(39 185 204/.035),0 0 0 16vw rgb(39 185 204/.025)}
+  .quote-page::before{content:'';position:absolute;inset:-56px;background-image:linear-gradient(rgb(89 188 230/.055) 1px,transparent 1px),linear-gradient(90deg,rgb(89 188 230/.055) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(90deg,#000,transparent 85%);animation:grid-drift 18s linear infinite}
+  .quote-page::after{content:'';position:absolute;top:0;bottom:0;left:-24%;width:24%;background:linear-gradient(90deg,transparent,rgb(94 226 245/.12),transparent);filter:blur(2px);transform:skewX(-16deg);animation:page-scan 9s ease-in-out infinite}
+  .quote-page__glow{position:absolute;right:-12vw;bottom:-32vw;width:62vw;aspect-ratio:1;border:1px solid transparent;border-top-color:rgb(66 200 231/.32);border-right-color:rgb(66 200 231/.09);border-radius:50%;box-shadow:0 0 0 8vw rgb(39 185 204/.035),0 0 0 16vw rgb(39 185 204/.025);animation:orbit-main 26s linear infinite}
+  .quote-page__glow::before,.quote-page__glow::after{content:'';position:absolute;border-radius:50%;pointer-events:none}
+  .quote-page__glow::before{inset:12%;border:1px dashed rgb(79 221 234/.2);animation:orbit-reverse 18s linear infinite}
+  .quote-page__glow::after{inset:27%;border:1px solid transparent;border-bottom-color:rgb(91 238 200/.32);border-left-color:rgb(91 238 200/.1);animation:orbit-main 12s linear infinite}
   .quote-page__layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr);align-items:center;gap:clamp(2rem,5vw,5.5rem)}
-  .quote-page__intro{max-width:540px}
-  .quote-page__eyebrow{display:flex;align-items:center;gap:.7rem;margin:0 0 1rem;color:#62e0ee;font-size:.78rem;font-weight:800;letter-spacing:.12em}
-  .quote-page__eyebrow span{width:28px;height:2px;background:#62e0ee;box-shadow:0 0 14px #62e0ee}
-  .quote-page h1{max-width:9ch;margin:0;color:#fff;font-size:clamp(3.1rem,5.5vw,5.5rem);line-height:.93;letter-spacing:-.06em}
+  .quote-page__intro{max-width:540px;animation:intro-breathe 7s ease-in-out infinite}
+  .quote-page h1{max-width:9ch;margin:0;color:#fff;font-size:clamp(3.1rem,5.5vw,5.5rem);line-height:.93;letter-spacing:-.06em;text-shadow:0 0 35px rgb(79 214 240/.08)}
   .quote-page__lead{max-width:30rem;margin:1.25rem 0 1.4rem;color:#b7ccda;font-size:clamp(1rem,1.4vw,1.2rem);line-height:1.55}
   .quote-page__services{display:flex;flex-wrap:wrap;gap:.55rem}
-  .quote-page__services span{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem .75rem;border:1px solid rgb(97 205 235/.22);border-radius:999px;background:rgb(3 25 43/.42);color:#e4f5fb;font-size:.78rem;font-weight:700}
+  .quote-page__services span{display:inline-flex;align-items:center;gap:.45rem;padding:.62rem .82rem;border:1px solid rgb(97 205 235/.22);border-radius:999px;background:rgb(3 25 43/.42);color:#e4f5fb;font-size:.86rem;font-weight:700;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+  .quote-page__services span:hover{transform:translateY(-2px) scale(1.035);border-color:rgb(97 220 235/.5);box-shadow:0 0 22px rgb(79 214 240/.1)}
   .quote-page__services :global(svg){color:#5bd9ef}
-  .quote-page__signal{display:flex;align-items:center;gap:.8rem;margin-top:1.35rem;padding-top:1.1rem;border-top:1px solid rgb(136 196 220/.16)}
-  .quote-page__signal-icon{display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:rgb(66 219 156/.12);color:#4bdd9e}
-  .quote-page__signal p,.quote-page__signal small{display:block;margin:0}
-  .quote-page__signal strong{font-size:.85rem}.quote-page__signal small{margin-top:2px;color:#91aabd;font-size:.72rem}
-  .quote-page__form-heading{display:flex;align-items:flex-end;gap:.9rem;margin:0 0 .75rem;padding-inline:.3rem}
-  .quote-page__form-heading>span{color:rgb(105 209 235/.34);font-size:2.5rem;font-weight:800;line-height:1}
-  .quote-page__form-heading p{margin:0 0 .15rem;color:#5ddcee;font-size:.7rem;font-weight:800;letter-spacing:.13em}
+  .quote-page__form{animation:form-float 6s ease-in-out infinite}
+  .quote-page__form-heading{display:flex;align-items:flex-end;margin:0 0 .75rem;padding-inline:.3rem}
   .quote-page__form-heading h2{margin:0;color:#fff;font-size:clamp(1.4rem,2vw,2rem)}
-  @media(max-width:980px){.quote-page{min-height:auto}.quote-page__layout{grid-template-columns:1fr;gap:1.6rem}.quote-page__intro{max-width:none}.quote-page h1{max-width:12ch;font-size:clamp(2.8rem,9vw,4.5rem)}.quote-page__lead{margin-block:.9rem}.quote-page__signal{display:none}}
-  @media(max-width:640px){.quote-page{padding:1.2rem 0 1.5rem}.quote-page__services{display:none}.quote-page__form-heading{margin-bottom:.55rem}.quote-page__form-heading>span{font-size:2rem}}
+  @keyframes grid-drift{to{transform:translate(56px,56px)}}
+  @keyframes page-scan{0%,12%{left:-24%;opacity:0}25%,70%{opacity:1}88%,100%{left:112%;opacity:0}}
+  @keyframes orbit-main{to{transform:rotate(360deg)}}
+  @keyframes orbit-reverse{to{transform:rotate(-360deg)}}
+  @keyframes intro-breathe{50%{transform:scale(1.012)}}
+  @keyframes form-float{50%{transform:translateY(-5px)}}
+  @media(max-width:980px){.quote-page{min-height:auto}.quote-page__layout{grid-template-columns:1fr;gap:1.6rem}.quote-page__intro{max-width:none}.quote-page h1{max-width:12ch;font-size:clamp(2.8rem,9vw,4.5rem)}.quote-page__lead{margin-block:.9rem}}
+  @media(max-width:640px){.quote-page{padding:1.2rem 0 1.5rem}.quote-page__services{display:none}.quote-page__form-heading{margin-bottom:.55rem}}
+  @media(prefers-reduced-motion:reduce){.quote-page::before,.quote-page::after,.quote-page__glow,.quote-page__glow::before,.quote-page__glow::after,.quote-page__intro,.quote-page__form{animation:none}}
 </style>
