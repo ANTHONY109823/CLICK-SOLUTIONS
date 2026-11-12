@@ -51,9 +51,9 @@ export interface ContactPayload {
   consent: boolean;
 }
 
-export type ContactErrors = Partial<Record<keyof ContactPayload, string>>;
+type ContactErrors = Partial<Record<keyof ContactPayload, string>>;
 
-export type ValidationResult =
+type ValidationResult =
   | { ok: true; data: ContactPayload }
   | { ok: false; errors: ContactErrors };
 

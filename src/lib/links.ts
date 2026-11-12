@@ -25,18 +25,6 @@ export function whatsappUrl(message?: string): string | null {
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }
 
-export function mailtoUrl(subject?: string): string | null {
-  const email = site.contact.email;
-  if (!email) return null;
-  return subject ? `mailto:${email}?subject=${encodeURIComponent(subject)}` : `mailto:${email}`;
-}
-
-export function telUrl(): string | null {
-  const phone = site.contact.phone;
-  if (!phone) return null;
-  return `tel:${phone.replace(/[^\d+]/g, '')}`;
-}
-
 /** Redes sociales configuradas, en orden estable. */
 export function socialLinks(): { network: string; label: string; url: string }[] {
   const labels: Record<string, string> = {

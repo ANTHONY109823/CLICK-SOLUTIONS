@@ -9,8 +9,8 @@
  * - `demo: true` = ejemplo de estructura; solo se ve en desarrollo y con etiqueta “Demostración”.
  */
 
-export type Availability = 'disponible' | 'bajo-pedido' | 'fase-temprana' | 'en-desarrollo' | 'agotado';
-export type ProductModel = 'commercial-license' | 'open-source-service';
+type Availability = 'disponible' | 'bajo-pedido' | 'fase-temprana' | 'en-desarrollo' | 'agotado';
+type ProductModel = 'commercial-license' | 'open-source-service';
 
 export interface LicenseProduct {
   id: string;
@@ -41,14 +41,6 @@ export interface LicenseProduct {
   visible: boolean;
   demo?: boolean;
 }
-
-export const availabilityLabels: Record<Availability, string> = {
-  disponible: 'Disponible',
-  'bajo-pedido': 'Bajo pedido',
-  'fase-temprana': 'Fase temprana',
-  'en-desarrollo': 'En desarrollo',
-  agotado: 'No disponible',
-};
 
 export const licenses: LicenseProduct[] = [
   {

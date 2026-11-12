@@ -104,18 +104,6 @@ ol {
 }
 
 /* ---------- Utilidades ---------- */
-.visually-hidden {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .skip-link {
   position: absolute;
   left: var(--space-4);
@@ -177,11 +165,6 @@ fieldset {
   margin-bottom: var(--space-10);
 }
 
-.section-header--center {
-  margin-inline: auto;
-  text-align: center;
-}
-
 .section-header p {
   color: var(--text-muted);
   font-size: var(--fs-md);
@@ -226,7 +209,6 @@ fieldset {
   gap: var(--space-6);
 }
 
-.grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
 .grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
 .grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
 
@@ -297,26 +279,6 @@ fieldset {
   color: var(--brand-navy);
 }
 
-.check-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-4);
-  display: grid;
-  gap: var(--space-2);
-}
-
-.check-list li {
-  display: flex;
-  gap: var(--space-2);
-  align-items: flex-start;
-}
-
-.check-list svg {
-  flex-shrink: 0;
-  margin-top: 3px;
-  color: var(--brand-cyan);
-}
-
 /* ---------- Insignias y avisos ---------- */
 .badge {
   display: inline-flex;
@@ -333,10 +295,6 @@ fieldset {
 }
 
 .badge--demo { background: var(--warning-bg); color: var(--warning); border: 1px dashed var(--warning); }
-.badge--success { background: var(--success-bg); color: var(--success); }
-.badge--warning { background: var(--warning-bg); color: var(--warning); }
-.badge--danger { background: var(--danger-bg); color: var(--danger); }
-
 .notice {
   display: flex;
   gap: var(--space-3);
@@ -357,8 +315,6 @@ fieldset {
   margin: 0;
 }
 
-.notice--info { background: var(--info-bg); border-color: #b9e6f8; }
-.notice--info svg { color: var(--link); }
 .notice--warning { background: var(--warning-bg); border-color: #fcd9a4; }
 .notice--warning svg { color: var(--warning); }
 

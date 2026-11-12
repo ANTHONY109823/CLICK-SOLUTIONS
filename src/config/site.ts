@@ -67,8 +67,6 @@ export const site = {
   showDemoContent: import.meta.env.DEV,
 };
 
-export type SocialNetwork = keyof typeof site.social;
-
 /** Lista de datos pendientes, mostrada como aviso solo en desarrollo. */
 export function getMissingData(): string[] {
   const missing: string[] = [];

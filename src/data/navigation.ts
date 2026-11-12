@@ -1,27 +1,8 @@
-export interface NavLink {
+interface NavLink {
   label: string;
   href: string;
   description?: string;
 }
-
-/** Enlaces del menú principal (los servicios se generan desde src/data/services.ts). */
-export const mainNav: NavLink[] = [
-  { label: 'Proyectos', href: '/proyectos' },
-  { label: 'Nosotros', href: '/nosotros' },
-  { label: 'Ayuda', href: '/ayuda' },
-];
-
-export const companyNav: NavLink[] = [
-  { label: 'Nosotros', href: '/nosotros' },
-  { label: 'Proyectos', href: '/proyectos' },
-  { label: 'Contacto', href: '/contacto' },
-];
-
-export const helpNav: NavLink[] = [
-  { label: 'Centro de ayuda', href: '/ayuda' },
-  { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
-  { label: 'Solicitar cotización', href: '/contacto?mensaje=Quiero%20solicitar%20una%20cotizaci%C3%B3n' },
-];
 
 export const legalNav: NavLink[] = [
   { label: 'Política de privacidad', href: '/politica-de-privacidad' },

@@ -9,7 +9,7 @@ import type { IconName } from '../components/ui/icons';
 
 export type ServiceSlug = 'drones' | 'desarrollo-web' | 'soporte-tecnico' | 'licencias-software';
 
-export interface Offering {
+interface Offering {
   id: string;
   title: string;
   summary: string;
@@ -21,7 +21,7 @@ export interface Offering {
   includes?: string[];
 }
 
-export interface Step {
+interface Step {
   title: string;
   text: string;
 }

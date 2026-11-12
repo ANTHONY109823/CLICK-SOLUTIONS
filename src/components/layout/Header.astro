@@ -192,94 +192,12 @@ const quoteHref = '/contacto?mensaje=Quiero%20solicitar%20una%20cotizaci%C3%B3n'
     transform: rotate(180deg);
   }
 
-  .has-menu {
-    position: relative;
-  }
-
-  .nav-signal {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--brand-cyan);
-    box-shadow: 0 0 12px var(--brand-cyan);
-  }
-
-  .dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 50%;
-    width: min(560px, 90vw);
-    padding: var(--space-3);
-    background: rgb(6 25 49 / 0.98);
-    border: 1px solid var(--dark-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    transform: translateX(-50%);
-    animation: dropdown-in var(--dur-base) var(--ease-out);
-  }
-
   /* Puente invisible para que el menú no se cierre al mover el mouse hacia él. */
-  .dropdown::before {
-    content: '';
-    position: absolute;
-    inset: -12px 0 auto;
-    height: 12px;
-  }
-
   @keyframes dropdown-in {
     from {
       opacity: 0;
       transform: translate(-50%, -4px);
     }
-  }
-
-  .dropdown-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-1);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .dropdown-item {
-    display: flex;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: var(--dark-text);
-    transition: background-color var(--dur-fast);
-  }
-
-  .dropdown-item:hover,
-  .dropdown-item[aria-current='page'] {
-    background: rgb(255 255 255 / 0.07);
-  }
-
-  .dropdown-icon {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    background: rgb(0 170 231 / 0.14);
-    color: var(--dark-accent);
-  }
-
-  .dropdown-title {
-    display: block;
-    font-size: var(--fs-sm);
-    font-weight: 600;
-    color: #fff;
-  }
-
-  .dropdown-desc {
-    display: block;
-    font-size: var(--fs-xs);
-    color: var(--dark-muted);
-    line-height: 1.45;
   }
 
   .header-actions {

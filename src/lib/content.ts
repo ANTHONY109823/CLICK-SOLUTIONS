@@ -37,10 +37,6 @@ export function getProjects(service?: ServiceSlug): Project[] {
   return projects.filter((project) => isShown(project) && (!service || project.service === service));
 }
 
-export function getProject(slug: string): Project | undefined {
-  return getProjects().find((project) => project.slug === slug);
-}
-
 export function getLicenses(): LicenseProduct[] {
   return licenses.filter((product) => product.visible && isShown(product));
 }
