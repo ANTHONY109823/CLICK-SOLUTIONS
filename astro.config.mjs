@@ -16,8 +16,12 @@ const GITHUB_PAGES = { site: 'https://anthony109823.github.io', base: '/CLICK-SO
 // Dominio provisional hasta que se configure SITE_URL (ver .env.example).
 const SITE_URL = process.env.SITE_URL || 'https://clicksolutions.example';
 
+// Dominios públicos detrás del proxy HTTPS de Railway. Sin esto, Astro ve las peticiones como
+// http:// y su protección CSRF rechaza los formularios (p. ej. el login del panel) con 403.
+const PUBLIC_HOSTS = [...new Set(['click-solutions-production.up.railway.app', new URL(SITE_URL).hostname])];
+
 // Páginas reservadas para funciones futuras: no se indexan.
-const NOT_INDEXED = /\/(carrito|mi-cuenta)\/?$/;
+const NOT_INDEXED = /\/(carrito|mi-cuenta|login|panel)\/?$/;
 
 /** Registra el endpoint del formulario solo cuando hay servidor. */
 const contactApi = {
@@ -26,6 +30,9 @@ const contactApi = {
     /** @param {{ injectRoute: (route: { pattern: string, entrypoint: string }) => void }} options */
     'astro:config:setup': ({ injectRoute }) => {
       injectRoute({ pattern: '/api/contacto', entrypoint: './src/server/contacto.ts' });
+      injectRoute({ pattern: '/login', entrypoint: './src/server/login.ts' });
+      injectRoute({ pattern: '/panel', entrypoint: './src/server/panel.ts' });
+      injectRoute({ pattern: '/api/panel/[...path]', entrypoint: './src/server/panel-api.ts' });
     },
   },
 };
@@ -36,6 +43,9 @@ export default defineConfig({
   output: isGithubPages ? 'static' : 'server',
   adapter: isGithubPages ? undefined : node({ mode: 'standalone' }),
   trailingSlash: 'never',
+  security: isGithubPages
+    ? undefined
+    : { allowedDomains: PUBLIC_HOSTS.map((hostname) => ({ hostname, protocol: 'https' })) },
   // HTML sin minificar: el resultado en dist/ queda legible (varias líneas, sin scroll horizontal).
   compressHTML: false,
   build: { format: 'file' },

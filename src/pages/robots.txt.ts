@@ -9,6 +9,8 @@ export const GET: APIRoute = ({ site }) => {
     `Disallow: ${BASE_PATH}/api/`,
     `Disallow: ${BASE_PATH}/carrito`,
     `Disallow: ${BASE_PATH}/mi-cuenta`,
+    `Disallow: ${BASE_PATH}/login`,
+    `Disallow: ${BASE_PATH}/panel`,
     '',
     `Sitemap: ${sitemap}`,
     '',

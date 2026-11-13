@@ -88,3 +88,33 @@ Antes de subir, confirma que no haya archivos `.env` ni hojas de cálculo (`git 
 - `npm outdated` y `npm audit` una vez al mes; actualizar dependencias y volver a compilar.
 - El sitio no guarda datos personales: no requiere copias de seguridad de base de datos.
   Cuando se agregue una base de datos (fase 2), configurar copias automáticas.
+
+## Panel de administración en Railway
+
+Abre /login en el mismo dominio para acceder a /panel. En Railway configura
+ADMIN_USER, ADMIN_PASSWORD y ADMIN_SESSION_SECRET (secreto aleatorio largo, por ejemplo
+32 bytes generados con un gestor de contraseñas), además de SITE_URL con el origen
+HTTPS real y NODE_ENV=production. No publiques estas credenciales. Las sesiones
+duran ocho horas; cambiar el secreto invalida todas las sesiones.
+
+En GitHub: Settings > Developer settings > Personal access tokens > Fine-grained
+tokens > Generate new token. Selecciona el propietario, una expiración y
+Only select repositories: únicamente CLICK-SOLUTIONS. En Repository permissions
+concede Contents: Read and write (sin permisos adicionales). Si la organización
+requiere aprobación, espera a que apruebe el token.
+[Documentación de GitHub](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+Guarda el token como GITHUB_TOKEN en Railway. GITHUB_REPO es opcional
+(predeterminado: ANTHONY109823/CLICK-SOLUTIONS) y GITHUB_BRANCH también
+(predeterminado: main). La rama debe permitir commits del propietario del token.
+Cada acción guarda todos sus archivos en un solo commit mediante Git Data; no se
+guarda en el disco efímero. Conecta Railway a esa rama y habilita el despliegue
+automático: el sitio reflejará los cambios al terminar el redespliegue. Si falta
+el token, el panel permite consultar los datos compilados pero guardar devuelve 503.
+
+El límite de login es cinco intentos por IP cada quince minutos por proceso;
+se reinicia al redesplegar. En Railway se usa X-Real-IP del proxy HTTP público
+([cabeceras de Railway](https://docs.railway.com/networking/public-networking/specs-and-limits));
+no expongas directamente el puerto del contenedor a Internet.
+Las rutas privadas no existen en el build de GitHub Pages. El panel local
+sigue disponible con npm run admin.
