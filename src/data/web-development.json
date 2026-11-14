@@ -1,31 +1,35 @@
 {
   "hero": {
     "eyebrow": "Desarrollo web y sistemas",
-    "title": "Creamos productos web que venden y organizan tu negocio.",
+    "title": "Creamos productos web que venden y organizan tu negocio",
     "lead": "Diseñamos sitios, tiendas y sistemas a medida con una experiencia clara, rápida y preparada para crecer contigo.",
     "ctaLabel": "Explorar soluciones",
-    "signals": ["Diseño adaptable", "Código mantenible", "Panel administrable"]
+    "signals": [
+      "Diseño adaptable",
+      "Código mantenible",
+      "Panel administrable"
+    ]
   },
   "showcase": [
     {
       "id": "sitio",
       "label": "Sitio web",
       "eyebrow": "Presencia digital",
-      "title": "Una marca clara. Una web que inspira confianza.",
+      "title": "Una marca clara, una web que inspira confianza",
       "metric": "Diseño · SEO · Contacto"
     },
     {
       "id": "tienda",
       "label": "Tienda",
       "eyebrow": "Ventas online",
-      "title": "Productos ordenados y listos para vender.",
+      "title": "Productos ordenados y listos para vender",
       "metric": "Catálogo · Pagos · Pedidos"
     },
     {
       "id": "sistema",
       "label": "Sistema",
       "eyebrow": "Operación digital",
-      "title": "Tus procesos reunidos en un solo panel.",
+      "title": "Tus procesos reunidos en un solo panel",
       "metric": "Usuarios · Datos · Reportes"
     }
   ],
@@ -40,7 +44,12 @@
       "price": "Desde USD 750",
       "timing": "2–3 semanas",
       "icon": "layout",
-      "includes": ["Web corporativa o landing page", "Diseño adaptable a celular", "Formulario, WhatsApp y mapa", "SEO técnico y publicación"]
+      "includes": [
+        "Web corporativa o landing page",
+        "Diseño adaptable a celular",
+        "Formulario, WhatsApp y mapa",
+        "SEO técnico y publicación"
+      ]
     },
     {
       "id": "gestion-interna",
@@ -52,7 +61,12 @@
       "price": "Desde USD 1,600",
       "timing": "5–6 semanas",
       "icon": "workflow",
-      "includes": ["Panel administrativo", "Usuarios y permisos", "Clientes, productos y estados", "Reportes esenciales"]
+      "includes": [
+        "Panel administrativo",
+        "Usuarios y permisos",
+        "Clientes, productos y estados",
+        "Reportes esenciales"
+      ]
     },
     {
       "id": "plataforma-medida",
@@ -64,7 +78,12 @@
       "price": "Desde USD 2,600",
       "timing": "7–8 semanas",
       "icon": "cpu",
-      "includes": ["Flujos personalizados", "Automatizaciones e integraciones", "Roles y paneles especializados", "Pruebas y capacitación"]
+      "includes": [
+        "Flujos personalizados",
+        "Automatizaciones e integraciones",
+        "Roles y paneles especializados",
+        "Pruebas y capacitación"
+      ]
     }
   ],
   "demos": [
@@ -73,28 +92,52 @@
       "label": "Inmobiliaria",
       "title": "Catálogo de propiedades",
       "description": "Búsqueda, fichas visuales y contacto directo para convertir visitas en consultas.",
-      "features": ["Filtros", "Galería", "WhatsApp"]
+      "features": [
+        "Filtros",
+        "Galería",
+        "WhatsApp"
+      ]
     },
     {
       "id": "catalogo",
       "label": "Comercio",
       "title": "Catálogo técnico",
       "description": "Productos organizados por categoría con información clara y solicitudes por producto.",
-      "features": ["Categorías", "Buscador", "Cotización"]
+      "features": [
+        "Categorías",
+        "Buscador",
+        "Cotización"
+      ]
     },
     {
       "id": "operaciones",
       "label": "Empresa",
       "title": "Panel de operaciones",
       "description": "Clientes, solicitudes y estados reunidos en un espacio privado para el equipo.",
-      "features": ["Usuarios", "Estados", "Reportes"]
+      "features": [
+        "Usuarios",
+        "Estados",
+        "Reportes"
+      ]
     }
   ],
   "process": [
-    { "title": "Entendemos", "text": "Definimos el objetivo, el usuario y el problema real." },
-    { "title": "Diseñamos", "text": "Ordenamos la experiencia y validamos la solución antes de construir." },
-    { "title": "Desarrollamos", "text": "Programamos por etapas con avances visibles y revisiones contigo." },
-    { "title": "Publicamos", "text": "Probamos, configuramos y dejamos el producto listo para trabajar." }
+    {
+      "title": "Entendemos",
+      "text": "Definimos el objetivo, el usuario y el problema real."
+    },
+    {
+      "title": "Diseñamos",
+      "text": "Ordenamos la experiencia y validamos la solución antes de construir."
+    },
+    {
+      "title": "Desarrollamos",
+      "text": "Programamos por etapas con avances visibles y revisiones contigo."
+    },
+    {
+      "title": "Publicamos",
+      "text": "Probamos, configuramos y dejamos el producto listo para trabajar."
+    }
   ],
   "cta": {
     "eyebrow": "Tu proyecto empieza con claridad",
