@@ -3,187 +3,33 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>Portal privado | ClickSolutions</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Administración</title>
     <link rel="stylesheet" href="/api/panel/assets/styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#resumen"><img src="/brand/clicksolutions-isotipo.png" alt="" /><span><strong>Click</strong><small>solutions</small></span></a>
-      <nav aria-label="Portal privado">
-        <a href="#resumen">Resumen</a>
-        <a href="#portafolio">Proyectos web</a>
-        <a href="#software">Software</a>
-        <a href="#cotizador">Cotizador</a>
-        <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">Contenido ↗</a>
-      </nav>
-      <form action="/api/panel/logout" method="post"><button type="submit">Cerrar sesión</button></form>
+    <header class="mobile-bar">
+      <button
+        type="button"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="sidebar"
+      >
+        ☰ Menú</button
+      ><span>Administración</span>
     </header>
-
-    <main>
-      <section class="dashboard" id="resumen">
-        <div>
-          <span class="kicker">Portal de gestión</span>
-          <h1>Cotizaciones claras,<br /><em>sin rehacer cálculos.</em></h1>
-          <p>Los precios y condiciones de este panel vienen del mismo archivo que alimenta la página pública de Drones.</p>
-        </div>
-        <aside class="sync-card">
-          <span>Sincronización</span>
-          <strong>Web + cotizador</strong>
-          <ul>
-            <li><b data-package-count>3</b> paquetes comerciales</li>
-            <li><b data-addon-count>3</b> servicios adicionales</li>
-            <li><b>PDF</b> generado en esta PC</li>
-          </ul>
-        </aside>
-      </section>
-
-      <section class="portfolio-manager" id="portafolio">
-        <header class="section-heading">
-          <div><span class="kicker">Desarrollo web</span><h2>Fotos del carrusel</h2></div>
-          <span class="draft-state"><b data-project-count>0</b> proyectos visibles</span>
-        </header>
-        <div class="portfolio-manager__grid">
-          <form class="project-form" data-project-form>
-            <label>Nombre del proyecto<input name="title" maxlength="70" placeholder="Ej. Tienda online para marca local" required /></label>
-            <label>Categoría o tipo<input name="category" maxlength="70" value="Desarrollo web" required /></label>
-            <label>Texto alternativo<input name="alt" maxlength="140" placeholder="Describe brevemente lo que aparece en la foto" /></label>
-            <label class="project-upload">Fotografía destacada
-              <input name="image" type="file" accept="image/jpeg,image/png,image/webp" required />
-              <span>JPG, PNG o WebP · máximo 8 MB · formato horizontal recomendado</span>
-            </label>
-            <button type="submit" class="button button--primary">Agregar al carrusel</button>
-            <p class="privacy-note">Los cambios se guardan en GitHub. El sitio se actualizará cuando termine el redespliegue.</p>
-          </form>
-          <div class="project-list" data-project-list aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="software-manager" id="software">
-        <header class="section-heading">
-          <div><span class="kicker">Descargas propias</span><h2>Dr. ClickSolutions</h2></div>
-          <span class="draft-state" data-software-state>Sin archivo publicado</span>
-        </header>
-        <div class="software-manager__grid">
-          <div class="software-manager__copy">
-            <strong>Diagnóstico gratuito de impresoras</strong>
-            <p>Sube aquí el ejecutable que podrán descargar los visitantes. El archivo reemplaza la versión anterior y actualiza automáticamente el botón de la web.</p>
-            <ul>
-              <li>Formato permitido: .exe</li>
-              <li>Tamaño máximo: 60 MB</li>
-              <li>La descarga pública se llamará DrClickSolutions.exe</li>
-            </ul>
-          </div>
-          <form class="software-upload" data-software-form>
-            <label>Archivo del programa<input name="executable" type="file" accept=".exe,application/vnd.microsoft.portable-executable,application/x-msdownload" required /></label>
-            <div class="software-file" data-software-file></div>
-            <button type="submit" class="button button--primary">Subir o reemplazar .exe</button>
-            <p class="privacy-note">Guardado en GitHub. El sitio se actualizará cuando termine el redespliegue.</p>
-          </form>
-        </div>
-        <div class="antivirus-manager">
-          <div>
-            <span class="kicker">Protección para tu PC</span>
-            <h3>Imágenes de antivirus</h3>
-            <p>Reemplaza la imagen destacada de ESET, Panda o Bitdefender.</p>
-          </div>
-          <form class="antivirus-upload" data-antivirus-form>
-            <label>Marca
-              <select name="antivirusId" required>
-                <option value="eset">ESET HOME Security</option>
-                <option value="panda">Panda Dome</option>
-                <option value="bitdefender">Bitdefender Total Security</option>
-              </select>
-            </label>
-            <label>Imagen destacada<input name="image" type="file" accept="image/jpeg,image/png,image/webp" required /></label>
-            <button type="submit" class="button button--primary">Actualizar imagen</button>
-          </form>
-          <div class="antivirus-preview" data-antivirus-preview aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="workspace" id="cotizador">
-        <div class="form-panel">
-          <header class="section-heading">
-            <div><span class="kicker">Nueva propuesta</span><h2>Datos de la cotización</h2></div>
-            <span class="draft-state" data-draft-state>Sin guardar</span>
-          </header>
-
-          <form data-quote-form>
-            <fieldset>
-              <legend>Documento y cliente</legend>
-              <div class="form-grid form-grid--3">
-                <label>N.º de cotización<input name="quoteNumber" required /></label>
-                <label>Fecha de emisión<input name="issueDate" type="date" required /></label>
-                <label>Válida por<input name="validityDays" type="number" min="1" max="90" required /></label>
-              </div>
-              <div class="form-grid form-grid--2">
-                <label>Cliente o contacto<input name="clientName" placeholder="Nombre completo" required /></label>
-                <label>Empresa / proyecto<input name="clientCompany" placeholder="Opcional" /></label>
-                <label>Cargo o tratamiento<input name="clientRole" placeholder="Ej. Arq., Ing., Sr." /></label>
-                <label>Correo o teléfono<input name="clientContact" placeholder="Opcional" /></label>
-              </div>
-            </fieldset>
-
-            <fieldset>
-              <legend>Información del servicio</legend>
-              <div class="form-grid form-grid--2">
-                <label>Nombre del proyecto<input name="projectName" placeholder="Ej. Registro de avance de obra" /></label>
-                <label>Ubicación<input name="location" placeholder="Distrito, ciudad" /></label>
-                <label>Fecha tentativa<input name="serviceDate" type="date" /></label>
-                <label>Movilidad adicional (S/)<input name="mobility" type="number" min="0" step="10" value="0" /></label>
-              </div>
-            </fieldset>
-
-            <fieldset>
-              <legend>Paquete</legend>
-              <div class="package-picker" data-package-picker></div>
-              <label class="hours-field" data-hours-field>Horas de grabación<input name="hours" type="number" min="1" max="24" step="0.5" value="1" /></label>
-            </fieldset>
-
-            <fieldset>
-              <legend>Servicios adicionales</legend>
-              <div class="addon-picker" data-addon-picker></div>
-            </fieldset>
-
-            <fieldset>
-              <legend>Ajustes finales</legend>
-              <div class="form-grid form-grid--2">
-                <label>Descuento (S/)<input name="discount" type="number" min="0" step="10" value="0" /></label>
-                <label>Responsable<input name="owner" value="Ing. Anthony Ccayo" /></label>
-              </div>
-              <label>Observaciones<textarea name="notes" rows="4" placeholder="Alcances particulares, entregables o coordinaciones especiales"></textarea></label>
-            </fieldset>
-
-            <div class="form-actions">
-              <button type="button" class="button button--ghost" data-save-draft>Guardar borrador</button>
-              <button type="reset" class="button button--ghost">Limpiar</button>
-              <button type="submit" class="button button--primary">Generar y descargar PDF</button>
-            </div>
-            <p class="privacy-note">Los datos del cliente permanecen en este navegador. No se envían a internet ni se guardan en la web pública.</p>
-          </form>
-        </div>
-
-        <aside class="preview-panel" aria-live="polite">
-          <div class="preview-paper">
-            <header><img src="/brand/clicksolutions-isotipo.png" alt="" /><div><small>PROPUESTA COMERCIAL</small><strong data-preview-number>—</strong></div></header>
-            <section class="preview-client"><small>PARA</small><strong data-preview-client>Completa el nombre del cliente</strong><span data-preview-project>Servicio de drones</span></section>
-            <section class="preview-package"><small>PAQUETE SELECCIONADO</small><h3 data-preview-package>Servicio estándar</h3><p data-preview-description></p></section>
-            <dl>
-              <div><dt>Servicio base</dt><dd data-preview-base>S/ 0.00</dd></div>
-              <div><dt>Adicionales y movilidad</dt><dd data-preview-extras>S/ 0.00</dd></div>
-              <div><dt>Descuento</dt><dd data-preview-discount>- S/ 0.00</dd></div>
-              <div class="preview-total"><dt>Inversión total</dt><dd data-preview-total>S/ 0.00</dd></div>
-              <div><dt>Adelanto para reservar</dt><dd data-preview-deposit>S/ 0.00</dd></div>
-            </dl>
-            <footer><span>ClickSolutions</span><span data-preview-contact></span></footer>
-          </div>
-          <div class="preview-help"><strong>PDF profesional de 2 páginas</strong><span>Incluye propuesta, partidas, total, adelanto, condiciones y datos de contacto.</span></div>
-        </aside>
-      </section>
-    </main>
-
-    <div class="toast" role="status" aria-live="polite" hidden data-toast></div>
+    <aside class="sidebar" id="sidebar">
+      <p class="sidebar-title">Administración</p>
+      <nav aria-label="Secciones del panel" id="navigation"></nav>
+      <div class="sidebar-bottom">
+        <a href="/" target="_blank" rel="noopener">Ver sitio ↗</a>
+        <form method="post" action="/api/panel/logout" id="logout">
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      </div>
+    </aside>
+    <main id="main" tabindex="-1"><p role="status">Cargando panel…</p></main>
+    <noscript>Activa JavaScript para editar el contenido del sitio.</noscript>
     <script src="/api/panel/assets/jspdf.js"></script>
     <script type="module" src="/api/panel/assets/app.js"></script>
   </body>

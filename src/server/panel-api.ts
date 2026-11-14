@@ -1,13 +1,10 @@
 import type { APIRoute } from 'astro';
-import business from '../data/business.json';
-import quote from '../data/drone-quote.json';
-import portfolioFallback from '../data/web-projects.json';
-import softwareFallback from '../data/click-software.json';
 import app from './panel-ui/app.js?raw';
 import styles from './panel-ui/styles.css?raw';
 import vendor from 'jspdf/dist/jspdf.umd.min.js?raw';
 import { allowLogin, clearSession, configured, credentialsMatch, hasSession, PanelError, readBody, reply, sameOrigin, setSession, unavailable } from './panel-auth';
 import { GithubStore, githubConfigured, PORTFOLIO, SOFTWARE } from './panel-github';
+import { attachImages, dataPath, documents, imageFolders, knownDocument, templates, validate, type Json } from './panel-data';
 
 export const prerender = false;
 const saved = 'Guardado en GitHub. El sitio se actualizará cuando termine el redespliegue.';
@@ -21,8 +18,8 @@ function image(value: unknown) {
   if (!bytes.length) throw new PanelError(400, 'El archivo está vacío.');
   return { bytes, extension: match[1] === 'image/jpeg' ? 'jpg' : match[1].split('/')[1] };
 }
-async function bodyJSON(request: Request) {
-  try { return JSON.parse((await readBody(request, 12_000_000)).toString('utf8')); }
+async function bodyJSON(request: Request, limit = 12_000_000) {
+  try { return JSON.parse((await readBody(request, limit)).toString('utf8')); }
   catch (error) { if (error instanceof PanelError) throw error; throw new PanelError(400, 'Solicitud no válida.'); }
 }
 export const ALL: APIRoute = async (context) => {
@@ -63,12 +60,82 @@ export const ALL: APIRoute = async (context) => {
       const asset = assets[path];
       return asset ? new Response(asset[0], { headers: { 'Content-Type': `${asset[1]}; charset=utf-8`, 'Cache-Control': 'no-store' } }) : reply({ error: 'No encontrado.' }, 404);
     }
-    if (path === 'config' && request.method === 'GET') {
-      if (!githubConfigured()) return reply({ business, quote, portfolio: portfolioFallback, software: softwareFallback });
-      const store = new GithubStore();
-      const head = await store.head();
-      const [portfolio, software] = await Promise.all([store.json(PORTFOLIO, head.sha), store.json(SOFTWARE, head.sha)]);
-      return reply({ business, quote, portfolio, software });
+    if (path === 'status' && request.method === 'GET') {
+      const head = githubConfigured() ? await new GithubStore().head() : null;
+      return reply({ syncConfigured: githubConfigured(), lastCommit: head ? { sha: head.sha, message: head.message, date: head.date } : null });
+    }
+    if (path === "config" && request.method === "GET") {
+      const store = githubConfigured() ? new GithubStore() : null;
+      const head = store ? await store.head() : null;
+      const entries = await Promise.all(
+        Object.entries(documents).map(async ([name, fallback]) => {
+          const data =
+            store && head
+              ? await store.json(dataPath(name), head.sha)
+              : fallback;
+          return [
+            name,
+            { data, templates: { ...templates(fallback), ...templates(data) } },
+          ] as const;
+        }),
+      );
+      const sections = Object.fromEntries(entries);
+      return reply({
+        business: sections.business!.data,
+        quote: sections["drone-quote"]!.data,
+        portfolio: sections["web-projects"]!.data,
+        software: sections["click-software"]!.data,
+        documents: sections,
+        imageFolders,
+        syncConfigured: githubConfigured(),
+        lastCommit: head
+          ? { sha: head.sha, message: head.message, date: head.date }
+          : null,
+      });
+    }
+    if (path.startsWith("data/")) {
+      const name = path.slice("data/".length);
+      if (!knownDocument(name))
+        return reply({ error: "Apartado no permitido." }, 404);
+      if (!["GET", "PUT"].includes(request.method))
+        return reply({ error: "Método no permitido." }, 405);
+      const store = githubConfigured() ? new GithubStore() : null;
+      const head = store ? await store.head() : null;
+      const current =
+        store && head
+          ? await store.json(dataPath(name), head.sha)
+          : documents[name]!;
+      if (request.method === "GET")
+        return reply({
+          name,
+          data: current,
+          templates: { ...templates(documents[name]!), ...templates(current) },
+          imageFolders,
+        });
+      const body = await bodyJSON(request, 100_000_000);
+      if (
+        !body ||
+        typeof body !== "object" ||
+        Array.isArray(body) ||
+        !Object.hasOwn(body, "data") ||
+        Object.keys(body).some((k) => !["data", "images"].includes(k))
+      )
+        throw new PanelError(
+          400,
+          "Envía los datos del apartado y sus imágenes.",
+        );
+      validate(name, body.data as Json, current);
+      const files = new Map<string, Buffer | null>();
+      attachImages(body.data as Json, body.images ?? [], files);
+      validate(name, body.data as Json, current);
+      if (!store || !head)
+        return reply(
+          { error: "Guardado no configurado: falta GITHUB_TOKEN." },
+          503,
+        );
+      files.set(dataPath(name), jsonBytes(body.data));
+      await store.commit(head, files);
+      return reply({ data: body.data, message: saved });
     }
     const mutation = (request.method === 'POST' && ['software/dr-click', 'software/antivirus-image', 'web-projects'].includes(path)) || (request.method === 'DELETE' && path.startsWith('web-projects/'));
     if (!mutation) return reply({ error: 'No encontrado.' }, 404);

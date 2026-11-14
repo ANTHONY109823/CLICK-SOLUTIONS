@@ -23,10 +23,10 @@ export class GithubStore {
       response.status === 422 || response.status === 409 ? 'No se pudo guardar. Recarga el panel e inténtalo de nuevo.' : 'No se pudo completar la operación en GitHub.');
     return response.json();
   }
-  async head(): Promise<{ sha: string; tree: string }> {
+  async head(): Promise<{ sha: string; tree: string; message: string; date: string | null }> {
     const ref = await this.api(`/git/ref/heads/${this.branch}`);
     const commit = await this.api(`/git/commits/${ref.object.sha}`);
-    return { sha: ref.object.sha, tree: commit.tree.sha };
+    return { sha: ref.object.sha, tree: commit.tree.sha, message: commit.message, date: commit.committer?.date || commit.author?.date || null };
   }
   async json(path: string, sha: string) {
     const file = await this.api(`/contents/${path}?ref=${encodeURIComponent(sha)}`);

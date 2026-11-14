@@ -1,0 +1,280 @@
+{
+  "document": {
+    "prefix": "COT-CS",
+    "nextNumber": 25,
+    "currency": "PEN",
+    "currencySymbol": "S/",
+    "depositPercent": 50,
+    "minimumNoticeDays": 3,
+    "validityDays": 15
+  },
+  "services": [
+    {
+      "id": "drones",
+      "name": "Drones",
+      "currency": "PEN",
+      "description": "Los alcances adicionales, más locaciones, videos extra o piezas distintas se cotizan por separado según el proyecto.",
+      "terms": [
+        "Forma de pago: 50% de adelanto para separar la fecha, con tres días de anticipación como mínimo, y 50% al finalizar la jornada de grabación, antes de entregar el material final.",
+        "Condiciones climáticas y legales: Los vuelos están sujetos a condiciones climáticas seguras y a las regulaciones de zonas de exclusión aérea de la DGAC. En caso de fuerza mayor, la fecha se reprograma de mutuo acuerdo.",
+        "Viáticos: La tarifa incluye traslado en distritos del radio céntrico de Lima. Las zonas periféricas, playas del sur o ubicaciones fuera de Lima Metropolitana pueden generar un recargo de movilidad.",
+        "Hora de inicio, ingreso y acceso: El tiempo se contabiliza desde la llegada del operador a la locación e incluye esperas por coordinaciones o autorizaciones de ingreso. Los permisos de acceso y equipos de protección personal requeridos son responsabilidad del cliente."
+      ],
+      "items": [
+        {
+          "id": "standard",
+          "name": "Servicio estándar",
+          "description": "Cobertura aérea profesional con entrega del material bruto para que conserves todos los originales.",
+          "unit": "hora",
+          "price": "350",
+          "scope": [
+            "Grabación con equipo profesional y operador acreditado por el MTC",
+            "Videos y fotografías sin edición",
+            "Material bruto RAW en 4K mediante Drive"
+          ],
+          "source": "drone-quote.packages.standard",
+          "restriction": ""
+        },
+        {
+          "id": "express",
+          "name": "Video Express",
+          "description": "Contenido corto y dinámico para Reel, TikTok y campañas en redes sociales.",
+          "unit": "proyecto",
+          "price": "450",
+          "scope": [
+            "Grabación con los vuelos necesarios para el proyecto",
+            "Edición profesional de 30 a 60 segundos",
+            "Entrega del video final y los originales en 4K"
+          ],
+          "source": "drone-quote.packages.express",
+          "restriction": ""
+        },
+        {
+          "id": "corporate",
+          "name": "Video corporativo",
+          "description": "Presentación audiovisual formal para empresas, obras, instalaciones o instituciones.",
+          "unit": "proyecto",
+          "price": "600",
+          "scope": [
+            "Grabación con los vuelos necesarios para el proyecto",
+            "Edición profesional y colorización",
+            "Entrega del video final y los originales en 4K"
+          ],
+          "source": "drone-quote.packages.corporate",
+          "restriction": ""
+        },
+        {
+          "id": "express-edit",
+          "name": "Edición de Video Express",
+          "description": "Reel o TikTok de 30 a 60 segundos",
+          "unit": "unidad",
+          "price": "150",
+          "scope": ["Reel o TikTok de 30 a 60 segundos"],
+          "source": "drone-quote.addons.express-edit",
+          "restriction": "Solo con el Servicio estándar"
+        },
+        {
+          "id": "corporate-edit",
+          "name": "Edición corporativa / institucional",
+          "description": "Video de 2 a 3 minutos con colorización",
+          "unit": "unidad",
+          "price": "250",
+          "scope": ["Video de 2 a 3 minutos con colorización"],
+          "source": "drone-quote.addons.corporate-edit",
+          "restriction": "Solo con el Servicio estándar"
+        },
+        {
+          "id": "extra-hour",
+          "name": "Hora adicional en el sitio",
+          "description": "Hora no agendada previamente",
+          "unit": "unidad",
+          "price": "300",
+          "scope": ["Hora no agendada previamente"],
+          "source": "drone-quote.addons.extra-hour",
+          "restriction": ""
+        },
+        {
+          "id": "fotogrametria",
+          "name": "Fotogrametría",
+          "description": "Alcance por definir según el proyecto.",
+          "unit": "proyecto",
+          "price": "",
+          "scope": ["Definir área, entregables y precisión."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "armado-fpv",
+          "name": "Drones FPV y de carrera armados a tu medida",
+          "description": "Para aficionados que quieren empezar o mejorar su equipo. Definimos la configuración según tu experiencia, objetivo y presupuesto; con el adelanto confirmado importamos las piezas y realizamos el armado local.",
+          "unit": "proyecto",
+          "price": "",
+          "scope": [
+            "Selección de componentes según presupuesto y objetivo",
+            "Importación de las piezas confirmadas en la cotización",
+            "Ensamblaje, soldadura y organización del cableado",
+            "Configuración inicial y pruebas funcionales antes de la entrega"
+          ],
+          "source": "",
+          "restriction": ""
+        }
+      ]
+    },
+    {
+      "id": "desarrollo-web",
+      "name": "Desarrollo web",
+      "currency": "USD",
+      "description": "Precios referenciales para un alcance estándar. Dominio, hosting, servicios de terceros, impuestos y funciones adicionales se detallan en la propuesta.",
+      "terms": [
+        "Precios referenciales para un alcance estándar. Dominio, hosting, servicios de terceros, impuestos y funciones adicionales se detallan en la propuesta."
+      ],
+      "items": [
+        {
+          "id": "presencia-ventas",
+          "name": "Web comercial",
+          "description": "Una presencia profesional para presentar, vender y recibir consultas.",
+          "unit": "proyecto",
+          "price": "750",
+          "scope": [
+            "Web corporativa o landing page",
+            "Diseño adaptable a celular",
+            "Formulario, WhatsApp y mapa",
+            "SEO técnico y publicación"
+          ],
+          "source": "web-development.solutions.presencia-ventas",
+          "restriction": "Precio desde; confirmar alcance."
+        },
+        {
+          "id": "gestion-interna",
+          "name": "Web con panel",
+          "description": "Tu web pública conectada a un panel privado para gestionar el negocio.",
+          "unit": "proyecto",
+          "price": "1600",
+          "scope": [
+            "Panel administrativo",
+            "Usuarios y permisos",
+            "Clientes, productos y estados",
+            "Reportes esenciales"
+          ],
+          "source": "web-development.solutions.gestion-interna",
+          "restriction": "Precio desde; confirmar alcance."
+        },
+        {
+          "id": "plataforma-medida",
+          "name": "Plataforma a medida",
+          "description": "Una solución personalizada para automatizar operaciones y conectar servicios.",
+          "unit": "proyecto",
+          "price": "2600",
+          "scope": [
+            "Flujos personalizados",
+            "Automatizaciones e integraciones",
+            "Roles y paneles especializados",
+            "Pruebas y capacitación"
+          ],
+          "source": "web-development.solutions.plataforma-medida",
+          "restriction": "Precio desde; confirmar alcance."
+        }
+      ]
+    },
+    {
+      "id": "soporte-tecnico",
+      "name": "Soporte técnico",
+      "currency": "PEN",
+      "description": "Completa los precios antes de emitir una cotización.",
+      "terms": [
+        "El alcance, la modalidad y los materiales se acuerdan antes de iniciar."
+      ],
+      "items": [
+        {
+          "id": "diagnostico",
+          "name": "Diagnóstico de computadoras",
+          "description": "Revisión de fallas, lentitud o errores.",
+          "unit": "servicio",
+          "price": "",
+          "scope": ["Diagnóstico y recomendaciones."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "instalacion-software",
+          "name": "Instalación y configuración",
+          "description": "Instalación de programas y controladores con licencias legítimas.",
+          "unit": "servicio",
+          "price": "",
+          "scope": ["Configuración de software acordada."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "preventivo",
+          "name": "Mantenimiento preventivo",
+          "description": "Limpieza, revisión y optimización de equipos.",
+          "unit": "equipo",
+          "price": "",
+          "scope": ["Mantenimiento y recomendaciones."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "windows",
+          "name": "Solución de problemas de Windows",
+          "description": "Evaluación y solución del problema acordado.",
+          "unit": "equipo",
+          "price": "",
+          "scope": ["Revisión del sistema."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "impresoras",
+          "name": "Impresoras y periféricos",
+          "description": "Instalación y configuración de dispositivos.",
+          "unit": "equipo",
+          "price": "",
+          "scope": ["Configuración y prueba de funcionamiento."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "equipos",
+          "name": "Instalación de equipos",
+          "description": "Puesta en marcha de computadoras.",
+          "unit": "equipo",
+          "price": "",
+          "scope": ["Instalación y configuración inicial."],
+          "source": "",
+          "restriction": ""
+        },
+        {
+          "id": "asesoria",
+          "name": "Asesoría tecnológica",
+          "description": "Evaluación y recomendaciones.",
+          "unit": "servicio",
+          "price": "",
+          "scope": ["Asesoría según la necesidad."],
+          "source": "",
+          "restriction": ""
+        }
+      ]
+    },
+    {
+      "id": "otros",
+      "name": "Otros servicios",
+      "currency": "PEN",
+      "description": "Describe el servicio y completa el importe. Software y licencias son venta directa.",
+      "terms": ["El alcance y las condiciones se confirman en esta propuesta."],
+      "items": [
+        {
+          "id": "personalizado",
+          "name": "Servicio personalizado",
+          "description": "",
+          "unit": "servicio",
+          "price": "",
+          "scope": ["Alcance por definir."],
+          "source": "",
+          "restriction": ""
+        }
+      ]
+    }
+  ]
+}
