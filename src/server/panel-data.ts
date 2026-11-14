@@ -46,7 +46,10 @@ export function templates(
   return output;
 }
 const invalid = (path: (string | number)[], reason: string): never => {
-  throw new PanelError(400, `${path.join(".") || "Datos"}: ${reason}`);
+  throw Object.assign(
+    new PanelError(400, `${path.join(".") || "Datos"}: ${reason}`),
+    { field: path },
+  );
 };
 const safeImage = (value: string) =>
   /^\/images\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_.-]+\.(?:jpg|jpeg|png|webp|svg)$/.test(
@@ -111,6 +114,7 @@ export function validate(name: string, value: Json, current: Json) {
       list.forEach((item, i) => {
         // Existing lists can contain distinct, explicitly represented shapes.
         let valid = false;
+        let failure: PanelError | undefined;
         for (const example of examples) {
           try {
             visit(item, example, [...path, i]);
@@ -118,10 +122,13 @@ export function validate(name: string, value: Json, current: Json) {
             break;
           } catch (error) {
             if (!(error instanceof PanelError)) throw error;
+            failure ??= error;
           }
         }
-        if (!valid)
+        if (!valid) {
+          if (failure) throw failure;
           invalid([...path, i], "Estructura, tipos o valores no válidos.");
+        }
       });
       return;
     }
@@ -171,25 +178,49 @@ export function validate(name: string, value: Json, current: Json) {
   visit(value, current, []);
   if (name === "quote-catalog") {
     const services = (value as typeof catalog).services;
-    for (const service of services) {
+    for (const [serviceIndex, service] of services.entries()) {
+      const groups = new Set(service.packageGroups.map((group) => group.id));
       if (
         /software|licenc|antivirus|epson|dr.?click/i.test(
           `${service.id} ${service.name}`,
         )
       )
-        invalid(["services"], "Software y licencias son venta directa.");
+        invalid(
+          ["services", serviceIndex, "name"],
+          "Software y licencias son venta directa.",
+        );
       if (!["PEN", "USD"].includes(service.currency))
-        invalid(["services"], "Moneda no válida: usa PEN o USD.");
-      for (const item of service.items)
+        invalid(
+          ["services", serviceIndex, "currency"],
+          "Moneda no válida: usa PEN o USD.",
+        );
+      for (const [itemIndex, item] of service.items.entries()) {
+        const itemPath = ["services", serviceIndex, "items", itemIndex];
+        if (!["paquete", "adicional"].includes(item.type))
+          invalid(
+            [...itemPath, "type"],
+            "El tipo debe ser paquete o adicional.",
+          );
+        if (!["tarifa", "barra"].includes(item.priceDisplay))
+          invalid(
+            [...itemPath, "priceDisplay"],
+            "Presentación de precio no válida.",
+          );
+        if (item.group && !groups.has(item.group))
+          invalid(
+            [...itemPath, "group"],
+            "El paquete de una partida no existe.",
+          );
         if (
           item.price !== "" &&
           (!/^\d+(?:\.\d{1,2})?$/.test(item.price) ||
             Number(item.price) > 1_000_000_000)
         )
           invalid(
-            ["services"],
+            [...itemPath, "price"],
             "El precio debe estar vacío o ser un importe positivo con hasta dos decimales.",
           );
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import app from './panel-ui/app.js?raw';
+import proposal from './panel-ui/proposal.js?raw';
 import styles from './panel-ui/styles.css?raw';
 import vendor from 'jspdf/dist/jspdf.umd.min.js?raw';
 import { allowLogin, clearSession, configured, credentialsMatch, hasSession, PanelError, readBody, reply, sameOrigin, setSession, unavailable } from './panel-auth';
@@ -56,7 +57,7 @@ export const ALL: APIRoute = async (context) => {
       return redirect('/login');
     }
     if (request.method === 'GET' && path.startsWith('assets/')) {
-      const assets: Record<string, [string, string]> = { 'assets/app.js': [app, 'text/javascript'], 'assets/styles.css': [styles, 'text/css'], 'assets/jspdf.js': [vendor, 'text/javascript'] };
+      const assets: Record<string, [string, string]> = { 'assets/app.js': [app, 'text/javascript'], 'assets/proposal.js': [proposal, 'text/javascript'], 'assets/styles.css': [styles, 'text/css'], 'assets/jspdf.js': [vendor, 'text/javascript'] };
       const asset = assets[path];
       return asset ? new Response(asset[0], { headers: { 'Content-Type': `${asset[1]}; charset=utf-8`, 'Cache-Control': 'no-store' } }) : reply({ error: 'No encontrado.' }, 404);
     }
@@ -195,6 +196,6 @@ export const ALL: APIRoute = async (context) => {
     await store.commit(head, files);
     return reply({ ...result, message: saved }, request.method === 'POST' ? 201 : 200);
   } catch (error) {
-    return error instanceof PanelError ? reply({ error: error.message }, error.status) : reply({ error: 'No se pudo completar la operación.' }, 500);
+    return error instanceof PanelError ? reply({ error: error.message, ...('field' in error ? { field: error.field } : {}) }, error.status) : reply({ error: 'No se pudo completar la operación.' }, 500);
   }
 };

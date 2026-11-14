@@ -1,4 +1,9 @@
-export {};
+import {
+  proposalModel,
+  proposalMoney,
+  proposalPdf,
+  longDate,
+} from "./proposal.js";
 const sections = [
   ["business", "Datos del negocio"],
   ["home", "Página de inicio"],
@@ -117,18 +122,31 @@ const labels = {
   source: "Referencia de origen",
   restriction: "Condición de la partida",
 };
+Object.assign(labels, {
+  signature: "Firma",
+  role: "Cargo",
+  footerSlogan: "Eslogan del pie",
+  greeting: "Saludo",
+  presentation: "Presentación",
+  additionalNote: "Nota de alcances adicionales",
+  additionalTitle: "Título de adicionales",
+  closing: "Texto de cierre",
+  packageGroups: "Paquetes y opciones",
+  optionsLabel: "Título de las opciones",
+  type: "Tipo de partida",
+  shortDescription: "Descripción corta",
+  modality: "Modalidad",
+  highlight: "Dato destacado",
+  value: "Valor",
+  group: "Paquete al que pertenece",
+  priceDisplay: "Presentación del precio",
+  lead: "Texto en negrita",
+  source: "Referencia del contenido",
+});
 const helps = {
-  id: "Usa letras, números, guiones o guiones bajos. No repitas identificadores en la misma lista.",
-  price: "En el catálogo deja el precio vacío si aún no está definido.",
-  imageFit:
-    "Usa cover para recortar o contain para mostrar la imagen completa.",
-  currency:
-    "PEN para soles o USD para dólares. No se mezclan monedas en una cotización.",
-  source:
-    "Referencia informativa. Revisa el precio del catálogo si cambias el precio público.",
-  download: "La subida de Dr. Click mantiene /downloads/DrClickSolutions.exe.",
-  nextNumber:
-    "Número inicial. El contador posterior se guarda en este navegador.",
+  price: "Deja vacío si aún no hay precio.",
+  nextNumber: "Inicio de la numeración de este navegador.",
+  group: "Identificador del paquete; vacío si no pertenece a uno.",
 };
 const main = document.querySelector("#main"),
   navigation = document.querySelector("#navigation"),
@@ -193,7 +211,10 @@ async function api(path, options = {}) {
   }
   const result = await response.json();
   if (!response.ok)
-    throw new Error(result.error || "No se pudo completar la operación.");
+    throw Object.assign(
+      new Error(result.error || "No se pudo completar la operación."),
+      { field: result.field },
+    );
   return result;
 }
 function at(data, path) {
@@ -404,6 +425,13 @@ function dashboard() {
 }
 function markDirty(state) {
   state.dirty = true;
+  if (state.onDirty) {
+    state.onDirty();
+    if (active === "cotizador") {
+      const preview = main.querySelector("[data-quote-preview]");
+      if (preview) renderQuotePreview(preview);
+    }
+  }
   const indicator = main.querySelector("[data-save-state]");
   if (indicator) indicator.textContent = "Cambios sin guardar";
 }
@@ -419,6 +447,8 @@ function blank(sample, key = "") {
       [
         "currency",
         "currencySymbol",
+        "type",
+        "priceDisplay",
         "unit",
         "icon",
         "imageFit",
@@ -452,44 +482,118 @@ function shiftImages(state, path, from, to = null) {
   state.images = next;
 }
 
-function renderField(state, value, path, label) {
+function errorIn(state, path) {
+  if (!state.errorPath?.length) return false;
+  if (path[0] === "$general") {
+    const value = state.data[state.errorPath[0]];
+    return !value || typeof value !== "object";
+  }
+  return path.every((key, index) => state.errorPath[index] === key);
+}
+function fold(state, path, label, body, open = false) {
+  state.openBlocks ??= new Map();
+  const key = keyFor(path),
+    bad = errorIn(state, path);
+  const node = element("details", {
+    class: "editor-fold" + (bad ? " has-error" : ""),
+    name: state.name + ":" + keyFor(path.slice(0, -1)),
+    "data-block-path": key,
+  });
+  node.open = Boolean(
+    bad || (state.openBlocks.has(key) ? state.openBlocks.get(key) : open),
+  );
+  node.append(element("summary", {}, label), body);
+  node.addEventListener("toggle", () => state.openBlocks.set(key, node.open));
+  return node;
+}
+function objectFields(state, value, path) {
+  const grid = element("div", { class: "editor-grid" });
+  for (const [key, item] of Object.entries(value))
+    grid.append(renderField(state, item, [...path, key], titleFor(key)));
+  return grid;
+}
+function rowSummary(state, item, path, index) {
+  const name =
+    item && typeof item === "object" && !Array.isArray(item)
+      ? item.title ||
+        item.name ||
+        item.label ||
+        item.id ||
+        "Elemento " + (index + 1)
+      : String(item || "Elemento " + (index + 1));
+  const summary = element("summary", { class: "row-summary" });
+  if (item?.image) {
+    const src =
+      state.images.get(keyFor([...path, "image"]))?.dataUrl ||
+      savedPreviews.get(item.image) ||
+      item.image;
+    summary.append(element("img", { src, alt: "", class: "row-thumb" }));
+  }
+  summary.append(element("span", { class: "row-title" }, name));
+  if (item && typeof item === "object" && Object.hasOwn(item, "price")) {
+    let currency = state.data.document?.currency || "PEN";
+    for (let i = 1; i < path.length; i++) {
+      const parent = at(state.data, path.slice(0, i));
+      if (parent?.currency) currency = parent.currency;
+    }
+    const value =
+      item.price === ""
+        ? "Sin precio"
+        : /^\d+(\.\d+)?$/.test(String(item.price))
+          ? money(item.price, currency)
+          : item.price;
+    summary.append(element("span", { class: "row-price" }, value));
+  }
+  return summary;
+}
+function renderField(state, value, path, label, open = false) {
   if (Array.isArray(value)) {
-    const group = element(
-      "fieldset",
-      { class: "group" },
-      element("legend", {}, label + " (" + value.length + ")"),
-    );
-    const min =
-      state.name === "drone-quote" && schemaKey(path) === "overview.items"
-        ? 2
-        : 0;
+    const body = element("div", { class: "fold-body list-body" }),
+      min =
+        state.name === "drone-quote" && schemaKey(path) === "overview.items"
+          ? 2
+          : 0;
     if (min)
-      group.append(
-        element(
-          "p",
-          { class: "help" },
-          "Conserva al menos dos elementos: las fichas públicas usan los dos primeros.",
-        ),
+      body.append(
+        element("p", { class: "help" }, "Conserva al menos dos fichas."),
       );
     value.forEach((item, index) => {
-      const card = element("div", { class: "list-item" });
+      const itemPath = [...path, index],
+        key = keyFor(itemPath),
+        details = element("details", {
+          class: "list-editor" + (errorIn(state, itemPath) ? " has-error" : ""),
+          name: state.name + ":rows:" + keyFor(path),
+        });
+      state.openBlocks ??= new Map();
+      details.open = Boolean(
+        errorIn(state, itemPath) || state.openBlocks.get(key),
+      );
+      details.addEventListener("toggle", () =>
+        state.openBlocks.set(key, details.open),
+      );
+      const summary = rowSummary(state, item, itemPath, index);
+      details.append(
+        summary,
+        element(
+          "div",
+          { class: "row-body" },
+          item && typeof item === "object" && !Array.isArray(item)
+            ? objectFields(state, item, itemPath)
+            : renderField(state, item, itemPath, "Valor"),
+        ),
+      );
       const move = (to) => {
         const [entry] = value.splice(index, 1);
         value.splice(to, 0, entry);
         shiftImages(state, path, index, to);
+        state.openBlocks.set(key, false);
+        state.openBlocks.set(keyFor([...path, to]), true);
         markDirty(state);
         render();
       };
       const tools = element(
         "div",
-        { class: "list-tools" },
-        element(
-          "strong",
-          {},
-          item && typeof item === "object" && !Array.isArray(item)
-            ? item.title || item.name || item.label || "Elemento " + (index + 1)
-            : "Elemento " + (index + 1),
-        ),
+        { class: "row-tools" },
         element(
           "button",
           {
@@ -527,21 +631,20 @@ function renderField(state, value, path, label) {
           "Quitar",
         ),
       );
-      card.append(
-        tools,
-        renderField(state, item, [...path, index], "Elemento " + (index + 1)),
-      );
-      group.append(card);
+      body.append(element("div", { class: "compact-row" }, details, tools));
     });
     const sample = state.templates[schemaKey(path)] ?? value[0];
-    group.append(
+    body.append(
       element(
         "button",
         {
           type: "button",
           disabled: sample === undefined,
           onclick: () => {
+            const index = value.length;
             value.push(blank(sample));
+            state.openBlocks.set(keyFor(path), true);
+            state.openBlocks.set(keyFor([...path, index]), true);
             markDirty(state);
             render();
           },
@@ -549,20 +652,18 @@ function renderField(state, value, path, label) {
         "Agregar elemento",
       ),
     );
-    return group;
+    return fold(state, path, label + " (" + value.length + ")", body, open);
   }
-  if (value && typeof value === "object") {
-    const group = element(
-      "fieldset",
-      { class: "group" },
-      element("legend", {}, label),
+  if (value && typeof value === "object")
+    return fold(
+      state,
+      path,
+      label,
+      element("div", { class: "fold-body" }, objectFields(state, value, path)),
+      open,
     );
-    for (const [key, item] of Object.entries(value))
-      group.append(renderField(state, item, [...path, key], titleFor(key)));
-    return group;
-  }
   const id = "field-" + ++fieldCounter,
-    field = element("div", { class: "field" }),
+    field = element("div", { class: "field", "data-field-path": keyFor(path) }),
     key = path.at(-1);
   if (typeof value === "boolean") {
     const input = element("input", {
@@ -606,7 +707,20 @@ function renderField(state, value, path, label) {
         "scope",
         "whatsappMessage",
       ].includes(key));
-  const input = element(long ? "textarea" : "input", {
+  if (long || imageField) field.classList.add("field-wide");
+  const choices =
+    state.name === "quote-catalog" && key === "type"
+      ? [
+          ["paquete", "Paquete u opción"],
+          ["adicional", "Adicional"],
+        ]
+      : key === "priceDisplay"
+        ? [
+            ["tarifa", "Tarifa por unidad"],
+            ["barra", "Barra de inversión"],
+          ]
+        : null;
+  const input = element(choices ? "select" : long ? "textarea" : "input", {
     id,
     type: long ? undefined : typeof value === "number" ? "number" : "text",
     maxlength: 10000,
@@ -614,6 +728,10 @@ function renderField(state, value, path, label) {
     min: 0,
     max: key === "depositPercent" ? 100 : 1000000000,
   });
+  if (choices)
+    input.append(
+      ...choices.map(([value, text]) => element("option", { value }, text)),
+    );
   input.value = value === null ? "" : String(value);
   input.disabled = value === null;
   const preview = imageField
@@ -668,7 +786,16 @@ function renderField(state, value, path, label) {
       "select",
       { "aria-label": "Carpeta de la imagen" },
       config.imageFolders.map((name) =>
-        element("option", { value: name }, name),
+        element(
+          "option",
+          { value: name },
+          {
+            hero: "Fotos principales",
+            drones: "Drones",
+            "proyectos-web": "Proyectos web",
+            "software/antivirus": "Antivirus",
+          }[name],
+        ),
       ),
     );
     folder.value =
@@ -716,11 +843,7 @@ function renderField(state, value, path, label) {
     updatePreview();
     field.append(
       preview,
-      element(
-        "small",
-        { class: "help" },
-        "Reemplazar: JPG, PNG o WebP, máximo 8 MB. La vista previa es local hasta guardar.",
-      ),
+      element("small", { class: "help" }, "JPG, PNG o WebP · máximo 8 MB."),
       file,
       element("small", { class: "help" }, "Carpeta de destino"),
       folder,
@@ -732,18 +855,13 @@ function renderField(state, value, path, label) {
 function editor(name) {
   const state = states.get(name),
     title = sections.find((s) => s[0] === name)[1];
-  main.append(
-    pageHead(
-      title,
-      "Edita los campos y guarda este apartado. Las listas permiten agregar, quitar y cambiar el orden.",
-    ),
-  );
+  main.append(pageHead(title, "Abre una subsección para editarla."));
   if (name === "quote-catalog")
     main.append(
       element(
         "p",
         { class: "notice" },
-        "Solo servicios: software y licencias son venta directa. Los precios vacíos se completan en el catálogo o en cada cotización. Los precios copiados de la web son referenciales; revísalos si cambias los JSON de origen.",
+        "Solo servicios. Los precios vacíos se completan al cotizar. El teléfono y correo de la firma se editan en Datos del negocio.",
       ),
     );
   if (!config.syncConfigured)
@@ -761,10 +879,47 @@ function editor(name) {
   });
   status(message, state.message || "", state.messageKind || "");
   const form = element("form"),
-    fields = element("fieldset", { class: "card", disabled: state.saving });
-  fields.append(element("legend", {}, "Contenido"));
-  for (const [key, value] of Object.entries(state.data))
-    fields.append(renderField(state, value, [key], titleFor(key)));
+    fields = element("fieldset", {
+      class: "editor-shell",
+      disabled: state.saving,
+    });
+  const primitive = Object.entries(state.data).filter(
+    ([, value]) => !value || typeof value !== "object",
+  );
+  let first = true,
+    commonAdded = false;
+  for (const [key, value] of Object.entries(state.data)) {
+    if (!value || typeof value !== "object") {
+      if (commonAdded) continue;
+      commonAdded = true;
+      fields.append(
+        fold(
+          state,
+          ["$general"],
+          "Información general",
+          element(
+            "div",
+            { class: "fold-body" },
+            objectFields(state, Object.fromEntries(primitive), []),
+          ),
+          first,
+        ),
+      );
+    } else
+      fields.append(renderField(state, value, [key], titleFor(key), first));
+    first = false;
+  }
+  form.addEventListener(
+    "invalid",
+    (event) => {
+      let parent = event.target.parentElement;
+      while (parent) {
+        if (parent.tagName === "DETAILS") parent.open = true;
+        parent = parent.parentElement;
+      }
+    },
+    true,
+  );
   const save = element(
     "button",
     { type: "submit", class: "primary", disabled: state.saving },
@@ -776,8 +931,8 @@ function editor(name) {
     state.dirty ? "Cambios sin guardar" : "Sin cambios pendientes",
   );
   form.append(
-    fields,
     message,
+    fields,
     element("div", { class: "save-bar" }, save, indicator),
   );
   form.addEventListener("submit", async (event) => {
@@ -786,6 +941,7 @@ function editor(name) {
     state.saving = true;
     state.message = "Guardando…";
     state.messageKind = "";
+    state.errorPath = null;
     render();
     try {
       const result = await api("data/" + name, {
@@ -808,6 +964,7 @@ function editor(name) {
     } catch (error) {
       state.message = error.message;
       state.messageKind = "error";
+      state.errorPath = error.field || [];
     } finally {
       state.saving = false;
       if (active === name) render();
@@ -916,33 +1073,91 @@ function quoteServices() {
 function selectedService() {
   return quoteServices().find((service) => service.id === quote.service);
 }
+
+let quoteUi;
+const DRAFT_KEY = "clicksolutions_quote_draft_v3";
+function termsList(value) {
+  if (Array.isArray(value))
+    return value.map((term) =>
+      typeof term === "string" ? { title: "", text: term } : term,
+    );
+  return typeof value === "string"
+    ? value
+        .split(/\n\s*\n/)
+        .filter(Boolean)
+        .map((text) => ({ title: "", text }))
+    : [];
+}
+function quoteDefaults(service) {
+  return {
+    service: service?.id || "",
+    serviceTitle: service?.name || "Servicio",
+    currency: service?.currency || "PEN",
+    greeting: service?.greeting || "Estimado/a {nombre}:",
+    presentation: service?.presentation || "",
+    additionalNote: service?.additionalNote || "",
+    closing: service?.closing || "",
+    terms: clone(service?.terms || []),
+  };
+}
 function initQuote() {
   const catalog = config.documents["quote-catalog"].data,
     first = quoteServices()[0];
   const fresh = {
+    ...quoteDefaults(first),
     number: quoteNumber(),
     date: localDate(),
     clientName: "",
+    greetingName: "",
     clientCompany: "",
     clientContact: "",
     project: "",
     location: "",
-    service: first?.id || "",
-    serviceTitle: first?.name || "Servicio",
-    currency: first?.currency || "PEN",
+    mode: "opciones",
     lines: [],
     discount: 0,
     depositPercent: catalog.document.depositPercent,
     validityDays: catalog.document.validityDays,
     notes: "",
-    terms: (first?.terms || []).join("\n\n"),
   };
-  const draft = stored("clicksolutions_quote_draft_v2", null);
+  const draft =
+    stored(DRAFT_KEY, null) || stored("clicksolutions_quote_draft_v2", null);
   quote =
     draft && typeof draft === "object" && Array.isArray(draft.lines)
       ? { ...fresh, ...draft }
       : fresh;
+  quote.terms = termsList(quote.terms);
+  quote.mode = quote.mode === "presupuesto" ? "presupuesto" : "opciones";
+  quote.lines = quote.lines.map((line) => ({
+    type: "paquete",
+    shortDescription: "",
+    modality: line.unit || "",
+    highlight: { label: "", value: "" },
+    group: "",
+    priceDisplay: "barra",
+    ...line,
+    scope:
+      typeof line.scope === "string"
+        ? line.scope
+            .split("\n")
+            .filter(Boolean)
+            .map((text) => ({ lead: "", text }))
+        : line.scope || [],
+  }));
   if (!["PEN", "USD"].includes(quote.currency)) quote.currency = "PEN";
+  quoteUi = {
+    name: "cotizador",
+    data: quote,
+    templates: {
+      terms: { title: "", text: "" },
+      "lines.*.scope": { lead: "", text: "" },
+    },
+    images: new Map(),
+    openBlocks: new Map(),
+    onDirty: () => {
+      quoteDirty = true;
+    },
+  };
 }
 function fieldInput(label, value, oninput, type = "text", attrs = {}) {
   const id = "field-" + ++fieldCounter,
@@ -951,7 +1166,7 @@ function fieldInput(label, value, oninput, type = "text", attrs = {}) {
       type: type === "textarea" ? undefined : type,
       ...attrs,
     });
-  input.value = value;
+  input.value = value ?? "";
   input.addEventListener("input", () =>
     oninput(
       type === "number"
@@ -963,36 +1178,46 @@ function fieldInput(label, value, oninput, type = "text", attrs = {}) {
   );
   return element(
     "div",
-    { class: "field" },
+    { class: "field" + (type === "textarea" ? " field-wide" : "") },
     element("label", { for: id }, label),
     input,
   );
 }
-function quoteTotals() {
-  const subtotal = quote.lines.reduce(
-      (sum, line) =>
-        sum + (Number(line.price) || 0) * (Number(line.quantity) || 0),
-      0,
-    ),
-    total = Math.max(0, subtotal - (Number(quote.discount) || 0));
-  return {
-    subtotal,
-    total,
-    deposit: (total * (Number(quote.depositPercent) || 0)) / 100,
-  };
+function selectInput(label, value, options, change) {
+  const id = "field-" + ++fieldCounter,
+    select = element(
+      "select",
+      { id },
+      options.map(([value, text]) => element("option", { value }, text)),
+    );
+  select.value = value;
+  select.addEventListener("change", () => change(select.value));
+  return element(
+    "div",
+    { class: "field" },
+    element("label", { for: id }, label),
+    select,
+  );
+}
+function currentProposal() {
+  return proposalModel(
+    quote,
+    config.documents["quote-catalog"].data,
+    config.documents.business.data,
+  );
 }
 function quoteView() {
   main.append(
     pageHead(
       "Cotizador",
-      "Cotiza servicios con partidas del catálogo o manuales. Software y licencias son venta directa. Los datos del cliente solo se guardan en este navegador.",
+      "Prepara opciones o un presupuesto. Los borradores se guardan solo en este navegador.",
     ),
   );
   const message = element("div", { class: "status", role: "status" }),
     layout = element("div", { class: "quote-layout" }),
     form = element("div"),
     preview = element("aside", {
-      class: "card quote-preview",
+      class: "quote-preview proposal-preview",
       "aria-live": "polite",
       "data-quote-preview": "",
     });
@@ -1001,18 +1226,21 @@ function quoteView() {
     quoteDirty = true;
     renderQuotePreview(preview);
   };
-  const documentCard = element(
-    "section",
-    { class: "card" },
-    element("h2", {}, "Documento y cliente"),
-    element(
-      "div",
-      { class: "field-row" },
-      fieldInput("Número", quote.number, (v) => update("number", v)),
-      fieldInput("Fecha", quote.date, (v) => update("date", v), "date"),
+  const documentFields = element(
+    "div",
+    { class: "editor-grid" },
+    fieldInput("N.° de cotización", quote.number, (v) => update("number", v)),
+    fieldInput(
+      "Fecha de emisión",
+      quote.date,
+      (v) => update("date", v),
+      "date",
     ),
     fieldInput("Nombre del cliente", quote.clientName, (v) =>
       update("clientName", v),
+    ),
+    fieldInput("Nombre para el saludo", quote.greetingName, (v) =>
+      update("greetingName", v),
     ),
     fieldInput("Empresa", quote.clientCompany, (v) =>
       update("clientCompany", v),
@@ -1024,49 +1252,53 @@ function quoteView() {
       update("project", v),
     ),
     fieldInput("Ubicación", quote.location, (v) => update("location", v)),
-  );
-  const select = element(
-    "select",
-    { "aria-label": "Servicio a cotizar" },
-    quoteServices().map((s) => element("option", { value: s.id }, s.name)),
-  );
-  select.value = quote.service;
-  select.addEventListener("change", () => {
-    if (
-      quote.lines.length &&
-      !window.confirm(
-        "Cambiar de servicio quitará las partidas para evitar mezclar monedas. ¿Continuar?",
-      )
-    ) {
-      select.value = quote.service;
-      return;
-    }
-    quote.service = select.value;
-    const service = selectedService();
-    quote.serviceTitle = service.name;
-    quote.currency = service.currency;
-    quote.terms = service.terms.join("\n\n");
-    quote.lines = [];
-    quoteDirty = true;
-    render();
-  });
-  const serviceCard = element(
-    "section",
-    { class: "card" },
-    element("h2", {}, "Servicio y partidas"),
-    element("label", {}, "Servicio", select),
-    fieldInput("Nombre del servicio en la propuesta", quote.serviceTitle, (v) =>
-      update("serviceTitle", v),
-    ),
-    element(
-      "p",
-      { class: "help" },
-      "Moneda: " +
-        quote.currency +
-        ". Los precios vacíos requieren un importe antes de generar el PDF.",
+    selectInput(
+      "Presentación de las partidas",
+      quote.mode,
+      [
+        ["opciones", "Opciones: inversiones independientes"],
+        ["presupuesto", "Presupuesto: partidas sumadas"],
+      ],
+      (value) => {
+        quote.mode = value;
+        quoteDirty = true;
+        render();
+      },
     ),
   );
-  const service = selectedService();
+  form.append(
+    fold(
+      quoteUi,
+      ["documento"],
+      "Documento y cliente",
+      element("div", { class: "fold-body" }, documentFields),
+      true,
+    ),
+  );
+  const serviceBody = element("div", { class: "fold-body" }),
+    service = selectedService();
+  serviceBody.append(
+    selectInput(
+      "Servicio",
+      quote.service,
+      quoteServices().map((s) => [s.id, s.name]),
+      (value) => {
+        if (
+          quote.lines.length &&
+          !window.confirm(
+            "Cambiar de servicio quitará sus partidas. ¿Continuar?",
+          )
+        ) {
+          render();
+          return;
+        }
+        const next = quoteServices().find((s) => s.id === value);
+        Object.assign(quote, quoteDefaults(next), { lines: [] });
+        quoteDirty = true;
+        render();
+      },
+    ),
+  );
   const catalogSelect = element(
     "select",
     { "aria-label": "Partida del catálogo" },
@@ -1079,50 +1311,62 @@ function quoteView() {
           " · " +
           (item.price === ""
             ? "Precio pendiente"
-            : money(item.price, quote.currency)) +
-          (item.restriction ? " · " + item.restriction : ""),
+            : proposalMoney(item.price, quote.currency)) +
+          (item.type === "adicional" ? " · Adicional" : ""),
       ),
     ),
   );
-  const addCatalog = button("Agregar del catálogo", () => {
-    if (catalogSelect.value === "") {
-      status(message, "Selecciona una partida del catálogo.", "error");
-      return;
-    }
-    const item = service.items[Number(catalogSelect.value)];
-    quote.lines.push({
-      name: item.name,
-      quantity: 1,
-      price: item.price,
-      unit: item.unit,
-      scope: [item.description, ...item.scope, item.restriction]
-        .filter(Boolean)
-        .join("\n"),
-    });
-    quoteDirty = true;
-    render();
-  });
-  serviceCard.append(
+  const openLine = (index) => {
+    quoteUi.openBlocks.set(keyFor(["partidas"]), true);
+    quoteUi.openBlocks.set(keyFor(["lines", index]), true);
+  };
+  serviceBody.append(
     element(
       "div",
-      { class: "stack" },
+      { class: "catalog-picker" },
       catalogSelect,
-      element(
-        "div",
-        { class: "quote-actions" },
-        addCatalog,
-        button("Agregar partida manual", () => {
-          quote.lines.push({
-            name: "",
-            quantity: 1,
-            price: "",
-            unit: "servicio",
-            scope: "",
-          });
-          quoteDirty = true;
-          render();
-        }),
-      ),
+      button("Agregar", () => {
+        if (catalogSelect.value === "") {
+          status(message, "Selecciona una partida.", "error");
+          return;
+        }
+        quote.lines.push({
+          ...clone(service.items[Number(catalogSelect.value)]),
+          quantity: 1,
+        });
+        openLine(quote.lines.length - 1);
+        quoteDirty = true;
+        render();
+      }),
+      button("Partida manual", () => {
+        quote.lines.push({
+          name: "",
+          type: "paquete",
+          shortDescription: "",
+          price: "",
+          quantity: 1,
+          unit: "servicio",
+          scope: [],
+          modality: "",
+          highlight: { label: "", value: "" },
+          group: "",
+          priceDisplay: "barra",
+        });
+        openLine(quote.lines.length - 1);
+        quoteDirty = true;
+        render();
+      }),
+    ),
+  );
+  serviceBody.append(
+    element(
+      "p",
+      { class: "help" },
+      quote.mode === "opciones"
+        ? "Cada opción tiene su propia inversión; no se calcula una suma conjunta."
+        : "Se suman todas las partidas y adicionales en " +
+            quote.currency +
+            ".",
     ),
   );
   quote.lines.forEach((line, index) => {
@@ -1131,27 +1375,119 @@ function quoteView() {
       quoteDirty = true;
       renderQuotePreview(preview);
     };
-    serviceCard.append(
+    const body = element(
+      "div",
+      { class: "fold-body" },
       element(
         "div",
-        { class: "list-item" },
+        { class: "editor-grid" },
+        fieldInput("Nombre de la partida", line.name, (v) =>
+          updateLine("name", v),
+        ),
+        selectInput(
+          "Tipo",
+          line.type,
+          [
+            ["paquete", "Paquete u opción"],
+            ["adicional", "Adicional"],
+          ],
+          (v) => {
+            line.type = v;
+            quoteDirty = true;
+            render();
+          },
+        ),
+        fieldInput(
+          "Cantidad",
+          line.quantity,
+          (v) => updateLine("quantity", v),
+          "number",
+          { min: 0.01, step: "any" },
+        ),
+        fieldInput(
+          "Precio unitario (" + quote.currency + ")",
+          line.price,
+          (v) => updateLine("price", v),
+          "number",
+          { min: 0, step: 0.01 },
+        ),
+        fieldInput("Unidad", line.unit, (v) => updateLine("unit", v)),
+        fieldInput("Modalidad", line.modality, (v) =>
+          updateLine("modality", v),
+        ),
+        fieldInput(
+          "Descripción corta",
+          line.shortDescription,
+          (v) => updateLine("shortDescription", v),
+          "textarea",
+        ),
+        fieldInput("Etiqueta destacada", line.highlight.label, (v) => {
+          line.highlight.label = v;
+          quoteDirty = true;
+          renderQuotePreview(preview);
+        }),
+        fieldInput("Valor destacado", line.highlight.value, (v) => {
+          line.highlight.value = v;
+          quoteDirty = true;
+          renderQuotePreview(preview);
+        }),
+      ),
+      renderField(quoteUi, line.scope, ["lines", index, "scope"], "Alcance"),
+    );
+    const details = fold(
+      quoteUi,
+      ["lines", index],
+      line.name || "Nueva partida",
+      body,
+    );
+    details
+      .querySelector("summary")
+      .append(
+        element(
+          "span",
+          { class: "row-price" },
+          line.price === ""
+            ? "Sin precio"
+            : proposalMoney(
+                Number(line.price) * Number(line.quantity),
+                quote.currency,
+              ),
+        ),
+      );
+    const move = (to) => {
+      const [item] = quote.lines.splice(index, 1);
+      quote.lines.splice(to, 0, item);
+      openLine(to);
+      quoteDirty = true;
+      render();
+    };
+    serviceBody.append(
+      element(
+        "div",
+        { class: "compact-row" },
+        details,
         element(
           "div",
-          { class: "quote-line" },
-          fieldInput("Partida", line.name, (v) => updateLine("name", v)),
-          fieldInput(
-            "Cantidad",
-            line.quantity,
-            (v) => updateLine("quantity", v),
-            "number",
-            { min: 0.01, step: "any" },
+          { class: "row-tools" },
+          element(
+            "button",
+            {
+              type: "button",
+              disabled: index === 0,
+              "aria-label": "Subir partida",
+              onclick: () => move(index - 1),
+            },
+            "↑",
           ),
-          fieldInput(
-            "Precio unitario",
-            line.price,
-            (v) => updateLine("price", v),
-            "number",
-            { min: 0, step: 0.01 },
+          element(
+            "button",
+            {
+              type: "button",
+              disabled: index === quote.lines.length - 1,
+              "aria-label": "Bajar partida",
+              onclick: () => move(index + 1),
+            },
+            "↓",
           ),
           button(
             "Quitar",
@@ -1163,23 +1499,60 @@ function quoteView() {
             "danger",
           ),
         ),
-        fieldInput("Unidad", line.unit, (v) => updateLine("unit", v)),
-        fieldInput(
-          "Alcance de esta partida",
-          line.scope,
-          (v) => updateLine("scope", v),
-          "textarea",
-        ),
       ),
     );
   });
-  const conditions = element(
-    "section",
-    { class: "card" },
-    element("h2", {}, "Condiciones"),
-    element(
+  form.append(
+    fold(
+      quoteUi,
+      ["partidas"],
+      "Servicio y partidas (" + quote.lines.length + ")",
+      serviceBody,
+    ),
+  );
+  const conditions = element("div", { class: "fold-body" }),
+    conditionFields = element(
       "div",
-      { class: "field-row" },
+      { class: "editor-grid" },
+      fieldInput(
+        "Saludo ({nombre} se reemplaza automáticamente)",
+        quote.greeting,
+        (v) => update("greeting", v),
+      ),
+      fieldInput(
+        "Validez (días)",
+        quote.validityDays,
+        (v) => update("validityDays", v),
+        "number",
+        { min: 1, step: 1 },
+      ),
+      fieldInput(
+        "Presentación",
+        quote.presentation,
+        (v) => update("presentation", v),
+        "textarea",
+      ),
+      fieldInput(
+        "Nota de alcances adicionales",
+        quote.additionalNote,
+        (v) => update("additionalNote", v),
+        "textarea",
+      ),
+      fieldInput(
+        "Texto de cierre",
+        quote.closing,
+        (v) => update("closing", v),
+        "textarea",
+      ),
+      fieldInput(
+        "Notas de la propuesta",
+        quote.notes,
+        (v) => update("notes", v),
+        "textarea",
+      ),
+    );
+  if (quote.mode === "presupuesto")
+    conditionFields.append(
       fieldInput(
         "Descuento (" + quote.currency + ")",
         quote.discount,
@@ -1194,208 +1567,354 @@ function quoteView() {
         "number",
         { min: 0, max: 100, step: 0.01 },
       ),
-    ),
-    fieldInput(
-      "Validez (días)",
-      quote.validityDays,
-      (v) => update("validityDays", v),
-      "number",
-      { min: 1, step: 1 },
-    ),
-    fieldInput("Notas", quote.notes, (v) => update("notes", v), "textarea"),
-    fieldInput(
-      "Términos y condiciones",
-      quote.terms,
-      (v) => update("terms", v),
-      "textarea",
-    ),
+    );
+  conditions.append(
+    conditionFields,
+    renderField(quoteUi, quote.terms, ["terms"], "Términos y condiciones"),
   );
-  const actions = element(
-    "div",
-    { class: "quote-actions" },
-    button("Guardar borrador", () => {
-      try {
-        localStorage.setItem(
-          "clicksolutions_quote_draft_v2",
-          JSON.stringify(quote),
-        );
-        quoteDirty = false;
-        status(message, "Borrador guardado solo en este navegador.", "success");
-      } catch {
-        status(
-          message,
-          "No se pudo guardar el borrador en este navegador.",
-          "error",
-        );
-      }
-    }),
-    button("Nueva cotización", () => {
-      if (
-        !window.confirm(
-          "¿Limpiar esta cotización? El borrador guardado se eliminará.",
-        )
-      )
-        return;
-      try {
-        localStorage.removeItem("clicksolutions_quote_draft_v2");
-        initQuote();
-        quoteDirty = false;
-        render();
-      } catch {
-        status(message, "No se pudo limpiar el borrador.", "error");
-      }
-    }),
-    button(
-      "Generar PDF",
-      async () => {
+  form.append(
+    fold(quoteUi, ["condiciones"], "Presentación y condiciones", conditions),
+    message,
+  );
+  const saveDraft = () => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(quote));
+      quoteDirty = false;
+      status(message, "Borrador guardado en este navegador.", "success");
+    } catch {
+      status(message, "No se pudo guardar el borrador.", "error");
+    }
+  };
+  form.append(
+    element(
+      "div",
+      { class: "quote-actions" },
+      button("Guardar borrador", saveDraft),
+      button("Nueva cotización", () => {
+        if (!window.confirm("¿Limpiar esta cotización y su borrador?")) return;
         try {
-          await generatePdf();
-          const counter = nextCounter();
-          localStorage.setItem(
-            "clicksolutions_quote_counter",
-            JSON.stringify(counter + 1),
-          );
-          localStorage.setItem(
-            "clicksolutions_quote_draft_v2",
-            JSON.stringify(quote),
-          );
+          localStorage.removeItem(DRAFT_KEY);
+          localStorage.removeItem("clicksolutions_quote_draft_v2");
+          initQuote();
           quoteDirty = false;
-          status(
-            message,
-            "PDF generado. La numeración avanzará en la próxima cotización.",
-            "success",
-          );
-        } catch (error) {
-          status(
-            message,
-            error.message || "No se pudo generar el PDF.",
-            "error",
-          );
+          render();
+        } catch {
+          status(message, "No se pudo limpiar el borrador.", "error");
         }
-      },
-      "primary",
+      }),
+      button(
+        "Generar PDF",
+        async () => {
+          try {
+            await generatePdf();
+            localStorage.setItem(
+              "clicksolutions_quote_counter",
+              JSON.stringify(nextCounter() + 1),
+            );
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(quote));
+            quoteDirty = false;
+            status(
+              message,
+              "PDF generado. La próxima cotización usará el siguiente número.",
+              "success",
+            );
+          } catch (error) {
+            status(
+              message,
+              error.message || "No se pudo generar el PDF.",
+              "error",
+            );
+          }
+        },
+        "primary",
+      ),
     ),
   );
-  form.append(documentCard, serviceCard, conditions, message, actions);
   layout.append(form, preview);
   main.append(layout);
   renderQuotePreview(preview);
 }
-function renderQuotePreview(container) {
-  const totals = quoteTotals(),
-    currency = quote.currency;
-  const table = element(
-    "table",
-    { class: "totals" },
-    element(
-      "thead",
-      {},
+
+function previewBullets(bullets) {
+  return element(
+    "ul",
+    { class: "proposal-bullets" },
+    bullets.map((b) =>
+      element("li", {}, element("strong", {}, b.lead), b.text),
+    ),
+  );
+}
+function proposalHeading(text) {
+  return element("h3", { class: "proposal-section" }, text);
+}
+function previewInvestment(item, model) {
+  const values = [
+    [
+      "Inversión total",
+      item.price === ""
+        ? "Precio pendiente"
+        : proposalMoney(item.amount, model.currency),
+    ],
+    item.highlight?.value
+      ? [item.highlight.label, item.highlight.value]
+      : ["Cantidad", item.quantity + " " + item.unit],
+    ["Modalidad", item.modality || item.unit],
+  ];
+  return element(
+    "div",
+    { class: "investment-bar" },
+    values.map(([label, value]) =>
       element(
-        "tr",
+        "div",
         {},
-        element("th", {}, "Partida"),
-        element("th", {}, "Importe"),
+        element("small", {}, label),
+        element("strong", {}, value),
       ),
     ),
+  );
+}
+function renderQuotePreview(container) {
+  const model = currentProposal(),
+    seen = new Set();
+  container.replaceChildren(
     element(
-      "tbody",
-      {},
-      quote.lines.map((line) =>
+      "div",
+      { class: "proposal-header" },
+      element("img", {
+        src: "/brand/clicksolutions-logo.png",
+        alt: "Click Solutions",
+        class: "proposal-logo",
+      }),
+      element("h2", {}, "PROPUESTA COMERCIAL"),
+    ),
+    element(
+      "div",
+      { class: "proposal-recipient" },
+      element(
+        "div",
+        {},
+        element("small", {}, "PARA:"),
+        element("strong", {}, model.clientName || "Nombre del cliente"),
         element(
-          "tr",
+          "span",
+          {},
+          [model.clientCompany, model.clientContact]
+            .filter(Boolean)
+            .join(" · "),
+        ),
+      ),
+      element(
+        "div",
+        {},
+        element(
+          "p",
+          {},
+          "N.° de cotización: ",
+          element("strong", {}, model.number),
+        ),
+        element(
+          "p",
+          {},
+          "Fecha de emisión: ",
+          element("strong", {}, longDate(model.date)),
+        ),
+      ),
+    ),
+  );
+  if (model.project || model.location)
+    container.append(
+      element(
+        "p",
+        {},
+        [model.project, model.location].filter(Boolean).join(" · "),
+      ),
+    );
+  container.append(
+    proposalHeading("PRESENTACIÓN"),
+    element("p", {}, model.greeting),
+    element("p", {}, model.presentation),
+  );
+  for (const item of model.packages) {
+    const group = model.groups.find((g) => g.id === item.group),
+      tariff = item.priceDisplay === "tarifa" && model.mode === "opciones";
+    if (group && !seen.has(group.id)) {
+      container.append(
+        proposalHeading(group.title),
+        element(
+          "div",
+          { class: "proposal-package" },
+          element("strong", {}, group.description),
+          previewBullets(group.scope),
+        ),
+        element("h4", { class: "options-label" }, group.optionsLabel),
+      );
+      seen.add(group.id);
+    }
+    if (!group) container.append(proposalHeading(item.name));
+    else container.append(element("h4", {}, item.name));
+    const body = element("div", {
+      class: group ? "proposal-option" : "proposal-package",
+    });
+    if (item.shortDescription)
+      body.append(element(tariff ? "strong" : "p", {}, item.shortDescription));
+    if (tariff)
+      body.append(
+        element(
+          "p",
+          {},
+          "Tarifa: ",
+          element(
+            "strong",
+            {},
+            item.price === ""
+              ? "Precio pendiente"
+              : proposalMoney(item.price, model.currency),
+          ),
+          " " + item.modality,
+        ),
+      );
+    if (tariff && item.quantity !== 1)
+      body.append(
+        element(
+          "p",
+          {},
+          "Inversión total: ",
+          element("strong", {}, proposalMoney(item.amount, model.currency)),
+          " · " + item.quantity + " " + item.unit,
+        ),
+      );
+    body.append(previewBullets(item.scope));
+    container.append(body);
+    if (!tariff) container.append(previewInvestment(item, model));
+  }
+  if (model.additionalNote)
+    container.append(
+      element("p", { class: "proposal-note" }, model.additionalNote),
+    );
+  if (model.additions.length) {
+    container.append(
+      proposalHeading(model.additionalTitle),
+      element(
+        "table",
+        { class: "proposal-additions" },
+        element(
+          "thead",
           {},
           element(
-            "td",
+            "tr",
             {},
-            line.quantity + " × " + (line.name || "Sin nombre"),
+            element("th", {}, "Servicio"),
+            element("th", {}, "Inversión adicional"),
           ),
-          element(
-            "td",
-            {},
-            line.price === ""
-              ? "Precio pendiente"
-              : money(
-                  (Number(line.price) || 0) * (Number(line.quantity) || 0),
-                  currency,
-                ),
+        ),
+        element(
+          "tbody",
+          {},
+          model.additions.map((item) =>
+            element(
+              "tr",
+              {},
+              element(
+                "td",
+                {},
+                (item.quantity !== 1 ? item.quantity + " × " : "") + item.name,
+                item.shortDescription
+                  ? element("small", {}, item.shortDescription)
+                  : null,
+                item.scope.length ? previewBullets(item.scope) : null,
+              ),
+              element(
+                "td",
+                {},
+                item.price === ""
+                  ? "Precio pendiente"
+                  : "+ " + proposalMoney(item.amount, model.currency),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  if (model.mode === "presupuesto") {
+    container.append(
+      proposalHeading("RESUMEN DEL PRESUPUESTO"),
+      element(
+        "table",
+        { class: "proposal-totals" },
+        element(
+          "tbody",
+          {},
+          [
+            ["Subtotal", model.subtotal],
+            ["Descuento", model.discount],
+            ["Total", model.total],
+            ["Adelanto (" + model.depositPercent + "%)", model.deposit],
+          ].map(([label, amount], index) =>
+            element(
+              "tr",
+              { class: index > 1 ? "total-row" : "" },
+              element("td", {}, label),
+              element("td", {}, proposalMoney(amount, model.currency)),
+            ),
           ),
         ),
       ),
       element(
-        "tr",
-        {},
-        element("td", {}, "Subtotal"),
-        element("td", {}, money(totals.subtotal, currency)),
+        "p",
+        { class: "help" },
+        "Validez: " +
+          model.validityDays +
+          " días a partir de la fecha de emisión.",
       ),
+    );
+  }
+  if (model.terms.length)
+    container.append(
+      proposalHeading("TÉRMINOS Y CONDICIONES DEL SERVICIO"),
       element(
-        "tr",
-        {},
-        element("td", {}, "Descuento"),
-        element("td", {}, money(quote.discount, currency)),
+        "ol",
+        { class: "proposal-terms" },
+        model.terms.map((term) =>
+          element(
+            "li",
+            {},
+            term.title ? element("strong", {}, term.title + ": ") : null,
+            term.text,
+          ),
+        ),
       ),
-      element(
-        "tr",
-        { class: "total-row" },
-        element("td", {}, "Total"),
-        element("td", {}, money(totals.total, currency)),
-      ),
-      element(
-        "tr",
-        {},
-        element("td", {}, "Adelanto (" + quote.depositPercent + "%)"),
-        element("td", {}, money(totals.deposit, currency)),
-      ),
-    ),
-  );
-  container.replaceChildren(
-    element("h2", {}, "Vista previa"),
-    element("p", {}, quote.number + " · " + quote.date),
-    element("h3", {}, quote.clientName || "Nombre del cliente"),
+    );
+  if (model.notes)
+    container.append(
+      proposalHeading("OBSERVACIONES"),
+      element("p", {}, model.notes),
+    );
+  container.append(
+    element("p", {}, model.closing),
+    element("p", {}, "Atentamente,"),
     element(
-      "p",
-      { class: "muted" },
-      [quote.clientCompany, quote.clientContact, quote.project, quote.location]
-        .filter(Boolean)
-        .join(" · "),
+      "div",
+      { class: "proposal-signature" },
+      element("strong", {}, model.signature.name),
+      element("span", {}, model.signature.role),
+      model.phone
+        ? element("span", {}, "Teléfono / WhatsApp: " + model.phone)
+        : null,
+      model.email ? element("span", {}, "Correo: " + model.email) : null,
     ),
-    element("h3", {}, quote.serviceTitle),
-    table,
-    element(
-      "p",
-      { class: "help" },
-      "Validez: " + quote.validityDays + " días.",
-    ),
-    element("h3", {}, "Alcance"),
-    ...quote.lines.map((line) =>
-      element("p", { class: "muted" }, line.name + ": " + line.scope),
-    ),
-    element("h3", {}, "Términos"),
-    element("p", { class: "muted" }, quote.terms),
-    quote.notes ? element("p", {}, "Notas: " + quote.notes) : null,
-    element("h3", {}, "Contacto"),
-    element("p", { class: "muted" }, contactText()),
+    element("footer", {}, model.footerSlogan),
   );
 }
-function contactText() {
-  const business = config.documents.business.data;
-  return [
-    business.legalName,
-    business.contact.phone,
-    business.contact.email,
-    business.contact.area,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
-
+let logoPromise;
 async function generatePdf() {
   if (
     !quote.clientName.trim() ||
     !quote.number.trim() ||
-    !quote.date ||
-    !quote.serviceTitle.trim()
+    !/^\d{4}-\d{2}-\d{2}$/.test(quote.date) ||
+    !Number.isFinite(Date.parse(quote.date + "T12:00:00Z"))
   )
-    throw new Error("Completa el cliente, número, fecha y servicio.");
+    throw new Error("Completa el cliente, número y fecha.");
   if (
     !quote.lines.length ||
     quote.lines.some(
@@ -1411,104 +1930,45 @@ async function generatePdf() {
     throw new Error(
       "Completa el nombre, cantidad y precio de todas las partidas.",
     );
-  const totals = quoteTotals();
+  const model = currentProposal();
   if (
-    !Number.isFinite(totals.subtotal) ||
-    !Number.isFinite(Number(quote.discount)) ||
-    Number(quote.discount) < 0 ||
-    Number(quote.discount) > totals.subtotal ||
-    quote.depositPercent === "" ||
-    Number(quote.depositPercent) < 0 ||
-    Number(quote.depositPercent) > 100 ||
-    !Number.isFinite(Number(quote.depositPercent)) ||
+    !Number.isFinite(model.subtotal) ||
     !Number.isInteger(Number(quote.validityDays)) ||
     Number(quote.validityDays) < 1
   )
-    throw new Error("Revisa el descuento, adelanto (0 a 100%) y validez.");
+    throw new Error("Revisa los importes y la validez.");
+  if (
+    model.mode === "presupuesto" &&
+    (!Number.isFinite(model.discount) ||
+      model.discount < 0 ||
+      model.discount > model.subtotal ||
+      quote.depositPercent === "" ||
+      !Number.isFinite(model.depositPercent) ||
+      model.depositPercent < 0 ||
+      model.depositPercent > 100)
+  )
+    throw new Error("Revisa el descuento y el adelanto (0 a 100%).");
   if (!window.jspdf?.jsPDF)
-    throw new Error("No se pudo cargar el generador de PDF. Recarga el panel.");
-  const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
-  let y = 20;
-  const width = 174,
-    left = 18;
-  function paragraph(text, size = 10, bold = false) {
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(size);
-    doc.setTextColor(35, 49, 65);
-    const lines = doc.splitTextToSize(String(text || ""), width);
-    for (const line of lines) {
-      if (y > 270) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.text(line, left, y);
-      y += size * 0.45 + 1.4;
-    }
-    y += 3;
-  }
-  paragraph("COTIZACIÓN", 17, true);
-  paragraph(quote.number + " | " + quote.date);
-  paragraph(quote.serviceTitle, 13, true);
-  paragraph(
-    "Cliente: " +
-      quote.clientName +
-      (quote.clientCompany ? " — " + quote.clientCompany : ""),
-  );
-  paragraph(
-    [quote.clientContact, quote.project, quote.location]
-      .filter(Boolean)
-      .join(" | "),
-  );
-  paragraph("PARTIDAS Y ALCANCE", 11, true);
-  for (const [index, line] of quote.lines.entries()) {
-    paragraph(index + 1 + ". " + line.name, 11, true);
-    paragraph(
-      line.quantity +
-        " " +
-        line.unit +
-        " × " +
-        money(line.price, quote.currency) +
-        " = " +
-        money(Number(line.quantity) * Number(line.price), quote.currency),
-    );
-    paragraph(line.scope);
-  }
-  paragraph("Subtotal: " + money(totals.subtotal, quote.currency));
-  paragraph("Descuento: " + money(quote.discount, quote.currency));
-  paragraph("TOTAL: " + money(totals.total, quote.currency), 13, true);
-  paragraph(
-    "Adelanto (" +
-      quote.depositPercent +
-      "%): " +
-      money(totals.deposit, quote.currency),
-    11,
-    true,
-  );
-  paragraph(
-    "Validez: " + quote.validityDays + " días a partir de la fecha de emisión.",
-  );
-  paragraph("TÉRMINOS Y CONDICIONES", 11, true);
-  paragraph(quote.terms);
-  if (quote.notes) {
-    paragraph("NOTAS", 11, true);
-    paragraph(quote.notes);
-  }
-  paragraph("CONTACTO", 11, true);
-  paragraph(contactText());
-  for (let page = 1; page <= doc.getNumberOfPages(); page++) {
-    doc.setPage(page);
-    doc.setFontSize(8);
-    doc.setTextColor(90);
-    doc.text("Página " + page + " de " + doc.getNumberOfPages(), 192, 287, {
-      align: "right",
-    });
-  }
+    throw new Error("No se pudo cargar el generador PDF. Recarga el panel.");
+  if (!logoPromise)
+    logoPromise = fetch("/brand/clicksolutions-logo.png")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("No se pudo cargar el logo oficial.");
+        return new Uint8Array(await response.arrayBuffer());
+      })
+      .catch((error) => {
+        logoPromise = null;
+        throw error;
+      });
+  const doc = proposalPdf(model, window.jspdf.jsPDF, await logoPromise);
   doc.save(
     (quote.number + "-" + quote.clientName)
       .replace(/[^a-zA-Z0-9_-]/g, "-")
       .slice(0, 110) + ".pdf",
   );
+  return doc;
 }
+
 function render() {
   main.replaceChildren();
   fieldCounter = 0;
