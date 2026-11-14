@@ -154,7 +154,7 @@ const mappingSteps = [
 <style>
   .drone-sheet {
     position: relative;
-    min-height: min(836px, calc(100svh - var(--header-h) - 1rem));
+    min-height: calc(100svh - var(--header-h) - 1rem);
     scroll-snap-align: start;
     overflow: hidden;
     isolation: isolate;
@@ -163,7 +163,7 @@ const mappingSteps = [
   .drone-sheet__inner {
     display: grid;
     align-content: center;
-    min-height: min(836px, calc(100svh - var(--header-h) - 1rem));
+    min-height: calc(100svh - var(--header-h) - 1rem);
     padding-block: clamp(1.5rem, 4vh, 3rem);
     gap: clamp(1.1rem, 2.5vh, 2rem);
   }
@@ -329,6 +329,12 @@ const mappingSteps = [
 
   @media (prefers-reduced-motion: reduce) {
     .drone-sheet { scroll-snap-align: none; }
+  }
+
+  /* Pantallas verticales (monitor vertical, tablets, móviles): alturas según el contenido. */
+  @media (orientation: portrait) {
+    .drone-sheet,
+    .drone-sheet__inner { min-height: min(836px, calc(100svh - var(--header-h) - 1rem)); }
   }
 </style>
 

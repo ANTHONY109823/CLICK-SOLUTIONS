@@ -91,7 +91,7 @@ const process: { title: string; text: string }[] = [
     position: relative;
     display: grid;
     align-items: center;
-    min-height: min(836px, calc(100svh - var(--header-h) - 50px));
+    min-height: calc(100svh - var(--header-h) - 50px);
     padding-block: clamp(3rem, 6vh, 5.5rem);
     overflow: hidden;
     background:
@@ -276,5 +276,10 @@ const process: { title: string; text: string }[] = [
     .company-panel__status i,
     .project-route__online i,
     .project-route::after { animation: none; }
+  }
+
+  /* Pantallas verticales (monitor vertical, tablets, móviles): alturas según el contenido. */
+  @media (orientation: portrait) {
+    .company-panel { min-height: min(836px, calc(100svh - var(--header-h) - 50px)); }
   }
 </style>

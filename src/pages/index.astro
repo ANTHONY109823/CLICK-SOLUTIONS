@@ -104,7 +104,7 @@ const home = getHomeContent();
   .home-panel {
     display: grid;
     align-items: center;
-    min-height: min(836px, calc(100svh - var(--header-h)));
+    min-height: calc(100svh - var(--header-h));
     padding-block: clamp(3.5rem, 7vh, 6rem);
     overflow: hidden;
   }
@@ -121,5 +121,10 @@ const home = getHomeContent();
   }
 
   @media (max-width: 560px) {
+  }
+
+  /* Pantallas verticales (monitor vertical, tablets, móviles): alturas según el contenido. */
+  @media (orientation: portrait) {
+    .home-panel { min-height: min(836px, calc(100svh - var(--header-h))); }
   }
 </style>

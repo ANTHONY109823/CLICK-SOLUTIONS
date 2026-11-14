@@ -217,7 +217,7 @@ const products = isLicenses ? getLicenses() : [];
   .service-sheet {
     --sheet-accent: var(--brand-cyan);
     --sheet-tint: rgb(0 170 231 / 0.07);
-    min-height: min(836px, calc(100svh - var(--header-h)));
+    min-height: calc(100svh - var(--header-h));
     padding-block: clamp(2.5rem, 5vh, 4.5rem);
     background: radial-gradient(circle at 88% 8%, var(--sheet-tint), transparent 25%), var(--bg);
   }
@@ -323,5 +323,10 @@ const products = isLicenses ? getLicenses() : [];
     .work-rail { grid-auto-columns: minmax(84vw, 1fr); }
     .quote-strip__actions { display: grid; }
     .quote-strip__actions :global(.btn) { width: 100%; }
+  }
+
+  /* Pantallas verticales (monitor vertical, tablets, móviles): alturas según el contenido. */
+  @media (orientation: portrait) {
+    .service-sheet { min-height: min(836px, calc(100svh - var(--header-h))); }
   }
 </style>

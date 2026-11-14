@@ -51,7 +51,7 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
 <style>
   .drone-overview {
     position: relative;
-    min-height: min(836px, calc(100svh - var(--header-h)));
+    min-height: calc(100svh - var(--header-h));
     padding-block: clamp(1.5rem, 3vh, 2.4rem);
     overflow: hidden;
     background:
@@ -168,5 +168,10 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
 
   @media (prefers-reduced-motion: reduce) {
     .drone-service__image img { transition: none; }
+  }
+
+  /* Pantallas verticales (monitor vertical, tablets, móviles): alturas según el contenido. */
+  @media (orientation: portrait) {
+    .drone-overview { min-height: min(836px, calc(100svh - var(--header-h))); }
   }
 </style>
