@@ -51,7 +51,7 @@ const imageUrl = (src: string) => src.startsWith('/') ? `${base}${src}` : src;
 <style>
   .drone-overview {
     position: relative;
-    min-height: calc(100svh - var(--header-h));
+    min-height: min(836px, calc(100svh - var(--header-h)));
     padding-block: clamp(1.5rem, 3vh, 2.4rem);
     overflow: hidden;
     background:

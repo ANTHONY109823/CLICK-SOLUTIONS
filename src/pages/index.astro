@@ -104,7 +104,7 @@ const home = getHomeContent();
   .home-panel {
     display: grid;
     align-items: center;
-    min-height: calc(100svh - var(--header-h));
+    min-height: min(836px, calc(100svh - var(--header-h)));
     padding-block: clamp(3.5rem, 7vh, 6rem);
     overflow: hidden;
   }

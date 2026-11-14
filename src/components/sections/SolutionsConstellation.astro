@@ -67,7 +67,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 </div>
 
 <style>
-  .constellation { --extra-bottom: 76px; --diameter: clamp(88px, min(26.4vw, 25.2svh), 240px); position: relative; isolation: isolate; min-height: calc(max(740px, 100svh - var(--header-h)) + var(--extra-bottom)); overflow: hidden; background: #edf7fc; }
+  .constellation { --extra-bottom: 76px; --diameter: clamp(88px, min(26.4vw, 25.2svh), 240px); position: relative; isolation: isolate; min-height: calc(max(740px, min(836px, 100svh - var(--header-h))) + var(--extra-bottom)); overflow: hidden; background: #edf7fc; }
   .honeycomb-camera { position: absolute; inset: 0 0 var(--extra-bottom); transform-origin: 50% 50%; animation: camera-zoom 19s ease-in-out infinite alternate; }
   .honeycomb-scene { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
   .cell { position: absolute; left: calc(50% + var(--x) * var(--diameter)); top: calc(50% + var(--y) * var(--diameter)); width: var(--diameter); height: calc(var(--diameter) * .866025404); translate: -50% -50%; }
@@ -111,7 +111,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   @keyframes edge-flow { to { stroke-dashoffset: -300; } }
   @keyframes surface-shine { 0%, 30% { transform: translateX(-140%); } 75%, 100% { transform: translateX(140%); } }
   @media (max-width: 640px) {
-    .constellation { --extra-bottom: 0px; --diameter: clamp(110px, 34vw, 184px); min-height: max(calc(100svh - var(--header-h)), calc(var(--diameter) * 4 + 48px)); }
+    .constellation { --extra-bottom: 0px; --diameter: clamp(110px, 34vw, 184px); min-height: max(min(836px, calc(100svh - var(--header-h))), calc(var(--diameter) * 4 + 48px)); }
     .honeycomb-camera { animation-name: camera-mobile; }
     .cell { left: calc(50% + var(--mobile-x) * var(--diameter)); top: calc(50% + var(--mobile-y) * var(--diameter)); width: calc(var(--diameter) * .866025404); height: var(--diameter); }
     .cell__foundation, .cell__depth, .cell__surface { clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }

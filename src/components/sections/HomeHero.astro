@@ -75,7 +75,7 @@ const { services, content } = Astro.props;
   .hero {
     position: relative;
     overflow: clip;
-    min-height: calc(100svh - var(--header-h));
+    min-height: min(836px, calc(100svh - var(--header-h)));
     padding-block: clamp(1.75rem, 4vh, 3.25rem) 0;
     background:
       radial-gradient(circle at 82% 25%, rgb(0 170 231 / 0.2), transparent 27%),

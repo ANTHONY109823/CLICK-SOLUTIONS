@@ -253,17 +253,17 @@ const projectImage = (src: string) => src.startsWith('/') ? `${base}${src}` : sr
 
 <style>
   .web-experience { --web-green: #5ce4a9; --web-blue: #28b7ef; --web-ink: #061a33; }
-  .web-screen { position: relative; min-height: calc(100svh - var(--header-h) - 1rem); scroll-snap-align: start; overflow: hidden; isolation: isolate; }
-  .web-screen__inner { display: grid; align-content: center; min-height: calc(100svh - var(--header-h) - 1rem); padding-block: clamp(1.5rem, 4vh, 3rem); gap: clamp(1.2rem, 3vh, 2rem); }
+  .web-screen { position: relative; min-height: min(836px, calc(100svh - var(--header-h) - 1rem)); scroll-snap-align: start; overflow: hidden; isolation: isolate; }
+  .web-screen__inner { display: grid; align-content: center; min-height: min(836px, calc(100svh - var(--header-h) - 1rem)); padding-block: clamp(1.5rem, 4vh, 3rem); gap: clamp(1.2rem, 3vh, 2rem); }
 
   .web-eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--web-green); font-size: var(--fs-xs); font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
   .web-eyebrow i { width: 25px; height: 2px; border-radius: 3px; background: currentColor; box-shadow: 0 0 12px currentColor; }
   .web-eyebrow--light { color: #087d82; }
 
-  .web-hero { min-height: calc(100svh - var(--header-h)); color: #fff; background: radial-gradient(circle at 83% 18%, rgb(42 198 152 / 0.22), transparent 28%), linear-gradient(132deg, #031426, #06314e 53%, #075943); }
+  .web-hero { min-height: min(836px, calc(100svh - var(--header-h))); color: #fff; background: radial-gradient(circle at 83% 18%, rgb(42 198 152 / 0.22), transparent 28%), linear-gradient(132deg, #031426, #06314e 53%, #075943); }
   .web-hero::before { content: ''; position: absolute; inset: 0; z-index: -2; opacity: 0.62; background-image: linear-gradient(rgb(91 228 169 / 0.055) 1px, transparent 1px), linear-gradient(90deg, rgb(91 228 169 / 0.055) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(90deg, black, transparent 88%); }
   .web-hero__glow { position: absolute; right: -13rem; bottom: -19rem; z-index: -1; width: 43rem; aspect-ratio: 1; border: 1px solid rgb(92 228 169 / 0.14); border-radius: 50%; box-shadow: 0 0 0 90px rgb(92 228 169 / 0.025), 0 0 0 180px rgb(40 183 239 / 0.018); }
-  .web-hero__inner { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(480px, 1.1fr); align-items: center; min-height: calc(100svh - var(--header-h)); gap: clamp(2rem, 6vw, 6rem); padding-block: clamp(2rem, 5vh, 4rem); }
+  .web-hero__inner { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(480px, 1.1fr); align-items: center; min-height: min(836px, calc(100svh - var(--header-h))); gap: clamp(2rem, 6vw, 6rem); padding-block: clamp(2rem, 5vh, 4rem); }
   .web-hero__copy h1 { max-width: 16ch; margin: var(--space-5) 0 var(--space-5); color: #fff; font-size: clamp(2.65rem, 4.6vw, 4.5rem); line-height: 0.94; letter-spacing: -0.045em; }
   .web-hero__copy > p { max-width: 62ch; margin: 0; color: #a9c8d2; font-size: clamp(0.95rem, 1.45vw, 1.14rem); line-height: 1.65; }
   .web-hero__actions { margin-top: var(--space-7); }
@@ -398,11 +398,11 @@ const projectImage = (src: string) => src.startsWith('/') ? `${base}${src}` : sr
   .price-note { display: flex; align-items: flex-start; justify-self: center; gap: 8px; margin: 0; color: #657b86; font-size: 0.64rem; }
   .price-note :global(svg) { flex: 0 0 auto; color: #0e9990; }
 
-  .web-proof { min-height: calc(100svh - var(--header-h) - 5.75rem); color: #fff; background: radial-gradient(circle at 18% 82%, rgb(40 183 239 / 0.2), transparent 28%), linear-gradient(135deg, #031426, #052d46 55%, #064b4b); }
+  .web-proof { min-height: min(836px, calc(100svh - var(--header-h) - 5.75rem)); color: #fff; background: radial-gradient(circle at 18% 82%, rgb(40 183 239 / 0.2), transparent 28%), linear-gradient(135deg, #031426, #052d46 55%, #064b4b); }
   .proof-grid { position: absolute; inset: 0; z-index: -1; opacity: 0.56; background-image: radial-gradient(rgb(92 228 169 / 0.18) 1px, transparent 1.5px); background-size: 24px 24px; mask-image: linear-gradient(90deg, black, transparent 73%); }
   .web-heading--dark h2 { color: #fff; }
   .web-heading--dark p { color: #9cb8c4; }
-  .web-proof__inner { grid-template-rows: auto minmax(0, 1fr); min-height: calc(100svh - var(--header-h) - 5.75rem); }
+  .web-proof__inner { grid-template-rows: auto minmax(0, 1fr); min-height: min(836px, calc(100svh - var(--header-h) - 5.75rem)); }
   .web-proof .web-heading__row { grid-template-columns: minmax(0, 1fr) minmax(260px, 0.5fr); }
   .web-proof .web-heading h2 { max-width: 18ch; }
   .project-carousel { position: relative; min-width: 0; height: 100%; min-height: 0; }

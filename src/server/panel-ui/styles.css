@@ -821,3 +821,14 @@ main {
     font-size: 10px;
   }
 }
+
+/* Flat allowlisted editor rows */
+.editable-rows{display:grid;gap:1rem;min-width:0}
+.editable-row{padding:1rem;border:1px solid #dbe4e8;border-radius:12px;align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}
+.editable-row-title{grid-column:1/-1;overflow-wrap:anywhere}
+.editable-row .field-wide{grid-column:auto}.editor-grid>*{min-width:0}
+.field input,.field select,.field textarea{max-width:100%;min-width:0}
+.editable-row .image-preview{max-height:150px;object-fit:contain}
+button,input,select{min-height:44px}input[type=checkbox]{min-height:24px;min-width:24px}
+@media(min-width:1500px){.editable-row{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.editable-row{grid-template-columns:1fr;padding:.75rem}.save-bar{flex-wrap:wrap}.page-head h1{overflow-wrap:anywhere}}

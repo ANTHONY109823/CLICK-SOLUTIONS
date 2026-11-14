@@ -6,7 +6,6 @@ import {
 } from "./proposal.js";
 const sections = [
   ["business", "Datos del negocio"],
-  ["home", "Página de inicio"],
   ["service-visibility", "Servicios visibles"],
   ["web-development", "Desarrollo web"],
   ["web-projects", "Portafolio / fotos del carrusel"],
@@ -852,10 +851,44 @@ function renderField(state, value, path, label, open = false) {
   }
   return field;
 }
+
+// Declarative allowlist. All other data remains untouched in the full PUT.
+const editableSections = {
+ business: [ ['Contacto','contact',['email','phone','whatsapp','area','address','hours']], ['Redes sociales','social',['facebook','instagram','tiktok','linkedin','youtube']], ['Soporte','support',['onsite','remote']] ],
+ 'service-visibility': [['','',['drones','desarrolloWeb','soporteTecnico','licenciasSoftware']]],
+ 'web-development': [['','solutions',['price','timing'],true]],
+ 'web-projects': [['','projects',['image','title','category','visible'],true,true]],
+ 'drone-quote': [['Fotos de servicios','overview.items',['image'],true],['Precios de servicios','packages',['price','priceLabel'],true],['Precios adicionales','addons',['price'],true],['Armado por encargo','customBuild',['image','priceLabel']]],
+ 'click-software': [['Reset Epson','resetEpson.plans',['price','duration'],true],['Dr. Click','drClick',['version']],...['eset','panda','bitdefender'].map(k=>[titleFor(k),'antivirus.'+k,['image']])],
+ 'quote-catalog': [['Datos del documento','document',['prefix','nextNumber','depositPercent','validityDays','signature.name','signature.role']]],
+};
+function renderEditableFields(state,target) {
+ const specs=[...editableSections[state.name]];
+ if(state.name==='quote-catalog') state.data.services.forEach((service,i)=>specs.push([service.name,['services',i,'items'],['name','price','type'],true,true]));
+ for(const [title,location,keys,list,mutable] of specs){
+  const path=Array.isArray(location)?location:location?location.split('.'):[], value=at(state.data,path);
+  const body=element('div',{class:'fold-body editable-rows'});
+  const row=(item,p,index)=>{
+   const grid=element('div',{class:'editor-grid editable-row'});
+   if(list)grid.append(element('strong',{class:'editable-row-title'},item.title||item.name||'Nuevo elemento'));
+   for(const key of keys){const fp=[...p,...key.split('.')];if(at(state.data,fp)!==undefined)grid.append(renderField(state,at(state.data,fp),fp,({'priceLabel':'Precio mostrado','signature.name':'Nombre de la firma','signature.role':'Cargo de la firma'})[key]||titleFor(key)));}
+   if(mutable)grid.append(button('Quitar',()=>{if(!window.confirm('\u00bfQuitar este elemento?'))return;value.splice(index,1);shiftImages(state,path,index);markDirty(state);render();},'danger'));
+   body.append(grid);
+  };
+  if(list)value.forEach((item,i)=>row(item,[...path,i],i));else row(value,path);
+  if(mutable)body.append(button('Agregar elemento',()=>{
+   const item=clone(state.templates[schemaKey(path)]??value[0]);item.id='nuevo-'+crypto.randomUUID().slice(0,8);
+   for(const key of keys)if(key!=='image')item[key]=key==='type'?'paquete':typeof item[key]==='boolean'?true:typeof item[key]==='number'?0:'';
+   value.push(item);markDirty(state);render();
+  }));
+  target.append(title?fold(state,path,title,body,true):body);
+ }
+}
+
 function editor(name) {
   const state = states.get(name),
     title = sections.find((s) => s[0] === name)[1];
-  main.append(pageHead(title, "Abre una subsección para editarla."));
+  main.append(pageHead(title, "Edita los campos y guarda los cambios."));
   if (name === "quote-catalog")
     main.append(
       element(
@@ -883,32 +916,7 @@ function editor(name) {
       class: "editor-shell",
       disabled: state.saving,
     });
-  const primitive = Object.entries(state.data).filter(
-    ([, value]) => !value || typeof value !== "object",
-  );
-  let first = true,
-    commonAdded = false;
-  for (const [key, value] of Object.entries(state.data)) {
-    if (!value || typeof value !== "object") {
-      if (commonAdded) continue;
-      commonAdded = true;
-      fields.append(
-        fold(
-          state,
-          ["$general"],
-          "Información general",
-          element(
-            "div",
-            { class: "fold-body" },
-            objectFields(state, Object.fromEntries(primitive), []),
-          ),
-          first,
-        ),
-      );
-    } else
-      fields.append(renderField(state, value, [key], titleFor(key), first));
-    first = false;
-  }
+  renderEditableFields(state, fields);
   form.addEventListener(
     "invalid",
     (event) => {

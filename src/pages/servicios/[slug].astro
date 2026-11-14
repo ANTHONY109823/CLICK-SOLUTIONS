@@ -217,7 +217,7 @@ const products = isLicenses ? getLicenses() : [];
   .service-sheet {
     --sheet-accent: var(--brand-cyan);
     --sheet-tint: rgb(0 170 231 / 0.07);
-    min-height: calc(100svh - var(--header-h));
+    min-height: min(836px, calc(100svh - var(--header-h)));
     padding-block: clamp(2.5rem, 5vh, 4.5rem);
     background: radial-gradient(circle at 88% 8%, var(--sheet-tint), transparent 25%), var(--bg);
   }
