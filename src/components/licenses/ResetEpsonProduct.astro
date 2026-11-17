@@ -7,6 +7,7 @@ const downloadUrl = software.drClick.download.startsWith('/') ? `${base}${softwa
 const resetDownload = software.resetEpson.download;
 const resetDownloadUrl = resetDownload?.startsWith('/') ? `${base}${resetDownload}` : resetDownload;
 const storyImage = `${base}/images/software/reset-epson-flow.png`;
+const paymentNumber = '927577686';
 ---
 
 <div class="click-suite" aria-label="Software propio de ClickSolutions">
@@ -71,6 +72,7 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
     <div class="reset-meta">
       <span><Icon name="monitor" size={16} />Windows + USB</span>
       <span><Icon name="lock" size={16} />Licencia vinculada a una PC</span>
+      <button class="reset-request" type="button" id="reset-request-open" aria-haspopup="dialog" aria-controls="reset-request-dialog">Enviar código de PC</button>
     </div>
   </article>
   <article class="doctor-card" aria-labelledby="reset-download-title">
@@ -99,6 +101,63 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
     )}
   </article>
 </div>
+
+<dialog class="reset-dialog" id="reset-request-dialog" aria-labelledby="reset-request-title">
+  <header class="reset-dialog__header">
+    <h2 id="reset-request-title">Enviar código de PC</h2>
+    <form method="dialog"><button class="reset-dialog__close" type="submit" aria-label="Cerrar">×</button></form>
+  </header>
+  <p>Este formulario es para quienes ya descargaron y ejecutaron ResetEpson. Copia el código de PC que muestra el programa y elige tu plan.</p>
+  <form id="reset-request-form" data-phone={`51${paymentNumber}`}>
+    <label for="reset-pc-code">Código de PC</label>
+    <input id="reset-pc-code" name="code" type="text" placeholder="FED7-B857-B24E-87C0" maxlength="64" required autocomplete="off" spellcheck="false" />
+    <label for="reset-request-plan">Plan de licencia</label>
+    <select id="reset-request-plan" name="plan" required>
+      <option value="" disabled selected>Elige un plan</option>
+      {software.resetEpson.plans.map((plan) => (
+        <option value={`${plan.duration} (${plan.price})`}>{plan.name} · {plan.duration} · {plan.price}</option>
+      ))}
+    </select>
+    <p class="reset-dialog__payment">Yape o Plin <strong>{paymentNumber}</strong></p>
+    <p>Puedes consultar con el administrador por WhatsApp antes de pagar. Si ya pagaste, puedes adjuntar el comprobante en el chat.</p>
+    <label class="reset-dialog__receipt">
+      <input id="reset-request-receipt" type="checkbox" />
+      Ya pagué y quiero adjuntar el comprobante en WhatsApp
+    </label>
+    <p id="reset-request-preview" class="reset-dialog__preview" hidden></p>
+    <button class="reset-dialog__send" type="submit">Enviar por WhatsApp</button>
+  </form>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#reset-request-dialog');
+  const open = document.querySelector<HTMLButtonElement>('#reset-request-open');
+  const form = document.querySelector<HTMLFormElement>('#reset-request-form');
+  const code = document.querySelector<HTMLInputElement>('#reset-pc-code');
+  const plan = document.querySelector<HTMLSelectElement>('#reset-request-plan');
+  const receipt = document.querySelector<HTMLInputElement>('#reset-request-receipt');
+  const preview = document.querySelector<HTMLElement>('#reset-request-preview');
+
+  if (dialog && open && form && code && plan && receipt && preview) {
+    open.addEventListener('click', () => dialog.showModal());
+    const updateMessage = () => {
+      const pcCode = code.value.trim();
+      code.setCustomValidity(code.value && !pcCode ? 'Pega el código de tu PC.' : '');
+      const message = pcCode && plan.value
+        ? `Hola, quiero solicitar una licencia de ResetEpson para el plan de ${plan.value}. Mi código de PC es ${pcCode}.${receipt.checked ? ' Le adjunto el comprobante de pago.' : ''}`
+        : '';
+      preview.textContent = message;
+      preview.hidden = !message;
+      return message;
+    };
+    form.addEventListener('input', updateMessage);
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const message = updateMessage();
+      if (message) window.open(`https://wa.me/${form.dataset.phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    });
+  }
+</script>
 
 <style>
   .click-suite { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr) minmax(0, 1fr); height: 100%; min-height: 0; gap: clamp(.9rem, 1.7vw, 1.3rem); }
@@ -153,6 +212,23 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
   .reset-plan > strong { color: #073d59; font-size: clamp(1.45rem, 2.2vw, 1.95rem); line-height: 1; }
   .reset-meta { display: flex; align-items:center; gap: 18px; padding-top: 7px; border-top: 1px solid #dce9ee; color:#526b78; font-size:.69rem; font-weight:700; }
   .reset-meta span { display:flex; align-items:center; gap:6px; }.reset-meta :global(svg){color:#179fc0}
+  .reset-meta { flex-wrap: wrap; }
+  .reset-request { margin-inline-start: auto; padding: .55rem .8rem; border: 1px solid #aad8e5; border-radius: 9px; background: #e6f7fa; color: #07516a; font: inherit; cursor: pointer; }
+  .reset-dialog { width: min(500px, calc(100% - 2rem)); max-height: calc(100% - 2rem); margin: auto; padding: clamp(1rem, 4vw, 1.75rem); border: 1px solid #344055; border-radius: 16px; background: #111827; color: #f8fafc; color-scheme: dark; }
+  .reset-dialog::backdrop { background: rgb(4 12 24 / .72); }
+  .reset-dialog__header { display:flex; align-items:center; justify-content:space-between; gap: .75rem; }
+  .reset-dialog h2 { margin: 0; color: inherit; font-size: 1.35rem; }
+  .reset-dialog p { margin: .5rem 0 .9rem; color: #bac8dd; font-size: .875rem; }
+  .reset-dialog label { display: block; margin: .8rem 0 .3rem; color: #d8e3f1; font-size: .85rem; }
+  .reset-dialog input[type="text"], .reset-dialog select { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1px solid #45546c; border-radius: 8px; background: #1d293b; color: #f8fafc; font: inherit; }
+  .reset-dialog input[type="text"] { color: #6de89a; }
+  .reset-dialog .reset-dialog__receipt { display: flex; align-items: center; gap: .55rem; min-height: 44px; margin: .25rem 0 .65rem; }
+  .reset-dialog__receipt input { flex: none; width: 1.1rem; height: 1.1rem; accent-color: #22c55e; }
+  .reset-dialog__close { width: 36px; height: 36px; border: 1px solid #45546c; border-radius: 8px; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
+  .reset-dialog p.reset-dialog__payment { margin-top: 1rem; }
+  .reset-dialog__payment strong { margin-inline-start: .4rem; color: #6de89a; }
+  .reset-dialog__preview { padding: .75rem; border-radius: 8px; background: #1d293b; overflow-wrap: anywhere; }
+  .reset-dialog__send { width: 100%; min-height: 44px; border: 0; border-radius: 8px; background: #22c55e; color: #072516; font: inherit; font-weight: 800; cursor: pointer; }
 
   @keyframes doctor-orbit { to { transform:rotate(360deg); } }
   @keyframes print-paper { 0%,18%{transform:translate(-50%,12px);opacity:0} 28%,68%{transform:translate(-50%,-19px);opacity:1} 82%,100%{transform:translate(-50%,-24px);opacity:0} }
@@ -162,4 +238,5 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
   @media (max-width: 1050px) { .click-suite { grid-template-columns: 1fr; height: auto; } .doctor-card { min-height: 350px; } .reset-card { min-height: 540px; } }
   @media (max-width: 620px) { .doctor-card { min-height: 440px; } .reset-card__header { display: grid; } .reset-story{width:100%;min-width:0;min-height:150px}.reset-plans { grid-template-columns: 1fr; } .reset-card { min-height: auto; } .reset-plan{min-height:104px}.reset-meta{align-items:flex-start;flex-direction:column;gap:5px} }
   @media (prefers-reduced-motion: reduce) { .doctor-visual__pulse, .doctor-visual__paper, .doctor-visual__scan, .reset-story__slide, .reset-story__progress i::after { animation: none; } .reset-story__slide--printer{opacity:1} }
+  @media (max-width: 620px) { .reset-request { margin-inline-start: 0; } }
 </style>
