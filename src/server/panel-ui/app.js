@@ -751,6 +751,18 @@ function renderField(state, value, path, label, open = false) {
       input.value;
     preview.src =
       src.startsWith("/images/") || src.startsWith("data:image/") ? src : "";
+    if (path[0] === "resetEpson" && path[1] === "gallery") {
+      const photo = at(state.data, path.slice(0, -1));
+      const crop = new Map([
+        ["diagnostico", "inset(0 66.667% 0 0)"],
+        ["impresora", "inset(0 33.333% 0 33.333%)"],
+        ["activacion", "inset(0 0 0 66.667%)"],
+      ]);
+      preview.style.objectViewBox = src === "/images/software/reset-epson-flow.png"
+        ? crop.get(photo.id) || "none"
+        : "none";
+      preview.hidden = !src;
+    }
   };
   input.addEventListener("input", () => {
     put(
@@ -797,6 +809,7 @@ function renderField(state, value, path, label, open = false) {
             drones: "Drones",
             "proyectos-web": "Proyectos web",
             "software/antivirus": "Antivirus",
+            "software/reset-epson": "Fotos de ResetEpson",
           }[name],
         ),
       ),
@@ -804,7 +817,9 @@ function renderField(state, value, path, label, open = false) {
     folder.value =
       config.imageFolders.find((name) =>
         value.startsWith("/images/" + name + "/"),
-      ) || (state.name === "web-projects" ? "proyectos-web" : "hero");
+      ) || (path[0] === "resetEpson" && path[1] === "gallery"
+        ? "software/reset-epson"
+        : state.name === "web-projects" ? "proyectos-web" : "hero");
     folder.addEventListener("change", () => {
       const upload = state.images.get(keyFor(path));
       if (upload) {
@@ -863,7 +878,7 @@ const editableSections = {
  'web-development': [['','solutions',['price','timing'],true]],
  'web-projects': [['','projects',['image','title','category','visible'],true,true]],
  'drone-quote': [['Fotos de servicios','overview.items',['image'],true],['Precios de servicios','packages',['price','priceLabel'],true],['Precios adicionales','addons',['price'],true],['Armado por encargo','customBuild',['image','priceLabel']]],
- 'click-software': [['Reset Epson','resetEpson.plans',['price','duration'],true],['Dr. Click','drClick',['version']],...['eset','panda','bitdefender'].map(k=>[titleFor(k),'antivirus.'+k,['image']])],
+ 'click-software': [['Fotos del carrusel de ResetEpson','resetEpson.gallery',['title','image'],true,true],['Planes de ResetEpson','resetEpson.plans',['price','duration'],true],['Dr. Click','drClick',['version']],...['eset','panda','bitdefender'].map(k=>[titleFor(k),'antivirus.'+k,['image']])],
  'quote-catalog': [['Datos del documento','document',['prefix','nextNumber','depositPercent','validityDays','signature.name','signature.role']]],
 };
 function renderEditableFields(state,target) {
@@ -872,6 +887,8 @@ function renderEditableFields(state,target) {
  for(const [title,location,keys,list,mutable] of specs){
   const path=Array.isArray(location)?location:location?location.split('.'):[], value=at(state.data,path);
   const body=element('div',{class:'fold-body editable-rows'});
+  const resetGallery=location==='resetEpson.gallery';
+  if(resetGallery) body.append(element('p',{class:'help'},'Selecciona una imagen para cambiarla o pulsa Agregar foto. Guarda los cambios de Software para publicarlos.'));
   const row=(item,p,index)=>{
    const grid=element('div',{class:'editor-grid editable-row'});
    if(list)grid.append(element('strong',{class:'editable-row-title'},item.title||item.name||'Nuevo elemento'));
@@ -880,9 +897,10 @@ function renderEditableFields(state,target) {
    body.append(grid);
   };
   if(list)value.forEach((item,i)=>row(item,[...path,i],i));else row(value,path);
-  if(mutable)body.append(button('Agregar elemento',()=>{
+  if(mutable && (!resetGallery || value.length < 10))body.append(button(resetGallery?'Agregar foto':'Agregar elemento',()=>{
    const item=clone(state.templates[schemaKey(path)]??value[0]);item.id='nuevo-'+crypto.randomUUID().slice(0,8);
    for(const key of keys)if(key!=='image')item[key]=key==='type'?'paquete':typeof item[key]==='boolean'?true:typeof item[key]==='number'?0:'';
+   if(resetGallery){item.title='Foto de ResetEpson';item.image='';}
    value.push(item);markDirty(state);render();
   }));
   target.append(title?fold(state,path,title,body,true):body);

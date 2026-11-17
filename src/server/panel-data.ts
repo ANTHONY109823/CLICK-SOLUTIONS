@@ -28,9 +28,11 @@ export const imageFolders = [
   "drones",
   "proyectos-web",
   "software/antivirus",
+  "software/reset-epson",
 ] as const;
 export const pathKey = (path: (string | number)[]) =>
   path.map((p) => (typeof p === "number" ? "*" : p)).join(".");
+const resetGalleryImage = (path: (string | number)[]) => pathKey(path) === "resetEpson.gallery.*.image";
 export function templates(
   value: Json,
   path: (string | number)[] = [],
@@ -67,7 +69,7 @@ const nullableText = new Set([
   "social.linkedin",
   "social.youtube",
 ]);
-export function validate(name: string, value: Json, current: Json) {
+export function validate(name: string, value: Json, current: Json, beforeUploads = false) {
   const defaults = templates(documents[name]!);
   let nodes = 0;
   function visit(next: Json, previous: Json, path: (string | number)[]) {
@@ -153,6 +155,7 @@ export function validate(name: string, value: Json, current: Json) {
     )
       invalid(path, "Tipo de dato no válido.");
     if (typeof next === "string") {
+      if (beforeUploads && next === "" && name === "click-software" && resetGalleryImage(path)) return;
       if (next.length > 10000) invalid(path, "Máximo 10 000 caracteres.");
       if (
         (typeof previous === "string" && previous.startsWith("/images/")) ||
@@ -176,6 +179,15 @@ export function validate(name: string, value: Json, current: Json) {
     }
   }
   visit(value, current, []);
+  if (name === "click-software") {
+    const { gallery } = (value as typeof software).resetEpson;
+    if (!gallery.length || gallery.length > 10)
+      invalid(["resetEpson", "gallery"], "Conserva entre 1 y 10 fotos.");
+    for (const [index, slide] of gallery.entries()) {
+      if (!slide.title.trim())
+        invalid(["resetEpson", "gallery", index, "title"], "Escribe una descripción para la foto.");
+    }
+  }
   if (name === "quote-catalog") {
     const services = (value as typeof catalog).services;
     for (const [serviceIndex, service] of services.entries()) {
@@ -271,7 +283,7 @@ export function attachImages(
       !parent ||
       !Object.hasOwn(parent, key) ||
       typeof parent[key] !== "string" ||
-      !safeImage(parent[key])
+      !(safeImage(parent[key]) || (parent[key] === "" && resetGalleryImage(field)))
     )
       throw new PanelError(400, "El destino debe ser un campo de imagen.");
     const match =

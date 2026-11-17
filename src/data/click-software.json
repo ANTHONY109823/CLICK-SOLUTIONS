@@ -7,6 +7,11 @@
     "available": true,
     "size": 20165332,
     "compatibility": "Compatible con más de 1450 modelos Epson EcoTank",
+    "gallery": [
+      { "id": "diagnostico", "title": "Diagnóstico de ResetEpson", "image": "/images/software/reset-epson-flow.png" },
+      { "id": "impresora", "title": "Impresora Epson EcoTank", "image": "/images/software/reset-epson-flow.png" },
+      { "id": "activacion", "title": "Activación de ResetEpson", "image": "/images/software/reset-epson-flow.png" }
+    ],
     "featuredModels": [
       "L210",
       "L355",

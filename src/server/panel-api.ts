@@ -6,6 +6,7 @@ import vendor from 'jspdf/dist/jspdf.umd.min.js?raw';
 import { allowLogin, clearSession, configured, credentialsMatch, hasSession, PanelError, readBody, reply, sameOrigin, setSession, unavailable } from './panel-auth';
 import { GithubStore, githubConfigured, PORTFOLIO, SOFTWARE } from './panel-github';
 import { attachImages, dataPath, documents, imageFolders, knownDocument, templates, validate, type Json } from './panel-data';
+import softwareDefaults from '../data/click-software.json';
 
 export const prerender = false;
 const saved = 'Guardado en GitHub. El sitio se actualizará cuando termine el redespliegue.';
@@ -14,6 +15,9 @@ const executableProducts = {
   'software/reset-epson': { key: 'resetEpson', filename: 'ResetEpson.exe' },
 } as const;
 const executableFields = ['available', 'filename', 'download', 'size'] as const;
+function addDefaultGallery(software: typeof softwareDefaults) {
+  software.resetEpson.gallery ??= structuredClone(softwareDefaults.resetEpson.gallery);
+}
 const jsonBytes = (value: unknown) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 const slugify = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 56) || 'proyecto';
 function image(value: unknown) {
@@ -79,6 +83,7 @@ export const ALL: APIRoute = async (context) => {
             store && head
               ? await store.json(dataPath(name), head.sha)
               : fallback;
+          if (name === "click-software") addDefaultGallery(data);
           return [
             name,
             { data, templates: { ...templates(fallback), ...templates(data) } },
@@ -111,6 +116,7 @@ export const ALL: APIRoute = async (context) => {
         store && head
           ? await store.json(dataPath(name), head.sha)
           : documents[name]!;
+      if (name === "click-software") addDefaultGallery(current);
       if (request.method === "GET")
         return reply({
           name,
@@ -134,6 +140,8 @@ export const ALL: APIRoute = async (context) => {
         for (const { key } of Object.values(executableProducts)) {
           const product = body.data?.[key];
           if (!product || typeof product !== 'object' || Array.isArray(product)) continue;
+          if (key === 'resetEpson' && !Object.hasOwn(product, 'gallery'))
+            product.gallery = current.resetEpson.gallery;
           // An editor opened before an upload must keep the latest download metadata.
           for (const field of executableFields) {
             if (Object.hasOwn(current[key], field)) product[field] = current[key][field];
@@ -141,7 +149,7 @@ export const ALL: APIRoute = async (context) => {
           }
         }
       }
-      validate(name, body.data as Json, current);
+      validate(name, body.data as Json, current, true);
       const files = new Map<string, Buffer | null>();
       attachImages(body.data as Json, body.images ?? [], files);
       validate(name, body.data as Json, current);
