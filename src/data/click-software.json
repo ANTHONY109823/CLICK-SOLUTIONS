@@ -3,7 +3,16 @@
     "name": "ResetEpson ClickSolutions",
     "version": "1.0",
     "compatibility": "Compatible con más de 1450 modelos Epson EcoTank",
-    "featuredModels": ["L210", "L355", "L3110", "L3210", "L3250", "L5190", "L5290", "L5590"],
+    "featuredModels": [
+      "L210",
+      "L355",
+      "L3110",
+      "L3210",
+      "L3250",
+      "L5190",
+      "L5290",
+      "L5590"
+    ],
     "plans": [
       {
         "id": "dia",
@@ -37,8 +46,8 @@
     "description": "Diagnostica el estado de la impresora y te indica si necesitas utilizar ResetEpson.",
     "download": "/downloads/DrClickSolutions.exe",
     "filename": "DrClickSolutions.exe",
-    "available": false,
-    "size": 0
+    "available": true,
+    "size": 16253801
   },
   "antivirus": {
     "eset": {
