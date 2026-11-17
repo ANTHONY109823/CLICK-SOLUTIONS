@@ -74,13 +74,20 @@
               <li>La descarga pública se llamará DrClickSolutions.exe</li>
             </ul>
           </div>
-          <form class="software-upload" data-software-form>
+          <form class="software-upload" data-software-form="drClick">
             <label>Archivo del programa<input name="executable" type="file" accept=".exe,application/vnd.microsoft.portable-executable,application/x-msdownload" required /></label>
             <div class="software-file" data-software-file></div>
             <button type="submit" class="button button--primary">Subir o reemplazar .exe</button>
             <p class="privacy-note">El archivo queda en el proyecto local. Después debes subir los cambios a GitHub para publicarlo en Railway.</p>
           </form>
         </div>
+        <form class="software-upload" data-software-form="resetEpson">
+          <h3>Ejecutable de ResetEpson</h3>
+          <label>Archivo del programa<input name="executable" type="file" accept=".exe" required /></label>
+          <div class="software-file" data-software-file></div>
+          <button type="submit" class="button button--primary">Guardar .exe de ResetEpson</button>
+          <p class="privacy-note">Archivo de hasta 60 MB. Para publicarlo en Railway, sube a GitHub el ejecutable y los cambios del proyecto.</p>
+        </form>
         <div class="antivirus-manager">
           <div>
             <span class="kicker">Protección para tu PC</span>

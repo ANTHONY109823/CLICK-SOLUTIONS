@@ -9,6 +9,11 @@ import { attachImages, dataPath, documents, imageFolders, knownDocument, templat
 
 export const prerender = false;
 const saved = 'Guardado en GitHub. El sitio se actualizará cuando termine el redespliegue.';
+const executableProducts = {
+  'software/dr-click': { key: 'drClick', filename: 'DrClickSolutions.exe' },
+  'software/reset-epson': { key: 'resetEpson', filename: 'ResetEpson.exe' },
+} as const;
+const executableFields = ['available', 'filename', 'download', 'size'] as const;
 const jsonBytes = (value: unknown) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 const slugify = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 56) || 'proyecto';
 function image(value: unknown) {
@@ -125,6 +130,17 @@ export const ALL: APIRoute = async (context) => {
           400,
           "Envía los datos del apartado y sus imágenes.",
         );
+      if (name === 'click-software') {
+        for (const { key } of Object.values(executableProducts)) {
+          const product = body.data?.[key];
+          if (!product || typeof product !== 'object' || Array.isArray(product)) continue;
+          // An editor opened before an upload must keep the latest download metadata.
+          for (const field of executableFields) {
+            if (Object.hasOwn(current[key], field)) product[field] = current[key][field];
+            else delete product[field];
+          }
+        }
+      }
       validate(name, body.data as Json, current);
       const files = new Map<string, Buffer | null>();
       attachImages(body.data as Json, body.images ?? [], files);
@@ -138,7 +154,10 @@ export const ALL: APIRoute = async (context) => {
       await store.commit(head, files);
       return reply({ data: body.data, message: saved });
     }
-    const mutation = (request.method === 'POST' && ['software/dr-click', 'software/antivirus-image', 'web-projects'].includes(path)) || (request.method === 'DELETE' && path.startsWith('web-projects/'));
+    const product = Object.hasOwn(executableProducts, path)
+      ? executableProducts[path as keyof typeof executableProducts]
+      : undefined;
+    const mutation = (request.method === 'POST' && (product || ['software/antivirus-image', 'web-projects'].includes(path))) || (request.method === 'DELETE' && path.startsWith('web-projects/'));
     if (!mutation) return reply({ error: 'No encontrado.' }, 404);
     if (!githubConfigured()) return reply({ error: 'Guardado no configurado: falta GITHUB_TOKEN.' }, 503);
     // Validate uploads before making any GitHub request.
@@ -146,9 +165,9 @@ export const ALL: APIRoute = async (context) => {
     let executable: Buffer | undefined;
     let body;
     let upload: ReturnType<typeof image> | undefined;
-    if (path === 'software/dr-click') {
+    if (product) {
       let name;
-      try { name = decodeURIComponent(request.headers.get('x-file-name') || 'DrClickSolutions.exe'); }
+      try { name = decodeURIComponent(request.headers.get('x-file-name') || ''); }
       catch { throw new PanelError(400, 'Nombre de archivo no válido.'); }
       if (!name.toLowerCase().endsWith('.exe')) throw new PanelError(400, 'Selecciona un archivo .exe.');
       executable = await readBody(request, 60_000_000);
@@ -164,9 +183,10 @@ export const ALL: APIRoute = async (context) => {
     let result;
     if (path.startsWith('software/')) {
       const software = await store.json(SOFTWARE, head.sha);
-      if (executable) {
-        files.set('public/downloads/DrClickSolutions.exe', executable);
-        Object.assign(software.drClick, { available: true, filename: 'DrClickSolutions.exe', download: '/downloads/DrClickSolutions.exe', size: executable.length });
+      if (product && executable) {
+        const download = `/downloads/${product.filename}`;
+        files.set(`public${download}`, executable);
+        Object.assign(software[product.key], { available: true, filename: product.filename, download, size: executable.length });
       } else if (upload) {
         const id = String(body.id).trim().toLowerCase();
         const filename = `${id}.${upload.extension}`;

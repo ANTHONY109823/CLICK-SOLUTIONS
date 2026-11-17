@@ -12,6 +12,21 @@ const portfolioImages = join(root, 'public', 'images', 'proyectos-web');
 const softwarePath = join(root, 'src', 'data', 'click-software.json');
 const downloadsPath = join(root, 'public', 'downloads');
 const antivirusImages = join(root, 'public', 'images', 'software', 'antivirus');
+const executableProducts = new Map([
+  ['/api/software/dr-click', { key: 'drClick', filename: 'DrClickSolutions.exe' }],
+  ['/api/software/reset-epson', { key: 'resetEpson', filename: 'ResetEpson.exe' }],
+]);
+let softwareWrite = Promise.resolve();
+function updateSoftware(change) {
+  const update = softwareWrite.then(async () => {
+    const software = JSON.parse(await readFile(softwarePath, 'utf8'));
+    await change(software);
+    await writeFile(softwarePath, `${JSON.stringify(software, null, 2)}\n`, 'utf8');
+    return software;
+  });
+  softwareWrite = update.catch(() => {});
+  return update;
+}
 
 const json = (response, status, value) => {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -71,20 +86,21 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (url.pathname === '/api/software/dr-click' && request.method === 'POST') {
-      const originalName = decodeURIComponent(String(request.headers['x-file-name'] || 'DrClickSolutions.exe'));
-      if (!originalName.toLowerCase().endsWith('.exe')) return json(response, 400, { error: 'Selecciona el archivo .exe de Dr. ClickSolutions.' });
+    const product = executableProducts.get(url.pathname);
+    if (product && request.method === 'POST') {
+      const originalName = decodeURIComponent(String(request.headers['x-file-name'] || ''));
+      if (!originalName.toLowerCase().endsWith('.exe')) return json(response, 400, { error: 'Selecciona un archivo .exe.' });
       const executable = await readBinaryBody(request);
       if (!executable.length) return json(response, 400, { error: 'El archivo está vacío.' });
 
-      await mkdir(downloadsPath, { recursive: true });
-      await writeFile(join(downloadsPath, 'DrClickSolutions.exe'), executable);
-      const software = JSON.parse(await readFile(softwarePath, 'utf8'));
-      software.drClick.available = true;
-      software.drClick.filename = 'DrClickSolutions.exe';
-      software.drClick.download = '/downloads/DrClickSolutions.exe';
-      software.drClick.size = executable.length;
-      await writeFile(softwarePath, `${JSON.stringify(software, null, 2)}\n`, 'utf8');
+      const software = await updateSoftware(async (software) => {
+        await mkdir(downloadsPath, { recursive: true });
+        await writeFile(join(downloadsPath, product.filename), executable);
+        Object.assign(software[product.key], {
+          available: true, filename: product.filename,
+          download: `/downloads/${product.filename}`, size: executable.length,
+        });
+      });
       json(response, 201, { software });
       return;
     }
@@ -100,11 +116,11 @@ const server = createServer(async (request, response) => {
       const extension = match[1] === 'image/jpeg' ? 'jpg' : match[1].split('/')[1];
       const filename = `${antivirusId}.${extension}`;
 
-      await mkdir(antivirusImages, { recursive: true });
-      await writeFile(join(antivirusImages, filename), imageBytes);
-      const software = JSON.parse(await readFile(softwarePath, 'utf8'));
-      software.antivirus[antivirusId].image = `/images/software/antivirus/${filename}`;
-      await writeFile(softwarePath, `${JSON.stringify(software, null, 2)}\n`, 'utf8');
+      const software = await updateSoftware(async (software) => {
+        await mkdir(antivirusImages, { recursive: true });
+        await writeFile(join(antivirusImages, filename), imageBytes);
+        software.antivirus[antivirusId].image = `/images/software/antivirus/${filename}`;
+      });
       json(response, 201, { software });
       return;
     }

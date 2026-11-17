@@ -208,7 +208,11 @@ async function api(path, options = {}) {
     window.location.assign("/login");
     throw new Error("La sesión ha terminado.");
   }
-  const result = await response.json();
+  const result = await response.json().catch(() => {
+    throw new Error(response.status === 413
+      ? "El servidor rechazó el archivo por su tamaño."
+      : `El servidor devolvió una respuesta inesperada (HTTP ${response.status}).`);
+  });
   if (!response.ok)
     throw Object.assign(
       new Error(result.error || "No se pudo completar la operación."),
@@ -914,7 +918,7 @@ function editor(name) {
   const form = element("form"),
     fields = element("fieldset", {
       class: "editor-shell",
-      disabled: state.saving,
+      disabled: state.saving || state.uploading,
     });
   renderEditableFields(state, fields);
   form.addEventListener(
@@ -930,7 +934,7 @@ function editor(name) {
   );
   const save = element(
     "button",
-    { type: "submit", class: "primary", disabled: state.saving },
+    { type: "submit", class: "primary", disabled: state.saving || state.uploading },
     state.saving ? "Guardando…" : "Guardar",
   );
   const indicator = element(
@@ -945,7 +949,7 @@ function editor(name) {
   );
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (state.saving) return;
+    if (state.saving || state.uploading) return;
     state.saving = true;
     state.message = "Guardando…";
     state.messageKind = "";
@@ -979,25 +983,42 @@ function editor(name) {
     }
   });
   main.append(form);
-  if (name === "click-software") softwareUpload(state);
+  if (name === "click-software") {
+    const uploads = element("div");
+    for (const [key, label, endpoint] of [
+      ["drClick", "Dr. ClickSolutions", "software/dr-click"],
+      ["resetEpson", "ResetEpson", "software/reset-epson"],
+    ]) {
+      uploads.append(softwareUpload(state, key, label, endpoint, () => {
+        fields.disabled = save.disabled = state.uploading;
+        for (const button of uploads.querySelectorAll("button"))
+          button.disabled = state.uploading;
+      }));
+    }
+    main.append(uploads);
+  }
 }
-function softwareUpload(state) {
+function softwareUpload(state, key, label, endpoint, updateDisabled) {
+  const product = state.data[key];
   const message = element("div", { class: "status", role: "status" }),
     file = element("input", {
       type: "file",
       accept: ".exe",
       required: true,
-      "aria-label": "Ejecutable de Dr. Click",
+      "aria-label": `Ejecutable de ${label}`,
     }),
     submit = element(
       "button",
-      { type: "submit", class: "primary" },
-      "Subir o reemplazar .exe",
+      { type: "submit", class: "primary", disabled: state.saving || state.uploading },
+      `Guardar .exe de ${label}`,
     );
   const form = element(
     "form",
     { class: "card" },
-    element("h2", {}, "Ejecutable de Dr. Click"),
+    element("h2", {}, `Ejecutable de ${label}`),
+    element("p", {}, product.available
+      ? `Archivo guardado: ${product.filename}`
+      : "Aún no hay un ejecutable guardado."),
     element(
       "p",
       { class: "help" },
@@ -1010,6 +1031,7 @@ function softwareUpload(state) {
   );
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (state.saving || state.uploading) return;
     try {
       if (state.dirty)
         throw new Error(
@@ -1023,9 +1045,10 @@ function softwareUpload(state) {
         !selected.size
       )
         throw new Error("Selecciona un archivo .exe no vacío de hasta 60 MB.");
-      submit.disabled = true;
+      state.uploading = true;
+      updateDisabled();
       status(message, "Subiendo programa…");
-      const result = await api("software/dr-click", {
+      const result = await api(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/octet-stream",
@@ -1035,17 +1058,23 @@ function softwareUpload(state) {
       });
       state.data = result.software;
       config.documents["click-software"].data = clone(result.software);
-      state.message =
-        "Guardado en GitHub; el sitio se actualizará al terminar el redespliegue.";
+      state.message = `${result.software[key].filename} guardado en GitHub. La descarga se activará al terminar el redespliegue.`;
       state.messageKind = "success";
-      render();
     } catch (error) {
       status(message, error.message, "error");
+      if (!form.isConnected) {
+        state.message = error.message;
+        state.messageKind = "error";
+      }
+      return;
     } finally {
-      submit.disabled = false;
+      state.uploading = false;
+      updateDisabled();
+      if (active === "click-software" && !form.isConnected) render();
     }
+    if (active === "click-software" && form.isConnected) render();
   });
-  main.append(form);
+  return form;
 }
 
 function stored(key, fallback) {

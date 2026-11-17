@@ -4,6 +4,8 @@ import software from '../../data/click-software.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const downloadUrl = software.drClick.download.startsWith('/') ? `${base}${software.drClick.download}` : software.drClick.download;
+const resetDownload = software.resetEpson.download;
+const resetDownloadUrl = resetDownload?.startsWith('/') ? `${base}${resetDownload}` : resetDownload;
 const storyImage = `${base}/images/software/reset-epson-flow.png`;
 ---
 
@@ -71,10 +73,35 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
       <span><Icon name="lock" size={16} />Licencia vinculada a una PC</span>
     </div>
   </article>
+  <article class="doctor-card" aria-labelledby="reset-download-title">
+    <div class="doctor-card__top">
+      <span class="product-badge">Instalador para Windows</span>
+      <span class="product-version">v{software.resetEpson.version}</span>
+    </div>
+
+    <div class="doctor-visual" aria-hidden="true">
+      <span class="doctor-visual__pulse"></span>
+      <span class="doctor-visual__printer"><Icon name="download" size={40} /></span>
+    </div>
+
+    <div class="doctor-card__copy">
+      <span class="product-label">EJECUTABLE .EXE</span>
+      <h3 id="reset-download-title">ResetEpson</h3>
+      <p>Descarga el programa para usarlo con tu licencia de ResetEpson.</p>
+    </div>
+
+    {software.resetEpson.available && resetDownloadUrl ? (
+      <a class="doctor-download" href={resetDownloadUrl} download={software.resetEpson.filename} data-track="software_download" data-track-label="reset-epson">
+        <Icon name="download" size={18} />Descargar ResetEpson
+      </a>
+    ) : (
+      <span class="doctor-download doctor-download--pending"><Icon name="clock" size={18} />Descarga próximamente</span>
+    )}
+  </article>
 </div>
 
 <style>
-  .click-suite { display: grid; grid-template-columns: minmax(270px, .72fr) minmax(0, 1.45fr); height: 100%; min-height: 0; gap: clamp(.9rem, 1.7vw, 1.3rem); }
+  .click-suite { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr) minmax(0, 1fr); height: 100%; min-height: 0; gap: clamp(.9rem, 1.7vw, 1.3rem); }
   .doctor-card, .reset-card { min-width: 0; overflow: hidden; border: 1px solid #b7e1f3; border-radius: 23px; box-shadow: 0 24px 60px -48px #0a4663; }
   .doctor-card { position: relative; display: grid; grid-template-rows: auto minmax(150px, 1fr) auto auto; align-items:center; padding: clamp(1rem, 2vw, 1.35rem); background: radial-gradient(circle at 50% 28%, rgb(50 210 176 / .16), transparent 33%), linear-gradient(150deg, #041a31, #074f58); color: #fff; }
   .doctor-card::before { content: ''; position: absolute; inset: 0; opacity: .32; background-image: linear-gradient(rgb(100 228 207 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(100 228 207 / .06) 1px, transparent 1px); background-size: 30px 30px; pointer-events: none; }
@@ -132,7 +159,7 @@ const storyImage = `${base}/images/software/reset-epson-flow.png`;
   @keyframes doctor-scan { 50% { transform: translate(5px, -8px) rotate(-8deg); } }
   @keyframes story-fade { 0%,5%{opacity:0;transform:scale(1.04)} 9%,29%{opacity:1;transform:scale(1)} 34%,100%{opacity:0;transform:scale(1.02)} }
   @keyframes story-progress { 0%,5%{transform:scaleX(0)} 8%,31%{transform:scaleX(1)} 34%,100%{transform:scaleX(0)} }
-  @media (max-width: 900px) { .click-suite { grid-template-columns: 1fr; height: auto; } .doctor-card { min-height: 520px; } .reset-card { min-height: 540px; } }
+  @media (max-width: 1050px) { .click-suite { grid-template-columns: 1fr; height: auto; } .doctor-card { min-height: 350px; } .reset-card { min-height: 540px; } }
   @media (max-width: 620px) { .doctor-card { min-height: 440px; } .reset-card__header { display: grid; } .reset-story{width:100%;min-width:0;min-height:150px}.reset-plans { grid-template-columns: 1fr; } .reset-card { min-height: auto; } .reset-plan{min-height:104px}.reset-meta{align-items:flex-start;flex-direction:column;gap:5px} }
   @media (prefers-reduced-motion: reduce) { .doctor-visual__pulse, .doctor-visual__paper, .doctor-visual__scan, .reset-story__slide, .reset-story__progress i::after { animation: none; } .reset-story__slide--printer{opacity:1} }
 </style>
